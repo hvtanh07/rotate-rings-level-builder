@@ -64,7 +64,7 @@ From the GDD, sections 1.2, 1.4 and 1.5:
 - A piece with no links left shatters (300 points per ring). Connectors go with their ring. A pin or bar that locks nothing shatters.
 - Locked Ring: does not turn until the piece holding its key shatters; then the key opens it.
 - Gear Rings: meshed gears turn the other way, by the tooth ratio (same teeth: same angle).
-- Open question, so it is a setting (**Rule**): what an arm does when its own ring turns. *Arms hold their ring* (default): a ring whose arm still hooks another ring cannot turn. *Arms swing off*: the turn swings the arm off the ring it hooks (GDD 1.2, way 2). The Check tab shows the bot result for both.
+- A ring whose arm still hooks another ring is held and cannot turn (a tap only shakes it). Free the hooked ring first. (Confirmed by the designer, 2026-11-25.)
 - Boosters: Hint lights rings that can turn and free something; Saw cuts one connector or bar; Remove takes one ring, bar or pin off.
 
 ## Code

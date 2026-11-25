@@ -21,7 +21,7 @@ const ORIG_LEVELS = (ORIGINAL.levels || []).map(normalize);
 let levels = [], cur = 0, meta = {version: ORIGINAL.version ?? 1, exportedAt: ORIGINAL.exportedAt ?? ''};
 let tab = 'level', mode = 'edit', tool = 'select', sel = new Set(), pick = null;
 let undo = [], redo = [], lastSnap = '';
-let prefs = {grid: 0.05, ids: false, rule: 'block'};
+let prefs = {grid: 0.05, ids: false, rule: 'block'}; // rule confirmed by the designer: a ring whose arm hooks another ring is locked
 let view = null;
 const L = () => levels[cur];
 
@@ -34,6 +34,7 @@ function load() {
   if (saved && Array.isArray(saved.levels) && saved.levels.length) { levels = saved.levels.map(normalize); cur = Math.min(saved.cur | 0, levels.length - 1); savedBase = saved.base || ''; if (saved.meta) meta = saved.meta; }
   else { levels = clone(ORIG_LEVELS); cur = 0; }
   try { Object.assign(prefs, JSON.parse(localStorage.getItem(STORE + '.prefs') || '{}')); } catch (e) {}
+  prefs.rule = 'block';
 }
 const STALE = 'The game data built into the tool changed since you last saved here. Press Reset to game data to load it (export first to keep your edits).';
 function persist() {
@@ -379,7 +380,7 @@ function renderPlay() {
   $('#ui').innerHTML = '';
   svg.classList.add('play');
   const rule = RULES[game.rule];
-  $('#pStats').innerHTML = `<span>Moves <b>${game.moves}</b></span><span>Score <b>${game.score}</b></span><span>Pieces left <b>${left(game)}</b></span><span title="${esc(rule.text)}">${esc(rule.name)}</span>`;
+  $('#pStats').innerHTML = `<span>Moves <b>${game.moves}</b></span><span>Score <b>${game.score}</b></span><span>Pieces left <b>${left(game)}</b></span>`;
 }
 function pieceCenter(i) {
   const r = game.lv.rings[i];
@@ -460,8 +461,7 @@ $('#pAuto').addEventListener('click', () => { if (auto !== null) { stopAuto(); r
 $('#pBot').addEventListener('click', () => { stopAuto(); botStep(); });
 $('#pRestart').addEventListener('click', restart);
 $('#pUndo').addEventListener('click', () => { if (game && undoMove(game)) { $('#fx').innerHTML = ''; flushEvents(); renderPlay(); } });
-$('#pRule').addEventListener('change', e => { prefs.rule = e.target.value; savePrefs(); restart(); refreshChecks(); if (tab === 'check') renderPane(); });
-function syncBoosters() { $('#bSaw').setAttribute('aria-pressed', String(booster === 'saw')); $('#bRemove').setAttribute('aria-pressed', String(booster === 'remove')); $('#pRule').value = prefs.rule; }
+function syncBoosters() { $('#bSaw').setAttribute('aria-pressed', String(booster === 'saw')); $('#bRemove').setAttribute('aria-pressed', String(booster === 'remove')); }
 $('#bHint').addEventListener('click', () => { if (!game) return; hintSet = new Set(hint(game)); if (!hintSet.size) toast('No ring can free anything right now.'); renderPlay(); });
 $('#bSaw').addEventListener('click', () => { booster = booster === 'saw' ? null : 'saw'; syncBoosters(); if (booster) toast('Saw: click a connector or a bar to cut it.'); });
 $('#bRemove').addEventListener('click', () => { booster = booster === 'remove' ? null : 'remove'; syncBoosters(); if (booster) toast('Remove: click a ring, bar or pin.'); });
@@ -472,7 +472,7 @@ let checkCache = {key: '', issues: [], bot: {}};
 function getChecks() {
   const k = JSON.stringify(L());
   if (checkCache.key !== k) checkCache = {key: k, issues: check(L()), bot: {}};
-  for (const rule of ['block', 'swing']) if (!checkCache.bot[rule]) { const s = solve(L(), rule); checkCache.bot[rule] = {won: s.won, moves: s.moves, stuck: s.stuck}; }
+  for (const rule of ['block']) if (!checkCache.bot[rule]) { const s = solve(L(), rule); checkCache.bot[rule] = {won: s.won, moves: s.moves, stuck: s.stuck}; }
   return checkCache;
 }
 function refreshChecks() {
@@ -561,12 +561,12 @@ function paneCheck(lv) {
   const c = getChecks();
   const bot = rule => {
     const b = c.bot[rule];
-    return `<h3>Bot · ${esc(RULES[rule].name)}${rule === prefs.rule ? ' (play test rule)' : ''}</h3>` +
+    return `<h3>Bot</h3>` +
       (b.won ? `<p><b>Solved in ${b.moves.length} move${b.moves.length === 1 ? '' : 's'}.</b></p>` : `<p class="x"><b>Stuck after ${b.moves.length} moves.</b> Left: ${b.stuck.map(i => esc(pname(lv, i))).join(', ')}</p>`) +
       `<div class="sol">${b.moves.map((m, k) => `<span class="${b.won ? 'ok' : ''}" title="Move ${k + 1}">${esc(lv.rings[m.ring].shape.id || '#' + m.ring)} ${m.delta > 0 ? '↺' : '↻'}${Math.abs(m.delta)}°</span>`).join('')}</div>`;
   };
   return `<h2>Check</h2>${c.issues.length ? `<ul class="issues">${c.issues.map(x => `<li class="${x.lvl}" ${x.piece !== undefined ? `data-piece="${x.piece}"` : ''}><b>${x.lvl === 'bad' ? 'Error' : 'Warning'}:</b> ${esc(x.text)}</li>`).join('')}</ul>` : '<ul class="issues"><li class="ok">No format problems.</li></ul>'}
-    ${bot(prefs.rule)}${bot(prefs.rule === 'block' ? 'swing' : 'block')}
+    ${bot('block')}
     <p class="hint">The bot turns one free ring at a time, by the smallest turn that frees everything on it (↺ counter-clockwise, ↻ clockwise). The level has no move limit, so a level the bot cannot finish is stuck for a player too. Move counts are a rough guide to difficulty.</p>
     <div class="btns"><button class="btn" type="button" data-act="watch">Watch the bot play</button></div>`;
 }
@@ -588,7 +588,7 @@ function paneHelp() {
   <li>A piece with no links left shatters. A ring gives 300 points.</li>
   <li>Locked Ring: does not turn until the piece holding its key shatters.</li>
   <li>Gear Rings: meshed gears turn the other way, by the tooth ratio.</li>
-  <li><b>Rule</b> picks what an arm does when its own ring turns. <i>Arms hold their ring</i> (default): a ring whose arm still hooks another ring cannot turn. <i>Arms swing off</i>: turning the ring swings the arm off (GDD 1.2, way 2). Which one the game uses still needs checking.</li>
+  <li>A ring whose arm still hooks another ring is held: it cannot turn (a tap only shakes it). Free the hooked ring first.</li>
   <li>Boosters: Hint lights the rings that can turn; Saw cuts one connector or bar; Remove takes one ring off.</li></ul>
   <h3>Data</h3><ul>
   <li>Levels are read from and written to the game's <code>levels.json</code> format: same keys, same order, 4-space layout.</li>

@@ -3,7 +3,8 @@ import {TYPE, isRing, analyze, inGap, P, angleAt, wrap180} from './format.js';
 
 export const RULES = {
   block: {name: 'Arms hold their ring', text: 'A ring whose arm still hooks another ring cannot turn. Free the hooked ring first.'},
-  swing: {name: 'Arms swing off', text: 'Turning a ring swings its arms off the rings they hook (GDD 1.2, way 2).'}
+  // not the game's rule (designer, 2026-11-25); kept for comparison in tests
+  swing: {name: 'Arms swing off', text: 'Turning a ring swings its arms off the rings they hook.'}
 };
 export const RING_POINTS = 300;
 const STEP = 2; // degrees per sweep step; smaller than the narrowest gap in the sample levels (12°)
