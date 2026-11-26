@@ -1,3 +1,1 @@
-winnable 1 / 16
-{"G":{"0":355,"1":150,"4":125,"5":195,"6":35,"7":60,"9":205},"rand":12.7,"bump":1.4,"stuck":0.87,"score":47.4}
-median {"G":{"0":355,"1":150,"4":125,"5":195,"6":35,"7":60,"9":205},"rand":12.7,"bump":1.4,"stuck":0.87,"score":47.4}
+40 H Crown            d  80.3 | rings 10 bot win 22 min 11 free 8 traps 9/110 stuck% 82 combo 8 boom 1 needsBomb  

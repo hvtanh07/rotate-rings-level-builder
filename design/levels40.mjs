@@ -100,24 +100,23 @@ L({name: 'Workshop', element: 'Bar + Pin', hard: true, rule: 'Hard: bars in the 
   const bl = b.R[BL], left = b.bar([[bl.x - .4, bl.y], [bl.x - 2.1, bl.y]], {c: C.purple}); b.pinBar(left, .7, 1);
   return {b};
 }});
-L({name: 'Ladder', element: 'Bar + Pin', rule: 'Bar ends and pins are in the way of free arms',
-  challenge: 'Breather: a hanging chain with a pinned rung on each ring. Work up from the bottom; each ring must drop its rung before its free arm swings into it.', make() {
+L({name: 'Ladder', element: 'Bar + Pin', rule: 'Three rungs, three rings: slide each bar out of its ring',
+  challenge: 'Each ring of the ladder has a bar run into its gap. Slide the rungs out (the middle one needs the side ring turned first), then take the ladder down from the top.', make() {
   const b = new Lv(), d = D(.9, .9), r0 = b.ring(0, d, {r: .9, c: C.orange}), r1 = b.ring(0, 0, {r: .9, c: C.yellow}), r2 = b.ring(0, -d, {r: .9, c: C.green});
   b.arm(r0, r1).arm(r1, r2);
-  [[r0, 180], [r1, 0], [r2, 180]].forEach(([i, a]) => {
-    const [x, y] = b.on(i, a), s = a === 0 ? 1 : -1, h = b.bar([[x, y], [x + s * 1.2, y]], {c: C.blue});
-    b.pinAt(x + s * 1.2, y, a);
-  });
+  b.poke(r0, 180, {c: C.blue}); b.poke(r1, 0, {c: C.blue, side: -1}); b.poke(r2, 180, {c: C.blue});
   b.arm(nb(b, r0, 90, {r: .7, c: C.pink}), r0);
+  const s = b.ring(2.75, 0, {r: .7, c: C.cyan, gap: 90}); b.pin(s, 0);
   return {b};
 }});
 
 /* ---------- 12-16: Bomb (unlock 12) ---------- */
 L({name: 'Knot', element: 'Bomb (new)', rule: 'A Bomb blows up the ring or bar it runs into, and its own ring',
-  challenge: 'The blue ring hooks the bar and can never let go. Turn the orange ring the short way so its bomb hits the bar. The long way frees the pin first and the bomb is lost.', make() {
-  const b = new Lv(), k = b.ring(1.2, -.8, {c: C.blue, gap: 270}), m = b.ring(-1.4, -.6, {c: C.orange, gap: 300});
-  const h = b.bar([[-2.8, .55], [2.8, .55]], {c: C.purple}); b.pinAt(-2.8, .55, 180).pinAt(2.8, .55, 0);
-  b.hookBar(k, h, [1.2, .55]).bomb(m, 30).pin(m, 230);
+  challenge: 'The bar runs into the gap of the right ring, but a ring hooks the bar, so the bar cannot slide (a knot). Turn the bomb ring up into the bar: the blast clears the bar, then the right ring can turn.', make() {
+  const b = new Lv(), y = .6, Q = b.ring(3.1, y, {r: .9, c: C.green, gap: 180});
+  const h = b.bar([[2.55, y], [-1.9, y]], {c: C.purple}); b.pinBar(h, .2, 1);
+  const k = b.ring(1.4, -.7, {r: .9, c: C.blue, gap: 270}), m = b.ring(-1.6, -.6, {c: C.orange, gap: 300});
+  b.hookBar(k, h, [1.4, y]).bomb(m, 0).pin(m, 230).pin(Q, 0);
   return {b, tutorialRing: m};
 }});
 L({name: 'Aim', element: 'Bomb', rule: 'Pick the right target: a bomb spent on a free ring is lost',
@@ -134,13 +133,16 @@ L({name: 'Long way', element: 'Bomb', rule: 'A bomb is solid: it cannot pass a p
   return {b};
 }});
 L({name: 'Scales', element: 'Bomb', hard: true, rule: 'Hard: two knots, two bombs, one decoy',
-  challenge: 'The beam rests on two closed, pinned pans: two knots. Each bomb can hit its pan or the beam. Hitting the beam wastes a bomb and the pans stay stuck. Free the bottom first, then aim each bomb out at its pan before its gap lets go of the hook.', make() {
-  const b = new Lv(), y = .45;
-  const Lp = b.ring(-3.2, y - 1, {c: C.blue, closed: true}), Rp = b.ring(3.2, y - 1, {c: C.blue, closed: true});
-  const BL = b.ring(-1.3, y - 1.05, {r: .9, c: C.orange}), BR = b.ring(1.3, y - 1.05, {r: .9, c: C.orange});
-  const ct = b.ring(0, -2.55, {r: .8, c: C.green}), s = nb(b, ct, 270, {r: .6, c: C.pink});
-  const h = b.bar([b.on(Lp, 90), b.on(Rp, 90)], {c: C.purple}); b.pinAt(0, y, 90);
-  b.pin(Lp, 270).pin(Rp, 270).arm(ct, BL).arm(ct, BR).arm(ct, s).bomb(BL, 135).bomb(BR, 45);
+  challenge: 'Two bars run into the side rings, and each bar is hooked from above, so neither can slide (two knots). Each bomb ring must turn up into its own bar; turned the other way, its bomb hits the center ring instead and the level is lost.', make() {
+  const b = new Lv(), y = .6, Lp = b.ring(-3.6, y, {r: .9, c: C.blue, gap: 0}), Rp = b.ring(3.6, y, {r: .9, c: C.blue, gap: 180});
+  const hL = b.bar([[-3.35, y], [-.9, y]], {c: C.purple}), hR = b.bar([[3.35, y], [.9, y]], {c: C.purple});
+  b.pinBar(hL, .2, 1).pinBar(hR, .2, -1).pin(Lp, 270).pin(Rp, 270);
+  b.arm(Lp, nb(b, Lp, 180, {r: .6, c: C.pink})).arm(Rp, nb(b, Rp, 0, {r: .6, c: C.pink}));
+  const kL = b.ring(-2.1, y + 1.35, {r: .9, c: C.green, gap: 90}), kR = b.ring(2.1, y + 1.35, {r: .9, c: C.green, gap: 90});
+  b.hookBar(kL, hL, [-2.1, y]).hookBar(kR, hR, [2.1, y]);
+  const BL = b.ring(-1.6, y - 1.2, {c: C.orange, gap: 200}), BR = b.ring(1.6, y - 1.2, {c: C.orange, gap: 340});
+  const ct = b.ring(0, -2.8, {r: .8, c: C.yellow}), s = nb(b, ct, 270, {r: .6, c: C.pink}), dc = b.ring(0, -1.2, {r: .5, c: C.cyan, gap: 90}); b.pin(dc, 270);
+  b.arm(ct, BL).arm(ct, BR).arm(ct, s).bomb(BL, 45).bomb(BR, 135);
   return {b};
 }});
 L({name: 'Ring road', element: 'Bomb', G: {0: 40, 1: 225, 2: 200, 3: 200, 4: 275, 5: 130}, rule: 'Two rings hooked onto each other are a knot',
@@ -160,11 +162,11 @@ L({name: 'Key', element: 'Locked Ring (new)', rule: 'A locked ring turns only af
   const p = nb(b, x, 270, {r: .8, c: C.pink}); b.arm(p, x).pin(y, 180).lock(x, y);
   return {b, tutorialRing: y};
 }});
-L({name: 'Key bar', element: 'Locked Ring', rule: 'The key can sit on a bar: clear the bar to open the lock',
-  challenge: 'The key hangs on the bar. Free both bar ends, the bar comes out and the locked ring opens.', make() {
-  const b = new Lv(), A = b.ring(-2.4, .2, {c: C.green}), B = b.ring(2.4, .2, {c: C.green}), X = b.ring(0, -1.4, {c: C.purple});
-  b.arm(A, nb(b, A, 180, {r: .7, c: C.orange})).arm(B, nb(b, B, 0, {r: .7, c: C.orange}));
-  const h = b.bar([b.on(A, 60), [-1, 1.6], [1, 1.6], b.on(B, 120)], {c: C.blue}); b.pinAt(-1, 1.6, 90).pinAt(1, 1.6, 90);
+L({name: 'Key bar', element: 'Locked Ring', rule: 'The key can sit on a bar: slide the bar out to open the lock',
+  challenge: 'The key of the locked ring is on the bar that runs into the left ring. The right ring is in the bar\'s way: turn it first, slide the bar out, then the lock opens.', make() {
+  const b = new Lv(), A = b.ring(-2.4, .2, {c: C.green}), B = b.ring(1.9, .2, {c: C.green, gap: 90}), X = b.ring(-.2, -1.7, {c: C.purple});
+  b.arm(A, nb(b, A, 180, {r: .7, c: C.orange})).arm(nb(b, B, 0, {r: .7, c: C.orange}), B).pin(B, 270);
+  const h = b.poke(A, 0, {c: C.blue, len: 1.5});
   b.arm(nb(b, X, 270, {r: .75, c: C.yellow}), X).pin(X, 90).lock(X, h);
   return {b};
 }});
@@ -176,23 +178,24 @@ L({name: 'Key chain', element: 'Locked Ring', rule: 'Locks in a row: each key op
   b.pin(r, 0).lock(l, t).lock(r, l);
   return {b};
 }});
-L({name: 'Vault', element: 'Locked Ring + Bomb', hard: true, G: {0: 290, 2: 340, 3: 100, 4: 285, 5: 260, 6: 355, 7: 285}, rule: 'Hard: a locked bomb, a key on a bar, a knot',
-  challenge: 'The bomb ring is locked; its key sits on the gate bar. Take the gate down first, then aim the bomb at the closed ring and not at the free one beside it.', make() {
+L({name: 'Vault', element: 'Locked Ring + Bomb', hard: true, G: {0: 290, 2: 340, 4: 285, 5: 260, 6: 355, 7: 285}, rule: 'Hard: a locked bomb, a key on a bar, a knot',
+  challenge: 'The bomb ring is locked; its key is on the bar run into the left top ring. The right top ring is in the bar\'s way, and its pendant must go first. Slide the bar out, then aim the bomb at the closed knot ring, not the free one.', make() {
   const b = new Lv(), M = b.ring(0, 0, {c: C.orange}), K = b.ring(-2.2, 0, {c: C.blue, closed: true}), F = b.ring(2.2, 0, {c: C.blue});
   const A = b.ring(-2.2, 2.4, {r: .85, c: C.green}), B = b.ring(2.2, 2.4, {r: .85, c: C.green});
-  const h = b.bar([b.on(A, 0), b.on(B, 180)], {c: C.purple}); b.pinBar(h, .5, 1);
+  const h = b.poke(A, 0, {c: C.purple, len: 1.8});
   b.arm(A, nb(b, A, 135, {r: .65, c: C.pink})).arm(B, nb(b, B, 45, {r: .65, c: C.pink}));
   b.bomb(M, 270).pin(M, 90).pin(K, 270).pin(F, 270).lock(M, h);
   b.arm(nb(b, K, 180, {r: .7, c: C.yellow}), K);
   const f1 = nb(b, F, 0, {r: .7, c: C.yellow}), f2 = nb(b, f1, 300, {r: .55, c: C.pink}); b.arm(F, f1).arm(f1, f2);
   return {b};
 }});
-L({name: 'Wave', element: 'Bar + Pin', rule: 'Breather: a long bent bar',
-  challenge: 'Breather: a wave-shaped bar lies on three rings. Free each of its rest points; the rings below it free themselves.', make() {
-  const b = new Lv(), R = [-3, 0, 3].map((x, k) => b.ring(x, -.3, {r: .9, c: [C.cyan, C.blue, C.cyan][k]}));
-  const h = b.bar([b.on(R[0], 90), [-1.5, 1.6], b.on(R[1], 90)], {c: C.purple}), h2 = b.bar([b.on(R[1], 90), [1.5, 1.6], b.on(R[2], 90)], {c: C.purple});
-  b.pinAt(-1.5, 1.6, 90).pinAt(1.5, 1.6, 90);
-  R.forEach((r, k) => b.arm(nb(b, r, 270, {r: .65, c: [C.yellow, C.orange, C.yellow][k]}), r));
+L({name: 'Wave', element: 'Bar + Pin', rule: 'Breather: two bent bars, each in two rings',
+  challenge: 'A bent bar runs into the tops of the left and middle rings, another into the bottoms of the middle and right rings. Slide each one out, both legs at once, then open the rings.', make() {
+  const b = new Lv(), y = -.3, R = [-3, 0, 3].map((x, k) => b.ring(x, y, {r: .9, c: [C.cyan, C.blue, C.cyan][k]}));
+  b.R[0].gap = 90; b.R[1].gaps = [90, 270]; b.R[2].gap = 270;
+  const i = .9 - .65, h1 = b.bar([[-3, y + i], [-3, 1.6], [0, 1.6], [0, y + i]], {c: C.purple}), h2 = b.bar([[0, y - i], [0, -2.2], [3, -2.2], [3, y - i]], {c: C.purple});
+  b.pinBar(h1, .6, 1, 0).pinBar(h1, .4, -1, 2).pinBar(h2, .6, 1, 0).pinBar(h2, .4, -1, 2);
+  b.arm(nb(b, R[0], 180, {r: .65, c: C.yellow}), R[0]).arm(nb(b, R[2], 0, {r: .65, c: C.yellow}), R[2]).arm(R[1], R[0]);
   return {b};
 }});
 
@@ -204,11 +207,13 @@ L({name: 'Gears', element: 'Gear Ring (new)', rule: 'Meshed gears turn together,
   b.arm(nb(b, a, 270, {r: .7, c: C.yellow}), a).arm(nb(b, g, 270, {r: .7, c: C.yellow}), g);
   return {b, tutorialRing: a};
 }});
-L({name: 'Drawbridge', element: 'Gear Ring', G: {0: 75, 1: 255, 2: 135, 3: 210}, rule: 'A bar on two gears: both ends free in one turn',
-  challenge: 'The bridge bar rests on two gears. One turn of a gear frees both ends together, if the free arms do not hit the bridge first.', make() {
-  const b = new Lv(), d = D(1, 1), a = b.ring(-d / 2, -.3, {c: C.cyan}), g = b.ring(d / 2, -.3, {c: C.cyan});
+L({name: 'Drawbridge', element: 'Gear Ring', rule: 'A bent bar in two gears: lift it, then one turn frees both',
+  challenge: 'The bridge is a bent bar in the tops of both gears, so the gear pair cannot turn. The ring above is in the way of the bridge: clear it, lift the bridge out, then one turn of the gears frees both pendants.', make() {
+  const b = new Lv(), d = D(1, 1), y = -.3, a = b.ring(-d / 2, y, {c: C.cyan, gap: 90}), g = b.ring(d / 2, y, {c: C.cyan, gap: 90});
   b.gear(a, g);
-  const h = b.bar([b.on(a, 135), [-d / 2 - .7, 1.9], [d / 2 + .7, 1.9], b.on(g, 45)], {c: C.purple}); b.pinAt(0, 1.9, 90);
+  const h = b.bar([[-d / 2, y + .35], [-d / 2, 1.9], [d / 2, 1.9], [d / 2, y + .35]], {c: C.purple});
+  b.pinBar(h, .6, 1, 0).pinBar(h, .4, -1, 2);
+  const T = b.ring(0, 3.05, {r: .9, c: C.yellow}); b.pin(T, 90);
   b.arm(a, nb(b, a, 200, {r: .7, c: C.pink})).arm(g, nb(b, g, 340, {r: .7, c: C.pink}));
   return {b};
 }});
@@ -249,34 +254,36 @@ L({name: 'Crossfire', element: 'Bomb + Bar', rule: 'Two bombs, each must cross t
   const f1 = nb(b, m1, 180, {r: .7, c: C.green}), f2 = nb(b, m2, 0, {r: .7, c: C.green}); b.arm(f1, m1).arm(f2, m2);
   return {b};
 }});
-L({name: 'Clock', element: 'Gear + Bar', rule: 'Gears around a hub: hands are bars',
-  challenge: 'Four small gears sit around a big gear. The clock hands are bars resting on the gears: one turn of the big gear moves all four the other way.', make() {
+L({name: 'Clock', element: 'Gear + Bar', rule: 'Gears around a hub: the hands are bars in two gears',
+  challenge: 'Four small gears sit around a big gear. Two clock hands are bars run into two of the small gears, so nothing can turn. Slide both hands out, then one turn of the big gear moves all four small gears the other way.', make() {
   const b = new Lv(), c = b.ring(0, 0, {r: 1.3, c: C.yellow}), G = [];
   [45, 135, 225, 315].forEach((a, k) => { const g = at(b, D(1.3, .8), a, {x: 0, y: 0}, {r: .8, c: k % 2 ? C.cyan : C.blue}); b.gear(c, g); G.push(g); });
-  b.bar([b.on(G[0], 135), b.on(G[1], 45)], {c: C.purple}); b.bar([b.on(G[2], 315), b.on(G[3], 225)], {c: C.purple});
-  G.forEach((g, k) => b.pin(g, [45, 135, 225, 315][k]));
+  b.poke(G[0], 45, {c: C.purple}); b.poke(G[2], 225, {c: C.purple});
+  G.forEach((g, k) => b.pin(g, [135, 225, 315, 45][k]));
   b.arm(nb(b, c, 0, {r: .6, c: C.pink}), c);
   return {b};
 }});
 L({name: 'Lift', element: 'Lock + Gear', rule: 'The key holder is a gear',
-  challenge: 'The key sits on a gear pair. Turn the pair to drop it, then the locked cabin ring and its chain can move.', make() {
+  challenge: 'The key sits on a gear pair, and a bar runs into each gear. Slide both bars out, turn the pair to drop the key, then the locked cabin ring and its chain can move.', make() {
   const b = new Lv(), d = D(1, 1), a = b.ring(-d / 2, 2, {c: C.green}), g = b.ring(d / 2, 2, {c: C.green});
   b.gear(a, g).pin(a, 90).pin(g, 90);
+  b.poke(a, 180, {c: C.purple}); b.poke(g, 0, {c: C.purple, side: -1});
   const x = b.ring(0, -.6, {r: .9, c: C.red}), y = nb(b, x, 270, {r: .75, c: C.orange}), z = nb(b, y, 270, {r: .6, c: C.yellow});
   b.arm(x, y).arm(y, z).pin(z, 270).lock(x, g);
-  b.bar([b.on(a, 270), b.on(x, 135)], {c: C.purple}); b.bar([b.on(g, 270), b.on(x, 45)], {c: C.purple});
   return {b};
 }});
-L({name: 'Grid', element: 'All so far', hard: true, G: {0: 180, 1: 135, 2: 220, 3: 340, 4: 40, 5: 310, 6: 295, 7: 40, 8: 145}, rule: 'Hard: a 3 x 3 grid',
-  challenge: 'Nine rings in a grid, linked like a maze, a locked center and a frame of pinned bars. Find the one corner that starts the chain.', make() {
+L({name: 'Grid', element: 'All so far', hard: true, G: {1: 135, 3: 340, 4: 40, 5: 310, 7: 40}, rule: 'Hard: a 3 x 3 grid',
+  challenge: 'Nine rings in a grid, linked like a maze, a locked center, and two bent bars run into the four corner rings, with a ring above and below in their way. Clear those, slide the frames out, then find the one corner that starts the chain.', make() {
   const b = new Lv(), d = D(.85, .85), g = [];
   for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) g.push(b.ring((c - 1) * d, (1 - r) * d, {r: .85, c: [C.blue, C.green, C.orange, C.purple, C.red, C.purple, C.orange, C.green, C.blue][r * 3 + c]}));
-  // a snake through the grid: 0 -> 1 -> 2 -> 5 -> 8 -> 7 -> 6 -> 3, center 4 locked with key on 3
   [[0, 1], [1, 2], [2, 5], [5, 8], [8, 7], [7, 6], [6, 3]].forEach(([a, c]) => b.arm(a, c));
   b.arm(g[4], g[1]).lock(g[4], g[3]);
-  const top = b.bar([b.on(g[0], 135), [-d, d + 1.3], [d, d + 1.3], b.on(g[2], 45)], {c: C.cyan}); b.pinAt(0, d + 1.3, 90);
+  b.R[0].gap = 90; b.R[2].gap = 90; b.R[6].gap = 270; b.R[8].gap = 270;
+  const i = .85 - .65, top = b.bar([[-d, d + i], [-d, d + 1.3], [d, d + 1.3], [d, d + i]], {c: C.cyan}), bot = b.bar([[-d, -d - i], [-d, -d - 1.3], [d, -d - 1.3], [d, -d - i]], {c: C.cyan});
+  b.pinBar(top, .85, 1, 0).pinBar(top, .15, -1, 2).pinBar(bot, .85, 1, 0).pinBar(bot, .15, -1, 2);
+  const T = b.ring(0, d + 2.55, {r: .9, c: C.pink, gap: 0}), Bt = b.ring(0, -d - 2.55, {r: .9, c: C.pink, gap: 180}); b.pin(T, 90).pin(Bt, 270);
+  b.arm(T, nb(b, T, 180, {r: .6, c: C.yellow}));
   b.arm(nb(b, g[3], 180, {r: .65, c: C.yellow}), g[3]).arm(nb(b, g[5], 0, {r: .65, c: C.yellow}), g[5]);
-  const bot = b.bar([b.on(g[6], 225), [-d, -d - 1.3], [d, -d - 1.3], b.on(g[8], 315)], {c: C.cyan}); b.pinAt(0, -d - 1.3, 270);
   return {b};
 }});
 L({name: 'Branches', element: 'Ring', rule: 'Breather: a tree of rings',
@@ -301,27 +308,28 @@ L({name: 'Mirror bomb', element: 'Gear + Bomb', rule: 'A bomb on a gear turns op
   b.pin(k, 270).pin(f, 90);
   return {b};
 }});
-L({name: 'Tower', element: 'All so far', rule: 'A tall build: bars, a lock and gears',
-  challenge: 'A tower of gears and bars. The roof bar holds the key of the base. Climb down: roof, gears, base.', make() {
-  const b = new Lv(), d = D(.9, .9), a = b.ring(-d / 2, 1.4, {r: .9, c: C.cyan}), g = b.ring(d / 2, 1.4, {r: .9, c: C.cyan});
+L({name: 'Tower', element: 'All so far', rule: 'A tall build: a roof bar, a lock and gears',
+  challenge: 'A tower of gears and bars. The roof is a bent bar in the tops of both gears, and it holds the key of the base. Climb down: roof, gears, base.', make() {
+  const b = new Lv(), d = D(.9, .9), a = b.ring(-d / 2, 1.4, {r: .9, c: C.cyan, gap: 90}), g = b.ring(d / 2, 1.4, {r: .9, c: C.cyan, gap: 90});
   b.gear(a, g);
-  const roof = b.bar([b.on(a, 150), [0, 3.2], b.on(g, 30)], {c: C.purple}); b.pinAt(0, 3.2, 90);
+  const roof = b.bar([[-d / 2, 1.65], [-d / 2, 3.2], [d / 2, 3.2], [d / 2, 1.65]], {c: C.purple}); b.pinBar(roof, .6, 1, 0).pinBar(roof, .4, -1, 2);
   const base = b.ring(0, -1.1, {r: 1.1, c: C.red}); b.arm(base, a).arm(base, g).lock(base, roof);
   b.arm(nb(b, base, 225, {r: .7, c: C.yellow}), base).arm(nb(b, base, 315, {r: .7, c: C.yellow}), base);
   return {b};
 }});
-L({name: 'Fortress', element: 'Lock + Bomb + Gear', hard: true, G: {0: 355, 1: 150, 2: 290, 3: 180, 6: 80, 7: 15, 8: 15}, rule: 'Hard: two locked bombs, two knots',
-  challenge: 'Two bomb rings are locked, their keys on the two gate bars. Take each gate down with the gear pair (each gate rests only on its gear), then aim each bomb at its own knot; each has a free decoy on the other side.', make() {
-  const b = new Lv(), d = D(1, 1), a = b.ring(-d / 2, 2.4, {c: C.green}), g = b.ring(d / 2, 2.4, {c: C.green}); b.gear(a, g);
+L({name: 'Fortress', element: 'Lock + Bomb + Gear', hard: true, G: {2: 290, 3: 180, 6: 80, 7: 15, 8: 15}, rule: 'Hard: two locked bombs, two knots',
+  challenge: 'Two bomb rings are locked, their keys on the two gate bars run into the gear pair. Slide each gate out, then aim each bomb at its own knot; each has a free decoy on the other side.', make() {
+  const b = new Lv(), d = D(1, 1), a = b.ring(-d / 2, 2.4, {c: C.green}), g = b.ring(d / 2, 2.4, {c: C.green}); b.gear(a, g).pin(a, 90).pin(g, 90);
   const m1 = b.ring(-2.2, 0, {c: C.orange}), m2 = b.ring(2.2, 0, {c: C.orange});
   const k1 = b.ring(-4.4, 0, {c: C.blue, closed: true}), k2 = b.ring(4.4, 0, {c: C.blue, closed: true}), f = b.ring(0, -.4, {c: C.cyan});
-  const h1 = b.bar([b.on(a, 180), [-2.2, 2.4], [-2.2, 1.45]], {c: C.purple}), h2 = b.bar([b.on(g, 0), [2.2, 2.4], [2.2, 1.45]], {c: C.purple});
-  b.pinAt(-2.2, 2.4, 90).pinAt(2.2, 2.4, 90).pinAt(-2.2, 1.45, 270).pinAt(2.2, 1.45, 270);
+  const h1 = b.poke(a, 180, {c: C.purple}), h2 = b.poke(g, 0, {c: C.purple, side: -1});
   b.lock(m1, h1).lock(m2, h2).bomb(m1, 270).bomb(m2, 270).pin(m1, 45).pin(m2, 135).pin(k1, 90).pin(k2, 90).pin(f, 270);
   const y1 = nb(b, k1, 270, {r: .7, c: C.yellow}), y2 = nb(b, k2, 270, {r: .7, c: C.yellow}); b.arm(y1, k1).arm(y2, k2);
   b.arm(nb(b, y1, 0, {r: .55, c: C.pink}), y1).arm(nb(b, y2, 180, {r: .55, c: C.pink}), y2);
+  b.arm(f, nb(b, f, 300, {r: .6, c: C.pink}));
   return {b};
 }});
+
 L({name: 'Snake', element: 'Ring', rule: 'Breather: a long winding chain',
   challenge: 'Breather: a long snake of rings. Start at the tail and follow it to the head.', make() {
   const b = new Lv(), cols = [C.green, C.yellow, C.green, C.yellow, C.green, C.yellow, C.red];
@@ -330,20 +338,19 @@ L({name: 'Snake', element: 'Ring', rule: 'Breather: a long winding chain',
   return {b};
 }});
 L({name: 'Cage', element: 'Ring + Bar', rule: 'Rings inside a ring',
-  challenge: 'A big ring cages three small ones. Two hook its inner side and hold it; the third holds a pinned bar. Drop the bar first, then turn the cage past both inner hooks and the hook below.', make() {
-  const b = new Lv(), B = b.ring(0, 0, {r: 2.1, c: C.purple}), o = {x: 0, y: 0};
-  const s1 = at(b, 1.25, 150, o, {r: .65, c: C.yellow}), s2 = at(b, 1.25, 30, o, {r: .65, c: C.yellow}), k = at(b, 1.15, 270, o, {r: .7, c: C.blue});
+  challenge: 'A big ring cages three small ones. Two hook its inner side and hold it; a bar runs from the gap of the third, out through the gap of the cage. Slide the bar out first, then turn the cage past both inner hooks and the hook below.', make() {
+  const b = new Lv(), B = b.ring(0, 0, {r: 2.1, c: C.purple, gap: 90}), o = {x: 0, y: 0};
+  const s1 = at(b, 1.25, 150, o, {r: .65, c: C.yellow}), s2 = at(b, 1.25, 30, o, {r: .65, c: C.yellow}), k = at(b, 1.15, 270, o, {r: .7, c: C.blue, gap: 90});
   b.armTo(s1, pol(2.1, 150)).armTo(s2, pol(2.1, 30));
-  const h = b.bar([b.on(k, 90), [0, .9]], {c: C.cyan}); b.pinAt(0, .9, 90);
+  const h = b.bar([[0, -1.1], [0, 2.7]], {c: C.cyan}); b.pinBar(h, .32, 1);
   b.arm(nb(b, B, 300, {r: .7, c: C.green}), B);
   return {b};
 }});
-L({name: 'Gear bridge', element: 'Gear + Bar + Bomb', G: {0: 200, 1: 130, 2: 310, 3: 230, 5: 180}, rule: 'A row of four gears: alternate directions',
-  challenge: 'Four gears in a row turn as one, each the other way from its neighbour. Bars rest on gears 1 and 4; a bomb rides gear 3. Choose one direction that frees the bars and sends the bomb into the knot below, not the free ring above.', make() {
+L({name: 'Gear bridge', element: 'Gear + Bar + Bomb', G: {1: 130, 2: 310, 5: 180}, rule: 'A row of four gears: alternate directions',
+  challenge: 'Four gears in a row turn as one, each the other way from its neighbour. Bars run into gears 1 and 4; a bomb rides gear 3. Slide both bars out, then choose the one direction that sends the bomb into the knot below, not the free ring above.', make() {
   const b = new Lv(), d = D(.9, .9), G = [0, 1, 2, 3].map(k => b.ring((k - 1.5) * d, 0, {r: .9, c: k % 2 ? C.cyan : C.green}));
   for (let k = 0; k < 3; k++) b.gear(G[k], G[k + 1]);
-  b.bar([b.on(G[0], 90), [-1.5 * d, 1.9]], {c: C.purple}); b.pinAt(-1.5 * d, 1.9, 90);
-  b.bar([b.on(G[3], 90), [1.5 * d, 1.9]], {c: C.purple}); b.pinAt(1.5 * d, 1.9, 90);
+  b.poke(G[0], 90, {c: C.purple}); b.poke(G[3], 90, {c: C.purple, side: -1});
   const k = b.ring(.5 * d, -2.05, {r: .9, c: C.blue, closed: true}), f = b.ring(.5 * d, 2.05, {r: .9, c: C.blue});
   b.pin(k, 270).pin(f, 90).bomb(G[2], 0).pin(G[1], 270).pin(G[2], 180);
   return {b};
@@ -360,12 +367,11 @@ L({name: 'Spiral', element: 'All so far', rule: 'A spiral: the lock key is at th
   b.arm(nb(b, R[6], dir - 40, {r: .5, c: C.pink}), R[6]);
   return {b};
 }});
-L({name: 'Crown', element: 'All', hard: true, G: {0: 5, 1: 200, 4: 105, 5: 290, 6: 230, 7: 355, 9: 175}, rule: 'Finale: every rule in one picture',
-  challenge: 'Finale: a gear pair carries two pinned bars down to the pillars, the jewel is locked with its key on the left bar, and the bomb ring at the base has a decoy on the near side and the hook of the jewel blocking the far side. Bars, then jewel, then send the bomb the long way to the knot.', make() {
-  const b = new Lv(), d = D(.9, .9), a = b.ring(-d / 2, 2.6, {r: .9, c: C.green}), g = b.ring(d / 2, 2.6, {r: .9, c: C.green}); b.gear(a, g);
+L({name: 'Crown', element: 'All', hard: true, G: {4: 105, 5: 290, 6: 230, 7: 355, 9: 175}, rule: 'Finale: every rule in one picture',
+  challenge: 'Finale: two bars run into the gear pair, the jewel is locked with its key on the left bar, and the bomb ring at the base has a decoy on the near side and the hook of the jewel blocking the far side. Bars, then gears and jewel, then send the bomb the long way to the knot.', make() {
+  const b = new Lv(), d = D(.9, .9), a = b.ring(-d / 2, 2.6, {r: .9, c: C.green}), g = b.ring(d / 2, 2.6, {r: .9, c: C.green}); b.gear(a, g).pin(a, 90).pin(g, 90);
   const L = b.ring(-2.6, .3, {r: .9, c: C.yellow, gap: 40}), R = b.ring(2.6, .3, {r: .9, c: C.yellow, gap: 140}), J = b.ring(0, 0, {r: 1, c: C.red});
-  const h1 = b.bar([b.on(a, 180), [-2.6, 2.6], b.on(L, 90)], {c: C.purple}), h2 = b.bar([b.on(g, 0), [2.6, 2.6], b.on(R, 90)], {c: C.purple});
-  b.pinAt(-2.6, 2.6, 135).pinAt(2.6, 2.6, 45);
+  const h1 = b.poke(a, 180, {c: C.purple}), h2 = b.poke(g, 0, {c: C.purple, side: -1});
   b.arm(J, L).arm(J, R).lock(J, h1);
   b.arm(L, nb(b, L, 220, {r: .65, c: C.pink})).arm(R, nb(b, R, 320, {r: .65, c: C.pink}));
   const M = b.ring(1.1, -2.3, {r: .95, c: C.orange}), K = b.ring(-1, -2.3, {r: .95, c: C.blue, closed: true}), F = b.ring(3.2, -2.3, {r: .95, c: C.blue});

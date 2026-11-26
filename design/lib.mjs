@@ -24,6 +24,14 @@ export class Lv {
     const pts = this.bars[h.bar].pts, a = pts[seg], b = pts[seg + 1], x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t;
     return this.pinAt(x, y, deg(Math.atan2(b[1] - a[1], b[0] - a[0])) + 90 * side);
   }
+  // a Straight Bar running into ring i through its gap at angle a (the ring cannot turn while it is in), pinned as a sleeve.
+  // o.in = how deep the inner end sits inside the tube, o.len = how far it sticks out, o.t = pin position along the bar.
+  poke(i, a, o = {}) {
+    const q = this.R[i]; if (o.gap !== false) q.gap = a;
+    const h = this.bar([pol(q.r - (o.in ?? .65), a, q), pol(q.r + (o.len ?? 1), a, q)], {c: o.c});
+    if (o.t !== null) this.pinBar(h, o.t ?? .6, o.side ?? 1);
+    return h;
+  }
   // an arm from ring `owner` hooking bar h at world point p (a bar has no gap: a knot only a Bomb clears)
   // an arm from ring `owner` to world point p on another ring's tube (e.g. a small ring inside a big one hooking its inner side)
   armTo(owner, p) { this.barHooks.push([owner, -1, p]); return this; }

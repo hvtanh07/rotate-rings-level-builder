@@ -23,7 +23,7 @@ Every push to `main` runs the tests, builds, and publishes `dist/` to the `gh-pa
 - **Levels:** list, filter, new, duplicate, reorder, delete. Edits are saved in the browser. **Reset to game data** brings back the built-in levels.
 - **Design:** add open rings, closed rings, connectors (arm from one ring, hook on another), Pins, Bombs, Gear Rings and Locked Rings. Drag to move; pieces resting on a moved ring follow it. Drag the dots to turn a gap, resize a ring, or move a connector or bar end (ends snap onto rings). Snap grid, zoom, pan, undo and redo.
 - **Inspector:** Level (id, tier, difficulty, seed, tutorial ring), Piece (every field of the file), Pieces (all pieces in file order), Check (format problems and a bot that solves the level), JSON (live text, apply, copy, download), Help.
-- **Play test:** drag a ring to turn it. Gaps free hooks, pins and bar ends; free pieces shatter; keys open Locked Rings; gears turn each other. Undo move, restart, Hint / Saw / Remove boosters, a bot that plays one move or the whole level.
+- **Play test:** drag a ring to turn it. Gaps free hooks and pins; drag a Straight Bar to slide it along its pins; free pieces shatter; keys open Locked Rings; gears turn each other. Undo move, restart, Hint / Saw / Remove boosters, a bot that plays one move or the whole level.
 - **Import / export:** the game file, a JSON list, one level, several level objects pasted one after another, or Id/Level rows copied from the sheet. Export writes `levels.json` in the game's layout, and **Copy as sheet rows** pastes into the Level Config tab.
 
 ## Updating levels in both places
@@ -50,7 +50,7 @@ The tool reads and writes the same keys, in the same order, as the game's `level
 | `shape.radius`, `shape.tubeRadius` | Ring size and tube thickness. |
 | `shape.gaps` | Gaps of an open ring: `centerDegrees` (0 = right, counter-clockwise) and `widthDegrees`. |
 | `shape.legLength`, `shape.hook` | Connector: an arm of `legLength`, centered on `position`, pointing along `eulerAngles.z`, from its ring's edge to a hook on another ring. Pin: length of the pin. |
-| `shape.points` | Straight Bar points, local to the bar and turned by `eulerAngles.z`. The first and last points rest on rings. |
+| `shape.points` | Straight Bar points, local to the bar and turned by `eulerAngles.z`. A bar runs into rings through their gaps and is held by the pins on it. |
 | `shape.gearTeeth`, `shape.gearPhase`, `gearWith` | Gear Ring: teeth, where the first tooth sits, and the indexes of the gears it meshes with. |
 | `locked`, `keyHolder`, `lockAngle`, `keyAngle` | Locked Ring: index of the piece holding its key, where the padlock sits on this ring and the key on the key holder. |
 | `snapStep` | A turn snaps to this step (15° on every ring in the sample levels). |
@@ -60,18 +60,18 @@ The tool reads and writes the same keys, in the same order, as the game's `level
 | `tier`, `difficulty`, `seed`, `mode`, `liftDirection`, `version` | Kept and editable; the tool does not use them. |
 | `startAngle`, `limitAngle`, `minAngle`, `maxAngle`, `slide`, `slideAxis`, `pivot`, `rotationAxis`, `flatRatio`, `arcDegrees`, `flexDepth` | Kept and editable. The play test uses `limitAngle`/`minAngle`/`maxAngle`; the rest are the same in every sample level. |
 
-Links are not stored in the file. The tool works them out from the geometry, which matches all 60 sample levels: every connector starts on exactly one ring (its owner, same color) and hooks exactly one other ring; every bar end and pin sits on one ring's circle.
+Links are not stored in the file. The tool works them out from the geometry, which matches all 60 sample levels: every connector starts on exactly one ring (its owner, same color) and hooks exactly one other ring; every pin sits on one ring's circle or on a bar.
 
 ## Rules used by the play test
 
 From the GDD, sections 1.2, 1.4 and 1.5:
 
 - Drag a ring to turn it around its center; it snaps to `snapStep` when you let go. Arms turn with their ring.
-- When a ring's gap passes a hook, pin or bar end resting on it, that link comes apart.
+- When a ring's gap passes a hook or pin resting on it, that link comes apart.
 - A piece with no links left shatters (300 points per ring). Connectors go with their ring. A pin that locks nothing shatters.
 - Solid parts: pins, connectors, bars and bombs cannot pass through each other. A turn stops where two of them touch (the ring shakes).
-- Straight Bar: its links are its ends resting on rings and the hooks resting on it. When none is left it comes out, and the pins on it go with it. A hook resting on a bar is a knot only a bomb can clear.
-- Pin: locks the ring or bar it stands on, and shatters when it locks nothing.
+- Straight Bar: it runs into rings through their gaps, and a ring with a bar in its gap cannot turn (the bar is in the way of its tube). Bars do not turn: the player slides a bar along its pins. A pin is a sleeve, so the bar moves on one line only, and it stops when it hits a ring tube or a solid part. When the bar slides off a pin, that pin lets go; with no pin left the bar comes out. A hook resting on a bar is a knot: the bar cannot slide, and only a bomb can clear it.
+- Pin: locks the ring it stands on (until the ring's gap passes it), or holds a bar as a sleeve. It shatters when it locks nothing.
 - Bomb (type 11, `shape.radius` = size): sits on a ring (turns with it) or on a bar. When a turn brings it onto another ring or bar, the bomb blows up and both pieces shatter. Pieces it touches at the start do not set it off. The bot uses a bomb when no turn frees anything else.
 - Locked Ring: does not turn until the piece holding its key shatters; then the key opens it.
 - Gear Rings: meshed gears turn the other way, by the tooth ratio (same teeth: same angle).

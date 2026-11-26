@@ -309,7 +309,10 @@ export function check(lv) {
     });
   });
   const {thru} = analyze(lv);
-  lv.rings.forEach((r, i) => { if (r.shape.type === TYPE.BAR && !thru.some(T => T.bar === i) && !locks.some(k => k.ring === i && k.kind === 'arm')) add('warn', `${pname(lv, i)}: this bar runs into no ring and no hook rests on it, so it comes out at once.`, i); });
+  lv.rings.forEach((r, i) => { if (r.shape.type !== TYPE.BAR) return;
+    const held = locks.some(k => k.ring === i);
+    if (!held) add('warn', `${pname(lv, i)}: no pin holds this bar and no hook rests on it, so it comes out at once.`, i);
+    else if (!thru.some(T => T.bar === i)) add('warn', `${pname(lv, i)}: this bar runs into no ring, so it blocks nothing.`, i); });
   thru.forEach(T => { const b = lv.rings[T.bar], q = lv.rings[T.ring]; if (T.points.some(p => gapDepth(q, 0, p, barMargin(b, q)) < 0)) add('warn', `${pname(lv, T.bar)} runs through the tube of ${pname(lv, T.ring)}: put it in a gap so the ring can turn.`, T.bar); });
   locks.forEach(L => { if (inGap(lv.rings[L.ring], 0, L.point)) add('warn', `${pname(lv, L.piece)} starts inside the gap of ${pname(lv, L.ring)}, so it is free at once.`, L.piece); });
   const t = lv.tutorialRing;

@@ -1,0 +1,1 @@
+12   Knot             d    46 | rings 3 bot STUCK 2 min 0 free 2 traps 0/0 stuck% 100 combo 0 boom 0 needsBomb UNWINNABLE 
