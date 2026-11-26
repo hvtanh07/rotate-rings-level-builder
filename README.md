@@ -21,7 +21,7 @@ Every push to `main` runs the tests, builds, and publishes `dist/` to the `gh-pa
 ## Features
 
 - **Levels:** list, filter, new, duplicate, reorder, delete. Edits are saved in the browser. **Reset to game data** brings back the built-in levels.
-- **Design:** add open rings, closed rings, connectors (arm from one ring, hook on another), Straight Bars, Pins, Gear Rings and Locked Rings. Drag to move; pieces resting on a moved ring follow it. Drag the dots to turn a gap, resize a ring, or move a connector or bar end (ends snap onto rings). Snap grid, zoom, pan, undo and redo.
+- **Design:** add open rings, closed rings, connectors (arm from one ring, hook on another), Pins, Bombs, Gear Rings and Locked Rings. Drag to move; pieces resting on a moved ring follow it. Drag the dots to turn a gap, resize a ring, or move a connector or bar end (ends snap onto rings). Snap grid, zoom, pan, undo and redo.
 - **Inspector:** Level (id, tier, difficulty, seed, tutorial ring), Piece (every field of the file), Pieces (all pieces in file order), Check (format problems and a bot that solves the level), JSON (live text, apply, copy, download), Help.
 - **Play test:** drag a ring to turn it. Gaps free hooks, pins and bar ends; free pieces shatter; keys open Locked Rings; gears turn each other. Undo move, restart, Hint / Saw / Remove boosters, a bot that plays one move or the whole level.
 - **Import / export:** the game file, a JSON list, one level, several level objects pasted one after another, or Id/Level rows copied from the sheet. Export writes `levels.json` in the game's layout, and **Copy as sheet rows** pastes into the Level Config tab.
@@ -38,7 +38,7 @@ The tool reads and writes the same keys, in the same order, as the game's `level
 
 | Key | Meaning in the tool |
 | --- | --- |
-| `shape.type` | `1` open ring (C shape), `0` closed ring, `6` connector, `9` pin, `10` Straight Bar. Other types are kept as they are and drawn as a dashed circle. |
+| `shape.type` | `1` open ring (C shape), `0` closed ring, `6` connector, `9` pin, `10` Straight Bar, `11` Bomb (new, not in the game file yet). Other types are kept as they are and drawn as a dashed circle. |
 | `shape.id` | `R…` rings, `K…` connectors, `L…` bars, `H…` pins, like the game file. |
 | `position`, `eulerAngles.z` | Center and angle on the board (y up, degrees counter-clockwise). |
 | `shape.radius`, `shape.tubeRadius` | Ring size and tube thickness. |
@@ -62,6 +62,8 @@ From the GDD, sections 1.2, 1.4 and 1.5:
 - Drag a ring to turn it around its center; it snaps to `snapStep` when you let go. Arms turn with their ring.
 - When a ring's gap passes a hook, pin or bar end resting on it, that link comes apart.
 - A piece with no links left shatters (300 points per ring). Connectors go with their ring. A pin or bar that locks nothing shatters.
+- Pin: locks the ring or bar it stands on, and shatters when it locks nothing. A bar held only by a pin cannot be freed by a gap.
+- Bomb (type 11, `shape.radius` = size): sits on a ring (turns with it) or on a bar. When a turn brings it onto another ring or bar, the bomb blows up and both pieces shatter. Pieces it touches at the start do not set it off. The bot uses a bomb when no turn frees anything else.
 - Locked Ring: does not turn until the piece holding its key shatters; then the key opens it.
 - Gear Rings: meshed gears turn the other way, by the tooth ratio (same teeth: same angle).
 - A ring whose arm still hooks another ring is held and cannot turn (a tap only shakes it). Free the hooked ring first. (Confirmed by the designer, 2026-11-25.)

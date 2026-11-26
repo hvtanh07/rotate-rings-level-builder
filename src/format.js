@@ -1,9 +1,9 @@
 // Level format of Rotate Rings: the same keys, in the same order, as the game's levels.json (Unity JsonUtility).
 // Geometry helpers: which ring each connector, bar and pin rests on.
 
-export const TYPE = {CLOSED: 0, RING: 1, CONNECTOR: 6, PIN: 9, BAR: 10};
-export const TYPE_NAME = {0: 'Closed ring', 1: 'Ring', 6: 'Connector', 9: 'Pin', 10: 'Straight Bar'};
-export const ID_PREFIX = {0: 'R', 1: 'R', 6: 'K', 9: 'H', 10: 'L'};
+export const TYPE = {CLOSED: 0, RING: 1, CONNECTOR: 6, PIN: 9, BAR: 10, BOMB: 11};
+export const TYPE_NAME = {0: 'Closed ring', 1: 'Ring', 6: 'Connector', 9: 'Pin', 10: 'Straight Bar', 11: 'Bomb'};
+export const ID_PREFIX = {0: 'R', 1: 'R', 6: 'K', 9: 'H', 10: 'L', 11: 'B'};
 export const isRing = r => r && (r.shape.type === TYPE.RING || r.shape.type === TYPE.CLOSED);
 
 // colorIndex 0–7, in the order of the GDD's 8 template colors (3.2).
@@ -32,7 +32,9 @@ export const SHAPE_DEFAULTS = {
   1: {radius: 1.0, tubeRadius: 0.15000000596046448, legLength: 1.2000000476837158, hook: false},
   6: {radius: 0.2200000137090683, tubeRadius: 0.04500000178813934, legLength: 0.6000000238418579, hook: true},
   9: {radius: 0.2199999988079071, tubeRadius: 0.04500000178813934, legLength: 0.75, hook: false},
-  10: {radius: 0.25999999046325684, tubeRadius: 0.09000000357627869, legLength: 1.2000000476837158, hook: false}
+  10: {radius: 0.25999999046325684, tubeRadius: 0.09000000357627869, legLength: 1.2000000476837158, hook: false},
+  // Bomb: new type (11), not in the game file yet. radius = size of the bomb.
+  11: {radius: 0.25, tubeRadius: 0.05, legLength: 0.3, hook: false}
 };
 export const GAP_WIDTH = 46.982540130615234;
 
@@ -165,6 +167,35 @@ export function barPoints(r) {
   return r.shape.points.map(q => ({x: p.x + q.x * c - q.y * s, y: p.y + q.x * s + q.y * c}));
 }
 export const TOL = 0.06;
+// Distance from p to a polyline.
+export function segDist(p, pts) {
+  let best = Infinity;
+  for (let k = 0; k + 1 < pts.length; k++) {
+    const a = pts[k], b = pts[k + 1], dx = b.x - a.x, dy = b.y - a.y, L2 = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / L2));
+    best = Math.min(best, Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy));
+  }
+  return best;
+}
+export function barsThrough(lv, pt, tol = TOL) {
+  const out = [];
+  lv.rings.forEach((r, i) => { if (r.shape.type === TYPE.BAR && segDist(pt, barPoints(r)) < tol + r.shape.tubeRadius) out.push(i); });
+  return out;
+}
+export function nearestBar(lv, pt, maxGap = 0.4) {
+  let best = -1, bd = Infinity;
+  lv.rings.forEach((r, i) => { if (r.shape.type !== TYPE.BAR) return; const d = segDist(pt, barPoints(r)); if (d < bd) { bd = d; best = i; } });
+  return bd <= maxGap ? best : -1;
+}
+export function snapToBar(r, p) {
+  const pts = barPoints(r); let best = p, bd = Infinity;
+  for (let k = 0; k + 1 < pts.length; k++) {
+    const a = pts[k], b = pts[k + 1], dx = b.x - a.x, dy = b.y - a.y, L2 = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / L2)), q = {x: a.x + t * dx, y: a.y + t * dy}, d = dist(p, q);
+    if (d < bd) { bd = d; best = q; }
+  }
+  return best;
+}
 export function ringsThrough(lv, pt, skip = -1, tol = TOL) {
   const out = [];
   lv.rings.forEach((r, i) => { if (i !== skip && isRing(r) && Math.abs(dist(P(r), pt) - r.shape.radius) < tol) out.push(i); });
@@ -180,7 +211,7 @@ export function nearestRing(lv, pt, maxGap = 0.5) {
 // kind 'arm': connector piece, owned by ring `owner`, hooks ring `ring` at `point`.
 // kind 'bar': end `end` of bar piece rests on ring `ring`. kind 'pin': pin piece locks ring `ring`.
 export function analyze(lv) {
-  const locks = [], owner = {}, problems = [];
+  const locks = [], owner = {}, host = {}, problems = [];
   lv.rings.forEach((r, i) => {
     const t = r.shape.type;
     if (t === TYPE.CONNECTOR) {
@@ -196,16 +227,20 @@ export function analyze(lv) {
       const ends = pts.length ? [0, pts.length - 1] : [];
       for (const e of ends) {
         const tg = ringsThrough(lv, pts[e])[0];
-        if (tg === undefined) problems.push({lvl: 'warn', piece: i, text: `Bar end ${e ? 'B' : 'A'} does not rest on a ring.`});
-        else locks.push({kind: 'bar', piece: i, ring: tg, point: pts[e], end: e});
+        if (tg !== undefined) locks.push({kind: 'bar', piece: i, ring: tg, point: pts[e], end: e});
       }
     } else if (t === TYPE.PIN) {
-      const tg = ringsThrough(lv, P(r))[0];
-      if (tg === undefined) problems.push({lvl: 'bad', piece: i, text: 'The pin does not stand on a ring.'});
-      else locks.push({kind: 'pin', piece: i, ring: tg, point: P(r)});
+      const tg = ringsThrough(lv, P(r))[0], bar = barsThrough(lv, P(r))[0];
+      if (tg !== undefined) locks.push({kind: 'pin', piece: i, ring: tg, point: P(r)});
+      else if (bar !== undefined) locks.push({kind: 'pin', piece: i, ring: bar, point: P(r), onBar: true});
+      else problems.push({lvl: 'bad', piece: i, text: 'The pin does not stand on a ring or a bar.'});
+    } else if (t === TYPE.BOMB) {
+      const tg = ringsThrough(lv, P(r))[0], bar = barsThrough(lv, P(r))[0];
+      if (tg !== undefined) host[i] = tg; else if (bar !== undefined) host[i] = bar;
+      else problems.push({lvl: 'bad', piece: i, text: 'The bomb does not sit on a ring or a bar.'});
     }
   });
-  return {locks, owner, problems};
+  return {locks, owner, host, problems};
 }
 
 // Gap of ring r, turned by `turn` degrees, contains point p?
@@ -248,6 +283,7 @@ export function check(lv) {
       }
     });
   });
+  lv.rings.forEach((r, i) => { if (r.shape.type === TYPE.BAR && !locks.some(k => k.piece === i || k.ring === i)) add('warn', `${pname(lv, i)}: nothing holds this bar (no ring under its ends, no pin on it), so it shatters at once.`, i); });
   locks.forEach(L => { if (inGap(lv.rings[L.ring], 0, L.point)) add('warn', `${pname(lv, L.piece)} starts inside the gap of ${pname(lv, L.ring)}, so it is free at once.`, L.piece); });
   const t = lv.tutorialRing;
   if (t !== -1 && (!lv.rings[t] || !isRing(lv.rings[t]))) add('warn', `tutorialRing ${t} is not a ring.`);
@@ -257,10 +293,10 @@ export const pname = (lv, i) => { const r = lv.rings[i]; return r ? (r.shape.id 
 export const statusOf = issues => issues.some(x => x.lvl === 'bad') ? 'bad' : issues.some(x => x.lvl === 'warn') ? 'warn' : 'ok';
 
 export function tally(lv) {
-  const t = {rings: 0, closed: 0, connectors: 0, pins: 0, bars: 0, locked: 0, gears: 0};
+  const t = {rings: 0, closed: 0, connectors: 0, pins: 0, bars: 0, bombs: 0, locked: 0, gears: 0};
   lv.rings.forEach(r => {
     const k = r.shape.type;
-    if (k === 1) t.rings++; else if (k === 0) t.closed++; else if (k === 6) t.connectors++; else if (k === 9) t.pins++; else if (k === 10) t.bars++;
+    if (k === 1) t.rings++; else if (k === 0) t.closed++; else if (k === 6) t.connectors++; else if (k === 9) t.pins++; else if (k === 10) t.bars++; else if (k === 11) t.bombs++;
     if (r.locked) t.locked++; if (r.shape.gearTeeth) t.gears++;
   });
   return t;
@@ -275,7 +311,7 @@ export function nextId(lv, type) {
 }
 export function makePiece(lv, type, over = {}) {
   const d = SHAPE_DEFAULTS[type] || SHAPE_DEFAULTS[1];
-  const r = normalizeRing({shape: {type, id: nextId(lv, type), ...d, gaps: type === TYPE.RING ? [{centerDegrees: 0.0, widthDegrees: GAP_WIDTH}] : []}, snapStep: isRing({shape: {type}}) ? 15.0 : 0.0, colorIndex: type === TYPE.PIN ? 0 : 1});
+  const r = normalizeRing({shape: {type, id: nextId(lv, type), ...d, gaps: type === TYPE.RING ? [{centerDegrees: 0.0, widthDegrees: GAP_WIDTH}] : []}, snapStep: isRing({shape: {type}}) ? 15.0 : 0.0, colorIndex: type === TYPE.PIN || type === TYPE.BOMB ? 0 : 1});
   return deepMerge(r, over);
 }
 function deepMerge(a, b) {

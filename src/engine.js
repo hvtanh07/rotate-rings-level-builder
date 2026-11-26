@@ -1,5 +1,5 @@
 // Play-test rules of Rotate Rings (GDD 1.2 and 1.4), and a bot that solves a level.
-import {TYPE, isRing, analyze, inGap, P, angleAt, wrap180} from './format.js';
+import {TYPE, isRing, analyze, inGap, P, angleAt, wrap180, barPoints, segDist, dist, rad} from './format.js';
 
 export const RULES = {
   block: {name: 'Arms hold their ring', text: 'A ring whose arm still hooks another ring cannot turn. Free the hooked ring first.'},
@@ -10,21 +10,23 @@ export const RING_POINTS = 300;
 const STEP = 2; // degrees per sweep step; smaller than the narrowest gap in the sample levels (12°)
 
 export function newGame(lv, opts = {}) {
-  const {locks, owner} = analyze(lv);
+  const {locks, owner, host} = analyze(lv);
   const g = {
-    lv, rule: opts.rule || 'block', locks: locks.map((L, k) => ({...L, id: k, on: true})), owner,
-    turn: lv.rings.map(() => 0), alive: lv.rings.map(r => r.shape.type in {0: 1, 1: 1, 6: 1, 9: 1, 10: 1}),
-    open: lv.rings.map(r => !r.locked), moves: 0, score: 0, events: [], history: []
+    lv, rule: opts.rule || 'block', locks: locks.map((L, k) => ({...L, id: k, on: true})), owner, host,
+    turn: lv.rings.map(() => 0), alive: lv.rings.map(r => r.shape.type in {0: 1, 1: 1, 6: 1, 9: 1, 10: 1, 11: 1}),
+    open: lv.rings.map(r => !r.locked), touch: lv.rings.map(() => []), moves: 0, score: 0, events: [], history: []
   };
+  // pieces a bomb touches at the start do not set it off; only a new touch does
+  lv.rings.forEach((r, b) => { if (r.shape.type === TYPE.BOMB) g.touch[b] = bombContacts(g, b); });
   // something already in a gap at the start is free at once
   for (const L of g.locks) if (inGap(lv.rings[L.ring], 0, L.point)) release(g, L, 'start');
   resolve(g);
   return g;
 }
-const snapshot = g => JSON.stringify({l: g.locks.map(L => L.on), t: g.turn, a: g.alive, o: g.open, m: g.moves, s: g.score});
+const snapshot = g => JSON.stringify({l: g.locks.map(L => L.on), t: g.turn, a: g.alive, o: g.open, m: g.moves, s: g.score, h: g.touch});
 export function undoMove(g) {
   const s = g.history.pop(); if (!s) return false;
-  const d = JSON.parse(s); g.locks.forEach((L, k) => L.on = d.l[k]); g.turn = d.t; g.alive = d.a; g.open = d.o; g.moves = d.m; g.score = d.s; g.events = [];
+  const d = JSON.parse(s); g.locks.forEach((L, k) => L.on = d.l[k]); g.turn = d.t; g.alive = d.a; g.open = d.o; g.moves = d.m; g.score = d.s; g.touch = d.h; g.events = [];
   return true;
 }
 
@@ -79,6 +81,7 @@ export function turnRing(g, i, delta, {count = true} = {}) {
       for (const L of locksOn(g, j)) if (inGap(r, g.turn[j], L.point)) release(g, L, 'gap');
       if (g.rule === 'swing') for (const L of armsOf(g, j)) release(g, L, 'swing');
     }
+    checkBombs(g);
   }
   resolve(g);
   return true;
@@ -95,12 +98,46 @@ export function resolve(g) {
       let links;
       if (t === TYPE.RING || t === TYPE.CLOSED) links = locksOn(g, i).length + armsOf(g, i).length;
       else if (t === TYPE.CONNECTOR) links = g.owner[i] !== undefined ? (g.alive[g.owner[i]] ? 1 : 0) : g.locks.filter(L => L.on && L.piece === i).length;
-      else if (t === TYPE.PIN || t === TYPE.BAR) links = g.locks.filter(L => L.on && L.piece === i).length;
+      else if (t === TYPE.PIN) links = g.locks.filter(L => L.on && L.piece === i).length;
+      else if (t === TYPE.BAR) links = g.locks.filter(L => L.on && (L.piece === i || L.ring === i)).length; // its ends, and pins holding it
+      else if (t === TYPE.BOMB) links = g.host[i] !== undefined && g.alive[g.host[i]] ? 1 : 0;
       else return;
       if (!links) { shatter(g, i); again = true; }
     });
   }
 }
+/* ---------- Bomb ---------- */
+// Where bomb b is now: it turns with its ring; on a bar it stays put.
+export function bombPos(g, b) {
+  const r = g.lv.rings[b], h = g.host[b], p = P(r);
+  if (h === undefined || !isRing(g.lv.rings[h])) return p;
+  const c = P(g.lv.rings[h]), a = rad(g.turn[h]), dx = p.x - c.x, dy = p.y - c.y;
+  return {x: c.x + dx * Math.cos(a) - dy * Math.sin(a), y: c.y + dx * Math.sin(a) + dy * Math.cos(a)};
+}
+// Rings and bars that bomb b touches now (not its own piece). A ring's gap does not count as touching.
+export function bombContacts(g, b) {
+  const R = g.lv.rings, p = bombPos(g, b), br = R[b].shape.radius * .5, out = [];
+  R.forEach((r, j) => {
+    if (j === b || j === g.host[b] || !g.alive[j]) return;
+    if (isRing(r)) { const c = P(r); if (Math.abs(dist(p, c) - r.shape.radius) < r.shape.tubeRadius + br && !inGap(r, g.turn[j], p)) out.push(j); }
+    else if (r.shape.type === TYPE.BAR && segDist(p, barPoints(r)) < r.shape.tubeRadius + br) out.push(j);
+  });
+  return out;
+}
+// A bomb that comes to touch another ring or bar blows up: its own piece and the one it touched both shatter.
+function checkBombs(g) {
+  g.lv.rings.forEach((r, b) => {
+    if (r.shape.type !== TYPE.BOMB || !g.alive[b]) return;
+    const now = bombContacts(g, b), hit = now.find(j => !g.touch[b].includes(j));
+    if (hit === undefined) { g.touch[b] = now; return; }
+    const h = g.host[b];
+    g.events.push({type: 'explode', piece: b, host: h, hit, at: bombPos(g, b)});
+    g.alive[b] = false;
+    if (h !== undefined) shatter(g, h, 'bomb');
+    shatter(g, hit, 'bomb');
+  });
+}
+
 function shatter(g, i, why = 'free') {
   if (!g.alive[i]) return;
   const R = g.lv.rings;
@@ -113,7 +150,9 @@ function shatter(g, i, why = 'free') {
 /* ---------- boosters (GDD 1.5) ---------- */
 // Hint: rings that can turn and still have something to free.
 export function hint(g) {
-  return g.lv.rings.map((r, i) => i).filter(i => isRing(g.lv.rings[i]) && g.alive[i] && canTurn(g, i).ok && (locksOn(g, i).length || (g.rule === 'swing' && armsOf(g, i).length)));
+  const out = g.lv.rings.map((r, i) => i).filter(i => isRing(g.lv.rings[i]) && g.alive[i] && canTurn(g, i).ok && (locksOn(g, i).length || (g.rule === 'swing' && armsOf(g, i).length)));
+  if (!out.length) { const m = bombMove(g); if (m) out.push(m.ring); }
+  return out;
 }
 // Saw: cuts one connector or bar.
 export function saw(g, i) {
@@ -173,7 +212,25 @@ export function botMove(g) {
       if (!best || score > best.score) best = {ring: i, delta, score};
     }
   });
-  return best && {ring: best.ring, delta: best.delta};
+  if (best) return {ring: best.ring, delta: best.delta};
+  return bombMove(g);
+}
+const cloneGame = g => ({...g, locks: g.locks.map(L => ({...L})), turn: [...g.turn], alive: [...g.alive], open: [...g.open], touch: g.touch.map(t => [...t]), events: [], history: []});
+// No turn frees a lock: look for the smallest turn that sets off a bomb (or frees anything at all).
+function bombMove(g) {
+  let best = null;
+  g.lv.rings.forEach((r, i) => {
+    if (!isRing(r) || !g.alive[i] || !canTurn(g, i).ok) return;
+    const step = r.snapStep || 15;
+    for (const dir of [1, -1]) {
+      const c = cloneGame(g), before = c.alive.filter(Boolean).length;
+      for (let t = step; t <= 360; t += step) {
+        turnRing(c, i, dir * step, {count: false});
+        if (c.alive.filter(Boolean).length < before) { if (!best || t < Math.abs(best.delta)) best = {ring: i, delta: dir * t}; break; }
+      }
+    }
+  });
+  return best;
 }
 // Plays the level with the bot. {won, moves:[{ring,delta}], stuck:[piece indexes], score}
 export function solve(lv, rule = 'block', limit = 400) {

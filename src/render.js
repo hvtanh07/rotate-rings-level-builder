@@ -61,6 +61,14 @@ function pinBody(r) {
     `<circle class="pinbase" cx="${f(p.x)}" cy="${f(p.y)}" r="${f(r.shape.radius * .6)}" fill="${col}" stroke="#fff" stroke-width=".05"/>` +
     `<circle class="hit" cx="${f(p.x)}" cy="${f(p.y)}" r=".32" stroke-width="0" fill="transparent"/>`;
 }
+function bombBody(r) {
+  const p = P(r), R = r.shape.radius, a = r.eulerAngles.z, f0 = pt(p, R * .8, a + 50), f1 = pt(p, R * 1.35, a + 35);
+  return `<circle class="bomb" cx="${f(p.x)}" cy="${f(p.y)}" r="${f(R)}" fill="#2B2F3A" stroke="#11131A" stroke-width=".04"/>` +
+    `<circle cx="${f(p.x - R * .3)}" cy="${f(p.y + R * .3)}" r="${f(R * .28)}" fill="#fff" fill-opacity=".35"/>` +
+    `<path class="fuse" d="M${f(f0.x)} ${f(f0.y)}Q${f(f1.x)} ${f(f0.y)} ${f(f1.x)} ${f(f1.y)}" stroke="#8C6A3E" stroke-width=".06" fill="none"/>` +
+    `<circle cx="${f(f1.x)}" cy="${f(f1.y)}" r="${f(R * .22)}" fill="#FFB020" stroke="#F2560F" stroke-width=".03"/>` +
+    `<circle class="hit" cx="${f(p.x)}" cy="${f(p.y)}" r="${f(R * 1.1)}" stroke-width="0" fill="transparent"/>`;
+}
 function padlock(c, s, open) {
   return `<g class="padlock${open ? ' open' : ''}" transform="translate(${f(c.x)} ${f(c.y)}) scale(${f(s)} ${f(-s)})">` +
     `<path d="M-5 -1V-5a5 5 0 0 1 10 0${open ? 'V-3' : 'V-1'}" fill="none" stroke="#5C6478" stroke-width="2.2" transform="${open ? 'translate(4 -3)' : ''}"/>` +
@@ -77,7 +85,7 @@ export function bounds(lv) {
   lv.rings.forEach(r => {
     if (isRing(r)) add(P(r), r.shape.radius + .35);
     else if (r.shape.type === TYPE.BAR) barPoints(r).forEach(p => add(p, .3));
-    else add(P(r), (r.shape.legLength || .5) + .3);
+    else add(P(r), (r.shape.legLength || .5) + .4);
   });
   if (!isFinite(x0)) { x0 = -3; y0 = -3; x1 = 3; y1 = 3; }
   const w = Math.max(4, x1 - x0), h = Math.max(4, y1 - y0), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
@@ -86,10 +94,11 @@ export function bounds(lv) {
 
 /* opts: {turn, alive, open, owner, sel:Set, hint:Set, ids, links:[{a,b,kind}], ghost, play, shakeIdx, dim:Set} */
 export function drawLevel(lv, o = {}) {
-  const R = lv.rings, alive = o.alive || R.map(() => true), turn = o.turn || R.map(() => 0), open = o.open || R.map(r => !r.locked), owner = o.owner || {};
+  const R = lv.rings, alive = o.alive || R.map(() => true), turn = o.turn || R.map(() => 0), open = o.open || R.map(r => !r.locked), owner = o.owner || {}, host = o.host || {};
   const sel = o.sel || new Set(), hint = o.hint || new Set();
   const order = R.map((r, i) => i).sort((a, b) => layer(R[a]) - layer(R[b]));
   const inRing = {}; Object.entries(owner).forEach(([c, i]) => { (inRing[i] = inRing[i] || []).push(+c); });
+  const bombsOn = {}; Object.entries(host).forEach(([b, i]) => { if (isRing(R[i])) (bombsOn[i] = bombsOn[i] || []).push(+b); });
   let s = '';
   const piece = i => {
     const r = R[i], t = r.shape.type;
@@ -101,6 +110,7 @@ export function drawLevel(lv, o = {}) {
       R.forEach((k, j) => { if (k.locked && k.keyHolder === i && !open[j] && alive[j]) inner += keyIcon(pt(c, r.shape.radius, r.keyAngle + r.eulerAngles.z), .024); });
       // connectors owned by this ring turn with it
       for (const j of inRing[i] || []) if (alive[j]) inner += `<g class="pc t6${sel.has(j) ? ' sel' : ''}" data-i="${j}">${connectorBody(R[j])}</g>`;
+      for (const j of bombsOn[i] || []) if (alive[j]) inner += `<g class="pc t11${sel.has(j) ? ' sel' : ''}" data-i="${j}">${bombBody(R[j])}</g>`;
       return `<g class="${cls}" data-i="${i}" transform="rotate(${f(turn[i] || 0)} ${f(c.x)} ${f(c.y)})">${inner}</g>`;
     }
     if (t === TYPE.CONNECTOR) return owner[i] !== undefined ? '' : `<g class="${cls}" data-i="${i}">${connectorBody(r)}</g>`;
@@ -110,6 +120,7 @@ export function drawLevel(lv, o = {}) {
       return `<g class="${cls}" data-i="${i}">${inner}</g>`;
     }
     if (t === TYPE.PIN) return `<g class="${cls}" data-i="${i}">${pinBody(r)}</g>`;
+    if (t === TYPE.BOMB) return host[i] !== undefined && isRing(R[host[i]]) ? '' : `<g class="${cls}" data-i="${i}">${bombBody(r)}</g>`;
     return `<g class="${cls} unknown" data-i="${i}"><circle cx="${f(r.position.x)}" cy="${f(r.position.y)}" r=".3" class="unk"/><circle class="hit" cx="${f(r.position.x)}" cy="${f(r.position.y)}" r=".3"/></g>`;
   };
   for (const i of order) if (alive[i] && !(R[i].shape.type === TYPE.CONNECTOR && owner[i] !== undefined && !alive[owner[i]])) s += piece(i);
@@ -118,7 +129,7 @@ export function drawLevel(lv, o = {}) {
   if (o.tutorial >= 0 && R[o.tutorial] && alive[o.tutorial]) s += label({x: R[o.tutorial].position.x, y: R[o.tutorial].position.y - .18}, '☝', 'tut');
   return s;
 }
-const layer = r => ({0: 0, 1: 1, 10: 2, 6: 3, 9: 4}[r.shape.type] ?? 5);
+const layer = r => ({0: 0, 1: 1, 10: 2, 6: 3, 9: 4, 11: 5}[r.shape.type] ?? 6);
 
 // Shards that burst out of a cleared piece.
 export function shardsAt(p, col, n = 12, spread = .9) {

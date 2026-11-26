@@ -1,8 +1,8 @@
 import './style.css';
 import ORIGINAL from './data/levels.json';
 import {TYPE, TYPE_NAME, PALETTE, colorHex, isRing, normalize, normalizeRing, serialize, serializeFile, compact, parseLevels, analyze, check, statusOf, tally, pname,
-  makePiece, placeArm, placeBar, snapToRing, nearestRing, ringsThrough, removePieces, blankLevel, connectorEnds, barPoints, P, dist, angleAt, rad, deg, wrap180, nextId} from './format.js';
-import {RULES, newGame, beginMove, turnRing, canTurn, undoMove, won, left, hint, saw, removePiece, botMove, solve} from './engine.js';
+  makePiece, placeArm, placeBar, snapToRing, nearestRing, nearestBar, snapToBar, ringsThrough, removePieces, blankLevel, connectorEnds, barPoints, P, dist, angleAt, rad, deg, wrap180, nextId} from './format.js';
+import {RULES, newGame, bombPos, beginMove, turnRing, canTurn, undoMove, won, left, hint, saw, removePiece, botMove, solve} from './engine.js';
 import {drawLevel, bounds, shardsAt} from './render.js';
 
 const $ = s => document.querySelector(s);
@@ -65,7 +65,7 @@ function refreshList() {
   $('#lvList').innerHTML = levels.map((lv, i) => {
     if (q && !(lv.id.toLowerCase().includes(q) || String(i + 1) === q || ('tier ' + lv.tier) === q)) return '';
     const st = listStatus[i] || 'ok', ch = isChanged(lv), t = tally(lv), el = [];
-    if (t.bars) el.push('bar'); if (t.pins) el.push('pin'); if (t.locked) el.push('lock'); if (t.gears) el.push('gear'); if (t.closed) el.push('closed');
+    if (t.bars) el.push('bar'); if (t.pins) el.push('pin'); if (t.bombs) el.push('bomb'); if (t.locked) el.push('lock'); if (t.gears) el.push('gear'); if (t.closed) el.push('closed');
     return `<li><button type="button" class="lv" data-i="${i}" aria-current="${i === cur}"><span class="n">${i + 1}</span><span><span class="t">${esc(lv.id)}${ch ? ' <i class="sr">changed</i>' : ''}</span><span class="m">${ch ? '<i>● </i>' : ''}T${lv.tier} · D${(+lv.difficulty).toFixed(1)} · ${t.rings + t.closed} rings${el.length ? ' · ' + el.join(', ') : ''}</span></span><span class="dot ${st}" title="${st === 'ok' ? 'No problems' : st === 'warn' ? 'Has warnings' : 'Has errors'}"></span></button></li>`;
   }).join('');
   const a = $('#lvList [aria-current="true"]'); if (a) a.scrollIntoView({block: 'nearest'});
@@ -139,11 +139,11 @@ function renderAll() {
   renderPane(); refreshChecks();
 }
 function renderEdit() {
-  const lv = L(), {locks, owner} = analyze(lv);
+  const lv = L(), {locks, owner, host} = analyze(lv);
   const links = [];
   locks.forEach(Lk => { if (sel.has(Lk.piece) || sel.has(Lk.ring) || sel.has(Lk.owner)) links.push({a: Lk.point, b: P(lv.rings[Lk.ring]), kind: Lk.kind}); });
   lv.rings.forEach((r, i) => { if (r.locked && r.keyHolder >= 0 && lv.rings[r.keyHolder] && (sel.has(i) || sel.has(r.keyHolder))) links.push({a: P(r), b: P(lv.rings[r.keyHolder]), kind: 'key'}); r.gearWith.forEach(j => { if (lv.rings[j] && sel.has(i)) links.push({a: P(r), b: P(lv.rings[j]), kind: 'gear'}); }); });
-  $('#scene').innerHTML = drawLevel(lv, {sel, owner, links, ids: prefs.ids, tutorial: lv.tutorialRing});
+  $('#scene').innerHTML = drawLevel(lv, {sel, owner, host, links, ids: prefs.ids, tutorial: lv.tutorialRing});
   $('#ui').innerHTML = handles(lv) + (pick ? pickMark(lv) : '');
   svg.classList.remove('play');
 }
@@ -179,7 +179,7 @@ function setBarWorld(r, pts) {
 }
 // Move pieces `ids` by (dx,dy) in lv (built from base); pieces resting on a moved ring follow it.
 function movePieces(base, ids, dx, dy) {
-  const lv = clone(base), moved = new Set(ids), {locks, owner} = analyze(base);
+  const lv = clone(base), moved = new Set(ids), {locks, owner, host} = analyze(base);
   const mv = p => ({x: r3(p.x + dx), y: r3(p.y + dy)});
   lv.rings.forEach((r, i) => { if (moved.has(i)) { r.position.x = r3(r.position.x + dx); r.position.y = r3(r.position.y + dy); } });
   base.rings.forEach((r, i) => {
@@ -194,13 +194,15 @@ function movePieces(base, ids, dx, dy) {
       if (ends.some(k => moved.has(k.ring))) { const np = pts.map((p, k) => ends.some(e => e.end === k && moved.has(e.ring)) ? mv(p) : p); setBarWorld(lv.rings[i], np); }
     } else if (t === TYPE.PIN) {
       const k = locks.find(k => k.piece === i); if (k && moved.has(k.ring)) { lv.rings[i].position.x = r3(r.position.x + dx); lv.rings[i].position.y = r3(r.position.y + dy); }
+    } else if (t === TYPE.BOMB) {
+      if (host[i] !== undefined && moved.has(host[i])) { lv.rings[i].position.x = r3(r.position.x + dx); lv.rings[i].position.y = r3(r.position.y + dy); }
     }
   });
   return lv;
 }
 // Ring i of base gets a new radius: everything resting on it is moved onto the new circle.
 function resizeRing(base, i, R) {
-  const lv = clone(base), {locks, owner} = analyze(base), ring = lv.rings[i];
+  const lv = clone(base), {locks, owner, host} = analyze(base), ring = lv.rings[i];
   ring.shape.radius = R;
   base.rings.forEach((r, j) => {
     const t = r.shape.type;
@@ -213,7 +215,7 @@ function resizeRing(base, i, R) {
       if (ends.length) setBarWorld(lv.rings[j], pts.map((p, k) => ends.some(e => e.end === k) ? snapToRing(ring, p) : p));
     } else if (t === TYPE.PIN) {
       const k = locks.find(k => k.piece === j); if (k && k.ring === i) { const q = snapToRing(ring, P(r)); lv.rings[j].position.x = r3(q.x); lv.rings[j].position.y = r3(q.y); }
-    }
+    } else if (t === TYPE.BOMB && host[j] === i) { const q = snapToRing(ring, P(r)); lv.rings[j].position.x = r3(q.x); lv.rings[j].position.y = r3(q.y); }
   });
   return lv;
 }
@@ -291,7 +293,7 @@ const TOOL_HINT = {
   select: '', ring: 'Click to place an open ring.', closed: 'Click to place a closed ring.',
   connector: 'Click the ring that owns the arm.', connector2: 'Now click the ring the arm hooks.',
   bar: 'Click a point on the first ring.', bar2: 'Now click a point on the second ring.',
-  pin: 'Click on a ring to stand a pin on it.', gear: 'Click the first gear ring.', gear2: 'Now click the ring it meshes with.',
+  pin: 'Click on a ring or a bar to stand a pin on it.', bomb: 'Click on a ring or a bar to put a bomb on it.', gear: 'Click the first gear ring.', gear2: 'Now click the ring it meshes with.',
   lock: 'Click the ring to lock.', lock2: 'Now click the piece that holds the key (a ring or bar).'
 };
 function addWithTool(e, w) {
@@ -301,10 +303,9 @@ function addWithTool(e, w) {
     const r = makePiece(lv, t, {position: {x: p.x, y: p.y}, colorIndex: Math.floor(Math.random() * 8)});
     lv.rings.push(r); sel = new Set([lv.rings.length - 1]); commit(); renderAll(); return;
   }
-  if (tool === 'pin') {
-    const k = ringUnder(e, w); if (k < 0) { toast('Click on a ring.'); return; }
-    const q = snapToRing(lv.rings[k], w), a = angleAt(P(lv.rings[k]), q);
-    const r = makePiece(lv, TYPE.PIN, {position: {x: r3(q.x), y: r3(q.y)}, eulerAngles: {z: r3(a)}, colorIndex: 0});
+  if (tool === 'pin' || tool === 'bomb') {
+    const h = hostUnder(e, w); if (!h) { toast('Click on a ring or a bar.'); return; }
+    const r = makePiece(lv, tool === 'pin' ? TYPE.PIN : TYPE.BOMB, {position: {x: r3(h.p.x), y: r3(h.p.y)}, eulerAngles: {z: r3(h.a)}, colorIndex: 0});
     lv.rings.push(r); sel = new Set([lv.rings.length - 1]); commit(); renderAll(); return;
   }
   const k = tool === 'lock' && pick ? pieceUnder(e, w) : ringUnder(e, w);
@@ -327,6 +328,18 @@ function addWithTool(e, w) {
   pick = null; commit(); renderAll();
 }
 const wrapPos = a => ((a % 360) + 360) % 360;
+// A ring or bar under the pointer, and the nearest point on it. a = outward angle (ring) or the bar's normal.
+function hostUnder(e, w) {
+  const lv = L(), g = e.target.closest && e.target.closest('[data-i]');
+  let k = g ? +g.dataset.i : -1;
+  if (k >= 0 && !isRing(lv.rings[k]) && lv.rings[k].shape.type !== TYPE.BAR) k = -1;
+  if (k < 0) k = nearestRing(lv, w, .4);
+  if (k < 0) k = nearestBar(lv, w, .4);
+  if (k < 0) return null;
+  const r = lv.rings[k];
+  if (isRing(r)) { const q = snapToRing(r, w); return {i: k, p: q, a: angleAt(P(r), q)}; }
+  return {i: k, p: snapToBar(r, w), a: r.eulerAngles.z + 90};
+}
 function pieceUnder(e, w) {
   const g = e.target.closest && e.target.closest('[data-i]');
   if (g) { const i = +g.dataset.i, r = L().rings[i]; if (isRing(r) || r.shape.type === TYPE.BAR) return i; }
@@ -350,7 +363,8 @@ $('#tRedo').addEventListener('click', doRedo);
 function deleteSel() {
   if (!sel.size) return;
   const lv = L(), {owner} = analyze(lv), del = new Set(sel);
-  lv.rings.forEach((r, i) => { if (r.shape.type === TYPE.CONNECTOR && del.has(owner[i])) del.add(i); });
+  const {host} = analyze(lv);
+  lv.rings.forEach((r, i) => { if ((r.shape.type === TYPE.CONNECTOR && del.has(owner[i])) || (r.shape.type === TYPE.BOMB && del.has(host[i]))) del.add(i); });
   removePieces(lv, [...del]); sel = new Set(); commit(); renderAll(); toast(`Deleted ${del.size} piece${del.size > 1 ? 's' : ''}.`);
 }
 function duplicateSel() {
@@ -376,7 +390,7 @@ $('#modePlay').addEventListener('click', () => setMode('play'));
 function restart() { stopAuto(); game = newGame(clone(L()), {rule: prefs.rule}); hintSet = new Set(); booster = null; $('#fx').innerHTML = ''; $('#banner').hidden = true; flushEvents(); syncBoosters(); renderPlay(); }
 function renderPlay() {
   if (!game) return;
-  $('#scene').innerHTML = drawLevel(game.lv, {turn: game.turn, alive: game.alive, open: game.open, owner: game.owner, hint: hintSet, ids: prefs.ids, shakeIdx, tutorial: game.moves ? -1 : game.lv.tutorialRing});
+  $('#scene').innerHTML = drawLevel(game.lv, {turn: game.turn, alive: game.alive, open: game.open, owner: game.owner, host: game.host, hint: hintSet, ids: prefs.ids, shakeIdx, tutorial: game.moves ? -1 : game.lv.tutorialRing});
   $('#ui').innerHTML = '';
   svg.classList.add('play');
   const rule = RULES[game.rule];
@@ -385,6 +399,7 @@ function renderPlay() {
 function pieceCenter(i) {
   const r = game.lv.rings[i];
   if (r.shape.type === TYPE.BAR) { const p = barPoints(r); return p.length ? {x: (p[0].x + p[p.length - 1].x) / 2, y: (p[0].y + p[p.length - 1].y) / 2} : P(r); }
+  if (r.shape.type === TYPE.BOMB) return bombPos(game, i);
   if (r.shape.type === TYPE.CONNECTOR) { const o = game.owner[i]; if (o !== undefined) { const c = P(game.lv.rings[o]), a = rad(game.turn[o]), p = P(r), dx = p.x - c.x, dy = p.y - c.y; return {x: c.x + dx * Math.cos(a) - dy * Math.sin(a), y: c.y + dx * Math.sin(a) + dy * Math.cos(a)}; } }
   return P(r);
 }
@@ -399,6 +414,11 @@ function flushEvents() {
       fx.appendChild(g); setTimeout(() => g.remove(), 900);
     }
     if (ev.type === 'shake') { shakeIdx = ev.piece; setTimeout(() => { shakeIdx = -1; renderPlay(); }, 330); const by = ev.by; toast(ev.why === 'locked' ? `${pname(game.lv, by)} is locked. Clear the piece with its key first.` : ev.why === 'arm' ? `${pname(game.lv, by)} cannot turn: its arm still hooks another ring.` : 'This piece does not turn.'); }
+    if (ev.type === 'explode') {
+      const g = document.createElementNS(NS, 'g'), c = ev.at;
+      g.innerHTML = `<circle cx="${c.x}" cy="${c.y}" r=".2" fill="#FFB020" opacity=".9"><animate attributeName="r" from=".2" to="1.6" dur=".5s" fill="freeze"/><animate attributeName="opacity" from=".9" to="0" dur=".5s" fill="freeze"/></circle>` + shardsAt(c, '#F2560F', 14, 1.1) + `<text class="praise" transform="translate(${c.x} ${c.y + .4}) scale(1 -1)">Boom!</text>`;
+      fx.appendChild(g); setTimeout(() => g.remove(), 900);
+    }
     if (ev.type === 'unlock') toast(`The key flew to ${pname(game.lv, ev.piece)}: it is open now.`);
   }
   game.events = [];
@@ -419,6 +439,7 @@ function playDown(e) {
   if (booster === 'remove') { if (removePiece(game, i)) { booster = null; syncBoosters(); hintSet = new Set(); flushEvents(); renderPlay(); } else toast('Remove takes a ring, a bar or a pin.'); return; }
   let ring = i;
   if (r.shape.type === TYPE.CONNECTOR && game.owner[i] !== undefined) ring = game.owner[i];
+  if (r.shape.type === TYPE.BOMB && game.host[i] !== undefined) ring = game.host[i];
   if (!isRing(game.lv.rings[ring])) return;
   const c = canTurn(game, ring);
   if (!c.ok) { turnRing(game, ring, 1); flushEvents(); renderPlay(); return; }
@@ -428,7 +449,8 @@ function playDown(e) {
   svg.setPointerCapture(e.pointerId);
 }
 function playMove(e, w) {
-  const d = drag, c = P(game.lv.rings[d.ring]), a = angleAt(c, w), dd = wrap180(a - d.prev);
+  const d = drag; if (!game.alive[d.ring]) return;
+  const c = P(game.lv.rings[d.ring]), a = angleAt(c, w), dd = wrap180(a - d.prev);
   d.prev = a; if (!dd) return;
   if (!d.started) { beginMove(game); d.started = true; }
   d.total += dd; turnRing(game, d.ring, dd, {count: false}); flushEvents(); renderPlay();
@@ -505,7 +527,7 @@ function paneLevel(lv) {
     <label class="fld full"><span>Tutorial ring <code>tutorialRing</code> (hand pointer on this ring)</span><select data-k="L.tutorialRing"><option value="-1">None (-1)</option>${rings}</select></label>
     </div>
     <details><summary class="hint">More fields</summary><div class="fields">${nfld('Version <code>version</code>', 'L.version', lv.version, 1)}<span></span>${nfld('liftDirection x', 'L.liftDirection.x', lv.liftDirection.x)}${nfld('liftDirection y', 'L.liftDirection.y', lv.liftDirection.y)}${nfld('liftDirection z', 'L.liftDirection.z', lv.liftDirection.z)}</div></details>
-    <h3>Pieces</h3><table class="tally"><tr><th>Open rings</th><td>${t.rings}</td></tr><tr><th>Closed rings</th><td>${t.closed}</td></tr><tr><th>Connectors</th><td>${t.connectors}</td></tr><tr><th>Straight Bars</th><td>${t.bars}</td></tr><tr><th>Pins</th><td>${t.pins}</td></tr><tr><th>Locked Rings</th><td>${t.locked}</td></tr><tr><th>Gear Rings</th><td>${t.gears}</td></tr></table>
+    <h3>Pieces</h3><table class="tally"><tr><th>Open rings</th><td>${t.rings}</td></tr><tr><th>Closed rings</th><td>${t.closed}</td></tr><tr><th>Connectors</th><td>${t.connectors}</td></tr><tr><th>Straight Bars</th><td>${t.bars}</td></tr><tr><th>Pins</th><td>${t.pins}</td></tr><tr><th>Bombs</th><td>${t.bombs}</td></tr><tr><th>Locked Rings</th><td>${t.locked}</td></tr><tr><th>Gear Rings</th><td>${t.gears}</td></tr></table>
     <h3>Tidy</h3><div class="btns"><button class="btn" type="button" data-act="center">Center on 0,0</button><button class="btn" type="button" data-act="order">Game order and ids</button></div>
     <p class="hint">Game order puts rings first, then connectors, bars and pins, and renames ids R0…, K0…, L0…, H0… like the game file. Key holders, gears and the tutorial ring follow.</p>`;
 }
@@ -522,6 +544,7 @@ function panePiece(lv) {
   s += nfld('Position x', K + 'position.x', r.position.x) + nfld('Position y', K + 'position.y', r.position.y);
   s += nfld(t === TYPE.RING || t === TYPE.CLOSED ? 'Turn <code>eulerAngles.z</code>' : 'Angle <code>eulerAngles.z</code>', K + 'eulerAngles.z', r.eulerAngles.z);
   s += nfld('Radius <code>shape.radius</code>', K + 'shape.radius', r.shape.radius) + nfld('Tube <code>shape.tubeRadius</code>', K + 'shape.tubeRadius', r.shape.tubeRadius);
+  if (t === TYPE.BOMB) { const h = analyze(lv).host[i]; s += `</div><p class="hint">Sits on ${h !== undefined ? '<b>' + esc(pname(lv, h)) + '</b>' : '<b>nothing</b>'}. Radius is the bomb's size. When a turn brings it onto another ring or bar, both blow up. New type 11: the game file does not have it yet.</p><div class="fields">`; }
   if (t === TYPE.CONNECTOR || t === TYPE.PIN) s += nfld('Leg <code>shape.legLength</code>', K + 'shape.legLength', r.shape.legLength);
   s += '</div>';
   if (t === TYPE.CONNECTOR) {
@@ -550,10 +573,10 @@ function panePiece(lv) {
   return s;
 }
 function panePieces(lv) {
-  const {locks, owner} = analyze(lv);
+  const {locks, owner, host} = analyze(lv);
   return `<p class="hint">${lv.rings.length} pieces, in file order.</p><ul class="plist">${lv.rings.map((r, i) => {
     const t = r.shape.type, lk = locks.find(k => k.piece === i);
-    const note = t === TYPE.CONNECTOR ? `${owner[i] !== undefined ? esc(lv.rings[owner[i]].shape.id) : '?'} → ${lk ? esc(lv.rings[lk.ring].shape.id) : '?'}` : t === TYPE.PIN ? `on ${lk ? esc(lv.rings[lk.ring].shape.id) : '?'}` : t === TYPE.BAR ? locks.filter(k => k.piece === i).map(k => esc(lv.rings[k.ring].shape.id)).join(' – ') : [r.locked ? '🔒 key ' + esc(lv.rings[r.keyHolder] ? lv.rings[r.keyHolder].shape.id : '?') : '', r.gearWith.length ? '⚙ ' + r.gearWith.map(j => esc(lv.rings[j] ? lv.rings[j].shape.id : '?')).join(',') : ''].filter(Boolean).join(' · ');
+    const note = t === TYPE.BOMB ? `on ${host[i] !== undefined ? esc(lv.rings[host[i]].shape.id) : '?'}` : t === TYPE.CONNECTOR ? `${owner[i] !== undefined ? esc(lv.rings[owner[i]].shape.id) : '?'} → ${lk ? esc(lv.rings[lk.ring].shape.id) : '?'}` : t === TYPE.PIN ? `on ${lk ? esc(lv.rings[lk.ring].shape.id) : '?'}` : t === TYPE.BAR ? locks.filter(k => k.piece === i).map(k => esc(lv.rings[k.ring].shape.id)).join(' – ') : [r.locked ? '🔒 key ' + esc(lv.rings[r.keyHolder] ? lv.rings[r.keyHolder].shape.id : '?') : '', r.gearWith.length ? '⚙ ' + r.gearWith.map(j => esc(lv.rings[j] ? lv.rings[j].shape.id : '?')).join(',') : ''].filter(Boolean).join(' · ');
     return `<li><button type="button" data-pi="${i}" aria-current="${sel.has(i)}"><span class="pc" style="background:${colorHex(r.colorIndex)}"></span><code>${esc(r.shape.id || '#' + i)}</code><span>${esc(TYPE_NAME[t] || 'type ' + t)} <small>${note}</small></span><small>#${i}</small></button></li>`;
   }).join('')}</ul>`;
 }
@@ -575,7 +598,8 @@ function paneHelp() {
   <kbd>V</kbd><span>Select. Drag pieces to move them; pieces resting on a moved ring follow it.</span>
   <kbd>R</kbd> <span>Open ring. <kbd>O</kbd> closed ring.</span>
   <kbd>C</kbd><span>Connector: click the ring that owns the arm, then the ring it hooks.</span>
-  <kbd>P</kbd><span>Pin: click on a ring.</span>
+  <kbd>P</kbd><span>Pin: click on a ring or a bar.</span>
+  <kbd>M</kbd><span>Bomb: click on a ring or a bar.</span>
   <kbd>G</kbd><span>Gear Ring: click two rings to mesh them.</span>
   <kbd>K</kbd><span>Locked Ring: click the ring, then the piece holding its key.</span>
   <kbd>Del</kbd><span>Delete. <kbd>Ctrl D</kbd> duplicate, arrows nudge, <kbd>Ctrl Z</kbd>/<kbd>Ctrl Y</kbd> undo/redo.</span>
@@ -585,6 +609,8 @@ function paneHelp() {
   <li>Drag a ring to turn it around its center (snaps to <code>snapStep</code>). Its arms turn with it.</li>
   <li>When a ring's gap passes a hook, pin or bar end resting on it, that link comes apart.</li>
   <li>A piece with no links left shatters. A ring gives 300 points.</li>
+  <li>Pin: locks the ring or bar it stands on; it shatters when it locks nothing. A bar held only by a pin cannot be freed by a gap.</li>
+  <li>Bomb: sits on a ring (turns with it) or a bar. When a turn brings it onto another ring or bar, the bomb blows up and both pieces shatter. Use it to break a piece that is stuck.</li>
   <li>Locked Ring: does not turn until the piece holding its key shatters.</li>
   <li>Gear Rings: meshed gears turn the other way, by the tooth ratio.</li>
   <li>A ring whose arm still hooks another ring is held: it cannot turn (a tap only shakes it). Free the hooked ring first.</li>
@@ -644,14 +670,14 @@ $('#pane').addEventListener('click', e => {
   else if (act === 'watch') { setMode('play'); $('#pAuto').click(); }
 });
 function gameOrder(lv) {
-  const rank = r => ({0: 0, 1: 0, 6: 1, 10: 2, 9: 3}[r.shape.type] ?? 4);
+  const rank = r => ({0: 0, 1: 0, 6: 1, 10: 2, 9: 3, 11: 4}[r.shape.type] ?? 5);
   const order = lv.rings.map((r, i) => i).sort((a, b) => rank(lv.rings[a]) - rank(lv.rings[b]) || a - b), map = [];
   order.forEach((o, n) => { map[o] = n; });
   lv.rings = order.map(o => lv.rings[o]);
   lv.rings.forEach(r => { if (r.keyHolder >= 0) r.keyHolder = map[r.keyHolder]; r.gearWith = r.gearWith.map(j => map[j]); });
   if (lv.tutorialRing >= 0) lv.tutorialRing = map[lv.tutorialRing];
   const cnt = {};
-  lv.rings.forEach(r => { const pre = {0: 'R', 1: 'R', 6: 'K', 10: 'L', 9: 'H'}[r.shape.type] || 'X'; cnt[pre] = cnt[pre] || 0; r.shape.id = pre + cnt[pre]++; });
+  lv.rings.forEach(r => { const pre = {0: 'R', 1: 'R', 6: 'K', 10: 'L', 9: 'H', 11: 'B'}[r.shape.type] || 'X'; cnt[pre] = cnt[pre] || 0; r.shape.id = pre + cnt[pre]++; });
 }
 
 /* ---------- import / export ---------- */
@@ -732,7 +758,7 @@ document.addEventListener('keydown', e => {
   const step = prefs.grid > 0 ? prefs.grid : .05;
   if (k === 'arrowleft') { e.preventDefault(); nudge(-step, 0); } else if (k === 'arrowright') { e.preventDefault(); nudge(step, 0); }
   else if (k === 'arrowup') { e.preventDefault(); nudge(0, step); } else if (k === 'arrowdown') { e.preventDefault(); nudge(0, -step); }
-  const T = {v: 'select', r: 'ring', o: 'closed', c: 'connector', p: 'pin', g: 'gear', k: 'lock'};
+  const T = {v: 'select', r: 'ring', o: 'closed', c: 'connector', p: 'pin', m: 'bomb', g: 'gear', k: 'lock'};
   if (T[k]) setTool(T[k]); else if (k === 'f') fitView(); else if (k === 'i') $('#tIds').click();
 });
 
