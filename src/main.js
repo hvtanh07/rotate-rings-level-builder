@@ -575,7 +575,6 @@ function paneHelp() {
   <kbd>V</kbd><span>Select. Drag pieces to move them; pieces resting on a moved ring follow it.</span>
   <kbd>R</kbd> <span>Open ring. <kbd>O</kbd> closed ring.</span>
   <kbd>C</kbd><span>Connector: click the ring that owns the arm, then the ring it hooks.</span>
-  <kbd>B</kbd><span>Straight Bar: click a point on one ring, then on another.</span>
   <kbd>P</kbd><span>Pin: click on a ring.</span>
   <kbd>G</kbd><span>Gear Ring: click two rings to mesh them.</span>
   <kbd>K</kbd><span>Locked Ring: click the ring, then the piece holding its key.</span>
@@ -733,7 +732,7 @@ document.addEventListener('keydown', e => {
   const step = prefs.grid > 0 ? prefs.grid : .05;
   if (k === 'arrowleft') { e.preventDefault(); nudge(-step, 0); } else if (k === 'arrowright') { e.preventDefault(); nudge(step, 0); }
   else if (k === 'arrowup') { e.preventDefault(); nudge(0, step); } else if (k === 'arrowdown') { e.preventDefault(); nudge(0, -step); }
-  const T = {v: 'select', r: 'ring', o: 'closed', c: 'connector', b: 'bar', p: 'pin', g: 'gear', k: 'lock'};
+  const T = {v: 'select', r: 'ring', o: 'closed', c: 'connector', p: 'pin', g: 'gear', k: 'lock'};
   if (T[k]) setTool(T[k]); else if (k === 'f') fitView(); else if (k === 'i') $('#tIds').click();
 });
 
