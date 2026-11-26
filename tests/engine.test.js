@@ -51,8 +51,9 @@ describe('rules', () => {
     expect(undoMove(g)).toBe(true); expect(won(g)).toBe(false);
     expect(removePiece(g, 0)).toBe(true); expect(won(g)).toBe(true);
   });
-  it('the bot solves all 60 sample levels with both rules', () => {
-    for (const raw of FILE.levels) for (const rule of ['block', 'swing']) {
+  it('the bot solves the sample levels with both rules', () => {
+    // the sample bars rest their ends on ring tubes, the old reading of the bar; bars now run into rings through a gap (designer, 2026-11-26)
+    for (const raw of FILE.levels.filter(l => !l.rings.some(r => r.shape.type === 10))) for (const rule of ['block', 'swing']) {
       const s = solve(normalize(raw), rule);
       expect(s.won, `${raw.id} ${rule}`).toBe(true);
     }
@@ -60,35 +61,41 @@ describe('rules', () => {
 });
 
 describe('Bomb', () => {
-  // R0 held by a pin; a bar held up by a pin, its end resting on a closed ring (no turn frees it); a bomb on R0 at 180°.
+  // R0 held by a pin at the top; a pinned bar runs into R0 through its gap at the bottom, so R0 can only turn inside the gap; a bomb on R0 at 250°.
   const make = (withBomb = true) => {
     const lv = normalize({id: 'bomb_test', rings: []});
-    const R0 = makePiece(lv, TYPE.RING, {position: {x: 0, y: 0}}); lv.rings.push(R0);
+    lv.rings.push(makePiece(lv, TYPE.RING, {position: {x: 0, y: 0}, shape: {gaps: [{centerDegrees: 270, widthDegrees: 60}]}}));
     lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: 0, y: 1}, eulerAngles: {z: 90}}));
-    const bar = makePiece(lv, TYPE.BAR); placeBar(bar, {x: -0.5, y: -2}, {x: -0.5, y: -0.5}); lv.rings.push(bar);
-    lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: -0.5, y: -1.5}, eulerAngles: {z: 180}}));
-    if (withBomb) lv.rings.push(makePiece(lv, TYPE.BOMB, {position: {x: -1, y: 0}}));
-    lv.rings.push(makePiece(lv, TYPE.CLOSED, {position: {x: -0.5, y: -3}}));
+    const bar = makePiece(lv, TYPE.BAR); placeBar(bar, {x: 0, y: -2}, {x: 0, y: -0.4}); lv.rings.push(bar);
+    lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: 0, y: -1.6}, eulerAngles: {z: 180}}));
+    if (withBomb) { const a = 250 * Math.PI / 180; lv.rings.push(makePiece(lv, TYPE.BOMB, {position: {x: Math.cos(a), y: Math.sin(a)}})); }
     return lv;
   };
   it('finds what each piece sits on', () => {
-    const {locks, host, problems} = analyze(make());
+    const {locks, host, problems, thru} = analyze(make());
     expect(problems).toEqual([]);
     expect(host[4]).toBe(0);
     expect(locks.find(k => k.piece === 3)).toMatchObject({kind: 'pin', ring: 2, onBar: true});
+    expect(thru).toEqual([expect.objectContaining({bar: 2, ring: 0})]);
+  });
+  it('a bar in the gap stops the ring: it turns only inside the gap', () => {
+    const g = newGame(make(false));
+    turnRing(g, 0, 90);
+    expect(g.events.some(e => e.type === 'bump' && e.by === 2)).toBe(true);
+    expect(g.turn[0]).toBeGreaterThan(5); expect(g.turn[0]).toBeLessThan(30);
+    expect(g.alive[0]).toBe(true);
   });
   it('turning the bomb onto the bar blows up the ring and the bar, and the level clears', () => {
     const g = newGame(make());
-    turnRing(g, 0, 30); expect(g.alive[2]).toBe(true);
-    turnRing(g, 0, 40);
+    turnRing(g, 0, 15);
     expect(g.alive[0]).toBe(false); expect(g.alive[2]).toBe(false); expect(won(g)).toBe(true);
   });
-  it('a bar comes out when nothing rests on it; its pins go with it', () => {
-    const lv = make(false); lv.rings.pop(); // no closed ring: the bar touches no ring
+  it('a bar comes out when it runs into no ring; its pins go with it', () => {
+    const lv = make(false); lv.rings[0].position = {x: 6, y: 6, z: 0};
     const g = newGame(lv); expect(g.alive[2]).toBe(false); expect(g.alive[3]).toBe(false);
   });
-  it('without the bomb the bar on a closed ring is stuck', () => {
-    const s = solve(make(false)); expect(s.won).toBe(false); expect(s.stuck).toContain(2);
+  it('without the bomb the bar keeps the ring from reaching its pin', () => {
+    const s = solve(make(false)); expect(s.won).toBe(false); expect(s.stuck).toContain(0);
   });
   it('the bot uses the bomb when nothing else frees a piece', () => {
     const s = solve(make()); expect(s.won).toBe(true);

@@ -39,13 +39,12 @@ describe('level format', () => {
 });
 
 describe('geometry', () => {
-  it('finds the owner and hooked ring of every connector, bar and pin in the sample levels', () => {
+  it('finds the owner and hooked ring of every connector and pin in the sample levels', () => {
     for (const raw of FILE.levels) {
       const lv = normalize(raw), {locks, owner, problems} = analyze(lv);
       expect(problems).toEqual([]);
       lv.rings.forEach((r, i) => {
         if (r.shape.type === 6) { expect(owner[i]).toBeDefined(); expect(lv.rings[owner[i]].colorIndex).toBe(r.colorIndex); expect(locks.filter(k => k.piece === i)).toHaveLength(1); }
-        if (r.shape.type === 10) expect(locks.filter(k => k.piece === i)).toHaveLength(2);
         if (r.shape.type === 9) expect(locks.filter(k => k.piece === i)).toHaveLength(1);
       });
     }

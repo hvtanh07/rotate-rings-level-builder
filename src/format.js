@@ -214,9 +214,9 @@ export function nearestRing(lv, pt, maxGap = 0.5) {
 
 // Every lock in the level, worked out from the geometry: which piece rests on which ring, and where.
 // kind 'arm': connector piece, owned by ring `owner`, hooks ring `ring` at `point`.
-// kind 'bar': end `end` of bar piece rests on ring `ring`. kind 'pin': pin piece locks ring `ring`.
+// kind 'pin': pin piece locks ring `ring`. thru: {bar, ring, points} = bar runs across the tube of ring at points (it blocks the ring's turn).
 export function analyze(lv) {
-  const locks = [], owner = {}, host = {}, problems = [];
+  const locks = [], owner = {}, host = {}, problems = [], thru = [];
   lv.rings.forEach((r, i) => {
     const t = r.shape.type;
     if (t === TYPE.CONNECTOR) {
@@ -231,11 +231,8 @@ export function analyze(lv) {
     } else if (t === TYPE.BAR) {
       const pts = barPoints(r);
       if (pts.length < 2) problems.push({lvl: 'bad', piece: i, text: 'A bar needs 2 or more points.'});
-      const ends = pts.length ? [0, pts.length - 1] : [];
-      for (const e of ends) {
-        const tg = ringsThrough(lv, pts[e])[0];
-        if (tg !== undefined) locks.push({kind: 'bar', piece: i, ring: tg, point: pts[e], end: e});
-      }
+      // a bar does not rest on rings: it is pinned in place and runs into rings through their gaps (designer, 2026-11-26)
+      lv.rings.forEach((q, j) => { if (isRing(q)) { const at = barCrossings(r, q); if (at.length) thru.push({bar: i, ring: j, points: at}); } });
     } else if (t === TYPE.PIN) {
       const tg = ringsThrough(lv, P(r))[0], bar = barsThrough(lv, P(r))[0];
       if (tg !== undefined) locks.push({kind: 'pin', piece: i, ring: tg, point: P(r)});
@@ -247,8 +244,29 @@ export function analyze(lv) {
       else problems.push({lvl: 'bad', piece: i, text: 'The bomb does not sit on a ring or a bar.'});
     }
   });
-  return {locks, owner, host, problems};
+  return {locks, owner, host, problems, thru};
 }
+
+// Points where bar b crosses the tube of ring q: the circle crossings, plus a bar end that stops on the tube.
+export function barCrossings(b, q) {
+  const pts = barPoints(b), c = P(q), R = q.shape.radius, band = q.shape.tubeRadius + b.shape.tubeRadius, out = [];
+  for (let k = 0; k + 1 < pts.length; k++) {
+    const a = pts[k], e = pts[k + 1], dx = e.x - a.x, dy = e.y - a.y, fx = a.x - c.x, fy = a.y - c.y;
+    const A = dx * dx + dy * dy, B = 2 * (fx * dx + fy * dy), C = fx * fx + fy * fy - R * R, D = B * B - 4 * A * C;
+    if (!A || D < 0) continue;
+    for (const t of [(-B - Math.sqrt(D)) / (2 * A), (-B + Math.sqrt(D)) / (2 * A)]) if (t >= 0 && t <= 1) out.push({x: a.x + t * dx, y: a.y + t * dy});
+  }
+  for (const e of [pts[0], pts[pts.length - 1]]) if (e && Math.abs(dist(e, c) - R) < band && !out.some(p => dist(p, e) < band)) out.push(e);
+  return out;
+}
+// How far point p sits inside a gap of ring r turned by `turn`, in degrees, after `margin` degrees each side (negative = on the tube).
+export function gapDepth(r, turn, p, margin = 0) {
+  if (r.shape.type !== TYPE.RING) return -180;
+  const a = angleAt(P(r), p);
+  return Math.max(-180, ...r.shape.gaps.map(g => g.widthDegrees / 2 - Math.abs(wrap180(a - (g.centerDegrees + r.eulerAngles.z + turn))) - margin));
+}
+// Margin in degrees that a bar of ring q needs on each side of a gap: the bar's and the tube's thickness.
+export const barMargin = (b, q) => (b.shape.tubeRadius + q.shape.tubeRadius) / q.shape.radius * 180 / Math.PI;
 
 // Gap of ring r, turned by `turn` degrees, contains point p?
 export function inGap(r, turn, p) {
@@ -290,7 +308,9 @@ export function check(lv) {
       }
     });
   });
-  lv.rings.forEach((r, i) => { if (r.shape.type === TYPE.BAR && !locks.some(k => k.piece === i || k.ring === i)) add('warn', `${pname(lv, i)}: nothing holds this bar (no ring under its ends, no pin on it), so it shatters at once.`, i); });
+  const {thru} = analyze(lv);
+  lv.rings.forEach((r, i) => { if (r.shape.type === TYPE.BAR && !thru.some(T => T.bar === i) && !locks.some(k => k.ring === i && k.kind === 'arm')) add('warn', `${pname(lv, i)}: this bar runs into no ring and no hook rests on it, so it comes out at once.`, i); });
+  thru.forEach(T => { const b = lv.rings[T.bar], q = lv.rings[T.ring]; if (T.points.some(p => gapDepth(q, 0, p, barMargin(b, q)) < 0)) add('warn', `${pname(lv, T.bar)} runs through the tube of ${pname(lv, T.ring)}: put it in a gap so the ring can turn.`, T.bar); });
   locks.forEach(L => { if (inGap(lv.rings[L.ring], 0, L.point)) add('warn', `${pname(lv, L.piece)} starts inside the gap of ${pname(lv, L.ring)}, so it is free at once.`, L.piece); });
   const t = lv.tutorialRing;
   if (t !== -1 && (!lv.rings[t] || !isRing(lv.rings[t]))) add('warn', `tutorialRing ${t} is not a ring.`);

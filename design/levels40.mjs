@@ -22,28 +22,30 @@ L({name: 'Held', element: 'Ring', rule: 'A ring whose arm hooks another cannot t
   b.arm(a, m).arm(m, e); return {b, tutorialRing: e};
 }});
 L({name: 'Flower', element: 'Ring', rule: 'One turn can free many hooks',
-  challenge: 'Four petals hook the center. One long turn of the center frees them all at once.', make() {
-  const b = new Lv(), c = b.ring(0, 0, {c: C.yellow, gap: 45});
-  [[90, C.pink], [0, C.purple], [270, C.pink], [180, C.purple]].forEach(([a, col]) => b.arm(nb(b, c, a, {r: .8, c: col}), c));
+  challenge: 'Three petals hook the center. One long turn of the center frees them all at once.', make() {
+  const b = new Lv(), c = b.ring(0, 0, {c: C.yellow, gap: 30});
+  [[90, C.pink], [330, C.purple], [210, C.cyan]].forEach(([a, col]) => b.arm(nb(b, c, a, {r: .8, c: col}), c));
   return {b};
 }});
 L({name: 'Swing', element: 'Ring', rule: 'Parts are solid: a free arm swings with its ring and bumps',
   challenge: 'Free the small ring, then the middle ring carries its arm. One way the arm hits the hook above; turn the other way.', make() {
   const b = new Lv(), m = b.ring(0, 0, {c: C.cyan, gap: 300}), h = nb(b, m, 90, {c: C.orange, gap: 30}), q = nb(b, m, 0, {r: .75, c: C.yellow, gap: 90});
-  b.arm(h, m).arm(m, q); return {b};
+  const p = nb(b, h, 90, {r: .7, c: C.pink, gap: 0});
+  b.arm(h, m).arm(m, q).arm(h, p).arm(nb(b, m, 225, {r: .7, c: C.green, gap: 180}), m); return {b};
 }});
 L({name: 'Bridge', element: 'Closed ring', rule: 'A closed ring has no gap: free it from its neighbours',
   challenge: 'The middle ring is closed and cannot let go of anything. Free both sides; it shatters when nothing holds it.', make() {
   const b = new Lv(), c = b.ring(0, 0, {c: C.red, closed: true}), l = nb(b, c, 180, {r: .85, c: C.blue}), r = nb(b, c, 0, {r: .85, c: C.blue});
   b.arm(c, l).arm(c, r);
-  b.arm(nb(b, l, 225, {r: .7, c: C.green}), l).arm(nb(b, r, 315, {r: .7, c: C.green}), r);
+  b.arm(nb(b, l, 225, {r: .7, c: C.green}), l).arm(nb(b, r, 315, {r: .7, c: C.green}), r).arm(r, nb(b, r, 45, {r: .7, c: C.yellow}));
   return {b};
 }});
 L({name: 'Make way', element: 'Ring', rule: 'Move one arm out of the way of another',
   challenge: 'The right ring cannot finish: its arm runs into the arm of the left ring. Turn the left ring first to clear the path.', make() {
   const b = new Lv(), A = b.ring(-1.175, 0, {c: C.purple, gap: 0}), B = b.ring(1.175, 0, {c: C.green, gap: 270});
   const ha = nb(b, A, 90, {r: .85, c: C.yellow, gap: 300}), hb = nb(b, B, 60, {r: .85, c: C.yellow, gap: 240}), s = nb(b, B, 0, {r: .7, c: C.pink, gap: 90});
-  b.arm(ha, A).arm(hb, B).arm(A, B).arm(B, s); return {b};
+  const t = nb(b, A, 225, {r: .7, c: C.cyan, gap: 200}), u = nb(b, B, 300, {r: .7, c: C.red, gap: 30});
+  b.arm(ha, A).arm(hb, B).arm(A, B).arm(B, s).arm(A, t).arm(u, B); return {b};
 }});
 
 /* ---------- 7-11: Straight Bar + Pin (unlock 7) ---------- */

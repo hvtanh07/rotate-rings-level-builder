@@ -1,5 +1,5 @@
 // Play-test rules of Rotate Rings (GDD 1.2 and 1.4), and a bot that solves a level.
-import {TYPE, isRing, analyze, inGap, P, angleAt, wrap180, barPoints, segDist, dist, rad, connectorEnds, dirOf} from './format.js';
+import {TYPE, isRing, analyze, inGap, gapDepth, barMargin, P, angleAt, wrap180, barPoints, segDist, dist, rad, connectorEnds, dirOf} from './format.js';
 
 export const RULES = {
   block: {name: 'Arms hold their ring', text: 'A ring whose arm still hooks another ring cannot turn. Free the hooked ring first.'},
@@ -10,9 +10,9 @@ export const RING_POINTS = 300;
 const STEP = 2; // degrees per sweep step; smaller than the narrowest gap in the sample levels (12°)
 
 export function newGame(lv, opts = {}) {
-  const {locks, owner, host} = analyze(lv);
+  const {locks, owner, host, thru} = analyze(lv);
   const g = {
-    lv, rule: opts.rule || 'block', locks: locks.map((L, k) => ({...L, id: k, on: true})), owner, host,
+    lv, rule: opts.rule || 'block', locks: locks.map((L, k) => ({...L, id: k, on: true})), owner, host, thru,
     turn: lv.rings.map(() => 0), alive: lv.rings.map(r => r.shape.type in {0: 1, 1: 1, 6: 1, 9: 1, 10: 1, 11: 1}),
     open: lv.rings.map(r => !r.locked), touch: lv.rings.map(() => []), rest: [], moves: 0, score: 0, events: [], history: []
   };
@@ -102,7 +102,7 @@ export function resolve(g) {
       if (t === TYPE.RING || t === TYPE.CLOSED) links = locksOn(g, i).length + armsOf(g, i).length;
       else if (t === TYPE.CONNECTOR) links = g.owner[i] !== undefined ? (g.alive[g.owner[i]] ? 1 : 0) : g.locks.filter(L => L.on && L.piece === i).length;
       else if (t === TYPE.PIN) links = g.locks.filter(L => L.on && L.piece === i).length;
-      else if (t === TYPE.BAR) links = g.locks.filter(L => L.on && (L.piece === i || (L.ring === i && L.kind === 'arm'))).length; // its ends on rings and hooks on it; pins only hold it in the air (designer, 2026-11-26) and go with it
+      else if (t === TYPE.BAR) links = g.thru.filter(T => T.bar === i && g.alive[T.ring]).length + g.locks.filter(L => L.on && L.ring === i && L.kind === 'arm').length; // rings it runs into and hooks on it; pins only hold it in place and go with it
       else if (t === TYPE.BOMB) links = g.host[i] !== undefined && g.alive[g.host[i]] ? 1 : 0;
       else return;
       if (!links) { shatter(g, i); again = true; }
@@ -178,6 +178,12 @@ function candidates(g, m) {
 }
 function bumpOf(g, moving, turn0, turn1) {
   const R = g.lv.rings;
+  // a ring's tube cannot turn into a bar that runs into it: the bar must stay in the gap (designer, 2026-11-26)
+  for (const T of g.thru) {
+    if (!moving.has(T.ring) || !g.alive[T.bar] || !g.alive[T.ring]) continue;
+    const q = R[T.ring], m = barMargin(R[T.bar], q);
+    for (const p of T.points) { const d1 = gapDepth(q, turn1[T.ring], p, m); if (d1 < 0 && d1 < gapDepth(q, turn0[T.ring], p, m) - 1e-6) return {piece: T.ring, by: T.bar}; }
+  }
   for (let m = 0; m < R.length; m++) {
     if (!g.alive[m] || !SOLID[R[m].shape.type]) continue;
     const cm = carrierOf(g, m); if (cm === undefined || !moving.has(cm)) continue;
