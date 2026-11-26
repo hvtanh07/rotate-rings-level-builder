@@ -1,1 +1,1 @@
-15 H Scales           d  46.6 | rings 9 bot win 13 min 6 free 6 traps 4/42 stuck% 34 combo 6 boom 2 needsBomb  
+15 H Scales           d    58 | rings 9 bot win 21 min 8 free 5 traps 3/49 stuck% 50 combo 6 boom 2 needsBomb  

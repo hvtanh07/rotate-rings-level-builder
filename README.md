@@ -69,7 +69,7 @@ From the GDD, sections 1.2, 1.4 and 1.5:
 - Drag a ring to turn it around its center; it snaps to `snapStep` when you let go. Arms turn with their ring.
 - When a ring's gap passes a hook or pin resting on it, that link comes apart.
 - A piece with no links left shatters (300 points per ring). Connectors go with their ring. A pin that locks nothing shatters.
-- Solid parts: pins, connectors, bars and bombs cannot pass through each other. A turn stops where two of them touch (the ring shakes).
+- Solid parts: pins, connectors, bars and bombs cannot pass through each other. A free arm cannot pass through another ring's tube either (only through its gap), and a turning ring's tube cannot sweep over a pin or an arm. A turn stops where they touch (the ring shakes). Ring tubes still overlap each other.
 - Straight Bar: it runs into rings through their gaps, and a ring with a bar in its gap cannot turn (the bar is in the way of its tube). Bars do not turn: the player slides a bar along its pins. A pin is a sleeve, so the bar moves on one line only, and it stops when it hits a ring tube or a solid part. When the bar slides off a pin, that pin lets go; with no pin left the bar comes out. A hook resting on a bar is a knot: the bar cannot slide, and only a bomb can clear it.
 - Pin: locks the ring it stands on (until the ring's gap passes it), or holds a bar as a sleeve. It shatters when it locks nothing.
 - Bomb (type 11, `shape.radius` = size): sits on a ring (turns with it) or on a bar. When a turn brings it onto another ring or bar, the bomb blows up and both pieces shatter. Pieces it touches at the start do not set it off. The bot uses a bomb when no turn frees anything else.
