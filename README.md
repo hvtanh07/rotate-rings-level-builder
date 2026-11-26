@@ -34,9 +34,9 @@ Every push to `main` runs the tests, builds, and publishes `dist/` to the `gh-pa
 
 ## The 40 designed levels
 
-`node design/run.mjs` builds them from `design/levels40.mjs`, playtests each one and writes `design/out/levels.json` (copy it to `src/data/levels.json`) and `design/out/report.json`. `node design/sheetrows.mjs` writes the Id/Level rows for the sheet. Difficulty = 2 × rings + 2.5 × bot moves + 40 × the share of careless (random) players who get stuck.
+`node design/run.mjs` (or `run.mjs from to part` for parallel parts, then `node design/merge.mjs a b …`) builds them from `design/levels40.mjs`, playtests each one and writes `design/out/levels.json` (copy it to `src/data/levels.json`) and `design/out/report.json`. `node design/sheetrows.mjs` writes the Id/Level rows for the sheet. Difficulty = 2 × rings + 2.5 × fewest moves + 40 × the share of careless (random) players who get stuck. `timeLimit` = 45 + 2 × difficulty seconds, rounded to 5, between 60 and 300. `node design/tune.mjs N tries` tries random gaps for level N; `node design/why.mjs N` shows what is left when a level cannot be won.
 
-Unlocks (GDD): Pin 7, Bomb 12, Locked Ring 17, Gear Ring 22. Hard levels: 10, 15, 20, 25, 30, 35, 40.
+Unlocks (GDD): Straight Bar + Pin 7, Bomb 12, Locked Ring 17, Gear Ring 22. Hard levels: 10, 15, 20, 25, 30, 35, 40.
 
 ## Level format
 
@@ -56,6 +56,7 @@ The tool reads and writes the same keys, in the same order, as the game's `level
 | `snapStep` | A turn snaps to this step (15° on every ring in the sample levels). |
 | `colorIndex` | 0 Red, 1 Blue, 2 Green, 3 Yellow, 4 Pink, 5 Orange, 6 Purple, 7 Cyan (the GDD's 8 colors). A connector has the color of its ring. |
 | `tutorialRing` | Ring with the hand pointer, `-1` for none. |
+| `timeLimit` | Seconds to finish the level, counted from the first ring move; `0` = no timer. At 0 the level is lost; Revive adds 30 s. (New, 2026-11-26.) |
 | `tier`, `difficulty`, `seed`, `mode`, `liftDirection`, `version` | Kept and editable; the tool does not use them. |
 | `startAngle`, `limitAngle`, `minAngle`, `maxAngle`, `slide`, `slideAxis`, `pivot`, `rotationAxis`, `flatRatio`, `arcDegrees`, `flexDepth` | Kept and editable. The play test uses `limitAngle`/`minAngle`/`maxAngle`; the rest are the same in every sample level. |
 
@@ -67,12 +68,15 @@ From the GDD, sections 1.2, 1.4 and 1.5:
 
 - Drag a ring to turn it around its center; it snaps to `snapStep` when you let go. Arms turn with their ring.
 - When a ring's gap passes a hook, pin or bar end resting on it, that link comes apart.
-- A piece with no links left shatters (300 points per ring). Connectors go with their ring. A pin or bar that locks nothing shatters.
-- Pin: locks the ring or bar it stands on, and shatters when it locks nothing. A bar held only by a pin cannot be freed by a gap.
+- A piece with no links left shatters (300 points per ring). Connectors go with their ring. A pin that locks nothing shatters.
+- Solid parts: pins, connectors, bars and bombs cannot pass through each other. A turn stops where two of them touch (the ring shakes).
+- Straight Bar: its links are its ends resting on rings and the hooks resting on it. When none is left it comes out, and the pins on it go with it. A hook resting on a bar is a knot only a bomb can clear.
+- Pin: locks the ring or bar it stands on, and shatters when it locks nothing.
 - Bomb (type 11, `shape.radius` = size): sits on a ring (turns with it) or on a bar. When a turn brings it onto another ring or bar, the bomb blows up and both pieces shatter. Pieces it touches at the start do not set it off. The bot uses a bomb when no turn frees anything else.
 - Locked Ring: does not turn until the piece holding its key shatters; then the key opens it.
 - Gear Rings: meshed gears turn the other way, by the tooth ratio (same teeth: same angle).
 - A ring whose arm still hooks another ring is held and cannot turn (a tap only shakes it). Free the hooked ring first. (Confirmed by the designer, 2026-11-25.)
+- Timer: starts on the first ring move; at 0 the level is lost; Revive +30 s.
 - Boosters: Hint lights rings that can turn and free something; Saw cuts one connector or bar; Remove takes one ring, bar or pin off.
 
 ## Code

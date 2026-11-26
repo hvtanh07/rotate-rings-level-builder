@@ -188,7 +188,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": 1
+            "tutorialRing": 1,
+            "timeLimit": 60.0
         },
         {
             "id": "level_002",
@@ -489,7 +490,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": 2
+            "tutorialRing": 2,
+            "timeLimit": 65.0
         },
         {
             "id": "level_003",
@@ -1016,7 +1018,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_004",
@@ -1317,7 +1320,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 65.0
         },
         {
             "id": "level_005",
@@ -1839,7 +1843,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_006",
@@ -2366,7 +2371,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_007",
@@ -2671,7 +2677,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": 0
+            "tutorialRing": 0,
+            "timeLimit": 65.0
         },
         {
             "id": "level_008",
@@ -3148,7 +3155,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 80.0
         },
         {
             "id": "level_009",
@@ -4021,7 +4029,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 105.0
         },
         {
             "id": "level_010",
@@ -4033,72 +4042,18 @@
                 "z": -1.0
             },
             "tier": 0,
-            "difficulty": 60.5,
+            "difficulty": 46.0,
             "seed": 4010,
             "rings": [
                 {
                     "shape": {
                         "id": "R0",
-                        "type": 0,
-                        "radius": 1.0,
-                        "tubeRadius": 0.15000000596046448,
-                        "gaps": [],
-                        "flatRatio": 0.5,
-                        "legLength": 1.2000000476837158,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": false,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 15.0,
-                    "colorIndex": 0,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "R1",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 80.0,
+                                "centerDegrees": 270.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4151,13 +4106,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R2",
+                        "id": "R1",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 15.0,
+                                "centerDegrees": 180.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4210,13 +4165,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R3",
+                        "id": "R2",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 15.0,
+                                "centerDegrees": 90.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4269,13 +4224,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R4",
+                        "id": "R3",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 295.0,
+                                "centerDegrees": 0.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4328,13 +4283,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R5",
+                        "id": "R4",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 35.0,
+                                "centerDegrees": 45.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4387,13 +4342,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R6",
+                        "id": "R5",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 135.0,
+                                "centerDegrees": 315.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4446,13 +4401,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R7",
+                        "id": "R6",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 170.0,
+                                "centerDegrees": 225.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4505,13 +4460,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R8",
+                        "id": "R7",
                         "type": 1,
                         "radius": 0.85,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 35.0,
+                                "centerDegrees": 135.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -4822,222 +4777,6 @@
                         "tubeRadius": 0.04500000178813934,
                         "gaps": [],
                         "flatRatio": 0.5,
-                        "legLength": 0.3500000000000001,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": true,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 0.0,
-                        "y": 1.175,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 90.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 0.0,
-                    "colorIndex": 0,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "K1",
-                        "type": 6,
-                        "radius": 0.2200000137090683,
-                        "tubeRadius": 0.04500000178813934,
-                        "gaps": [],
-                        "flatRatio": 0.5,
-                        "legLength": 0.3500000000000001,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": true,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 1.175,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 0.0,
-                    "colorIndex": 0,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "K2",
-                        "type": 6,
-                        "radius": 0.2200000137090683,
-                        "tubeRadius": 0.04500000178813934,
-                        "gaps": [],
-                        "flatRatio": 0.5,
-                        "legLength": 0.3500000000000001,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": true,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 0.0,
-                        "y": -1.175,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": -90.00000000000001
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 0.0,
-                    "colorIndex": 0,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "K3",
-                        "type": 6,
-                        "radius": 0.2200000137090683,
-                        "tubeRadius": 0.04500000178813934,
-                        "gaps": [],
-                        "flatRatio": 0.5,
-                        "legLength": 0.3500000000000001,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": true,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": -1.175,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 180.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 0.0,
-                    "colorIndex": 0,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "K4",
-                        "type": 6,
-                        "radius": 0.2200000137090683,
-                        "tubeRadius": 0.04500000178813934,
-                        "gaps": [],
-                        "flatRatio": 0.5,
                         "legLength": 1.1044607324760325,
                         "arcDegrees": 240.0,
                         "flexDepth": 0.0,
@@ -5086,7 +4825,7 @@
                 },
                 {
                     "shape": {
-                        "id": "K5",
+                        "id": "K1",
                         "type": 6,
                         "radius": 0.2200000137090683,
                         "tubeRadius": 0.04500000178813934,
@@ -5140,7 +4879,7 @@
                 },
                 {
                     "shape": {
-                        "id": "K6",
+                        "id": "K2",
                         "type": 6,
                         "radius": 0.2200000137090683,
                         "tubeRadius": 0.04500000178813934,
@@ -5194,7 +4933,7 @@
                 },
                 {
                     "shape": {
-                        "id": "K7",
+                        "id": "K3",
                         "type": 6,
                         "radius": 0.2200000137090683,
                         "tubeRadius": 0.04500000178813934,
@@ -5264,6 +5003,222 @@
                     },
                     "position": {
                         "x": 0.0,
+                        "y": 3.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 90.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H1",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.05,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H2",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 0.0,
+                        "y": -3.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 270.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H3",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -3.05,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 180.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H4",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 0.0,
                         "y": 2.75,
                         "z": 0.0
                     },
@@ -5302,7 +5257,7 @@
                 },
                 {
                     "shape": {
-                        "id": "H1",
+                        "id": "H5",
                         "type": 9,
                         "radius": 0.2199999988079071,
                         "tubeRadius": 0.04500000178813934,
@@ -5356,7 +5311,7 @@
                 },
                 {
                     "shape": {
-                        "id": "H2",
+                        "id": "H6",
                         "type": 9,
                         "radius": 0.2199999988079071,
                         "tubeRadius": 0.04500000178813934,
@@ -5410,7 +5365,7 @@
                 },
                 {
                     "shape": {
-                        "id": "H3",
+                        "id": "H7",
                         "type": 9,
                         "radius": 0.2199999988079071,
                         "tubeRadius": 0.04500000178813934,
@@ -5463,7 +5418,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 135.0
         },
         {
             "id": "level_011",
@@ -6228,7 +6184,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 90.0
         },
         {
             "id": "level_012",
@@ -6695,7 +6652,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": 1
+            "tutorialRing": 1,
+            "timeLimit": 100.0
         },
         {
             "id": "level_013",
@@ -7153,7 +7111,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 110.0
         },
         {
             "id": "level_014",
@@ -7165,7 +7124,7 @@
                 "z": -1.0
             },
             "tier": 1,
-            "difficulty": 10.5,
+            "difficulty": 13.0,
             "seed": 4014,
             "rings": [
                 {
@@ -7289,7 +7248,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 135.0,
+                                "centerDegrees": 45.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -7724,7 +7683,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 70.0
         },
         {
             "id": "level_015",
@@ -8579,7 +8539,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 145.0
         },
         {
             "id": "level_016",
@@ -8591,7 +8552,7 @@
                 "z": -1.0
             },
             "tier": 1,
-            "difficulty": 43.2,
+            "difficulty": 22.0,
             "seed": 4016,
             "rings": [
                 {
@@ -8720,7 +8681,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 290.0,
+                                "centerDegrees": 200.0,
                                 "widthDegrees": 46.982540130615234
                             }
                         ],
@@ -9235,14 +9196,14 @@
                         "gearPhase": 0.0
                     },
                     "position": {
-                        "x": -2.6414,
-                        "y": -1.525,
+                        "x": -1.6017,
+                        "y": -2.0098,
                         "z": 0.0
                     },
                     "eulerAngles": {
                         "x": 0.0,
                         "y": 0.0,
-                        "z": 210.0
+                        "z": 280.0
                     },
                     "rotationAxis": {
                         "x": 0.0,
@@ -9327,7 +9288,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 90.0
         },
         {
             "id": "level_017",
@@ -9628,7 +9590,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": 0
+            "tutorialRing": 0,
+            "timeLimit": 65.0
         },
         {
             "id": "level_018",
@@ -10393,7 +10356,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 100.0
         },
         {
             "id": "level_019",
@@ -10920,7 +10884,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_020",
@@ -10932,7 +10897,7 @@
                 "z": -1.0
             },
             "tier": 1,
-            "difficulty": 49.4,
+            "difficulty": 57.6,
             "seed": 4020,
             "rings": [
                 {
@@ -10989,7 +10954,7 @@
                         "z": 0.0
                     },
                     "locked": true,
-                    "keyHolder": 8,
+                    "keyHolder": 10,
                     "lockAngle": 310.0,
                     "keyAngle": 310.0,
                     "gearWith": []
@@ -11404,6 +11369,124 @@
                 },
                 {
                     "shape": {
+                        "id": "R8",
+                        "type": 1,
+                        "radius": 0.7,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 0.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 4.25,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R9",
+                        "type": 1,
+                        "radius": 0.55,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 300.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 5.05,
+                        "y": -1.3856,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 4,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
                         "id": "L0",
                         "type": 10,
                         "radius": 0.25999999046325684,
@@ -11598,6 +11681,114 @@
                         "x": 0.0,
                         "y": 0.0,
                         "z": -7.016709298534877e-15
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K3",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.34999999999999964,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.375,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 1,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K4",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.35000000000000014,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 4.6875,
+                        "y": -0.7578,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": -59.999999999999986
                     },
                     "rotationAxis": {
                         "x": 0.0,
@@ -11898,7 +12089,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 160.0
         },
         {
             "id": "level_021",
@@ -12672,7 +12864,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 100.0
         },
         {
             "id": "level_022",
@@ -13144,7 +13337,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": 0
+            "tutorialRing": 0,
+            "timeLimit": 70.0
         },
         {
             "id": "level_023",
@@ -13633,7 +13827,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 80.0
         },
         {
             "id": "level_024",
@@ -14105,7 +14300,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 80.0
         },
         {
             "id": "level_025",
@@ -14117,7 +14313,7 @@
                 "z": -1.0
             },
             "tier": 2,
-            "difficulty": 33.5,
+            "difficulty": 62.5,
             "seed": 4025,
             "rings": [
                 {
@@ -14128,7 +14324,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 30.0,
+                                "centerDegrees": 340.0,
                                 "widthDegrees": 46.982540130615234
                             }
                         ],
@@ -14189,7 +14385,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 215.0,
+                                "centerDegrees": 195.0,
                                 "widthDegrees": 46.982540130615234
                             }
                         ],
@@ -14251,7 +14447,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 115.0,
+                                "centerDegrees": 180.0,
                                 "widthDegrees": 46.982540130615234
                             }
                         ],
@@ -14312,7 +14508,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 320.0,
+                                "centerDegrees": 305.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -14371,7 +14567,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 5.0,
+                                "centerDegrees": 155.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -14430,7 +14626,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 255.0,
+                                "centerDegrees": 150.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -14503,65 +14699,6 @@
                         "gearPhase": 0.0
                     },
                     "position": {
-                        "x": 4.4,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 15.0,
-                    "colorIndex": 1,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "R7",
-                        "type": 1,
-                        "radius": 0.7,
-                        "tubeRadius": 0.15000000596046448,
-                        "gaps": [
-                            {
-                                "centerDegrees": 340.0,
-                                "widthDegrees": 56.0
-                            }
-                        ],
-                        "flatRatio": 0.5,
-                        "legLength": 1.2000000476837158,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": false,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
                         "x": 0.0,
                         "y": -2.05,
                         "z": 0.0
@@ -14587,6 +14724,119 @@
                     "maxAngle": 180.0,
                     "snapStep": 15.0,
                     "colorIndex": 6,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R7",
+                        "type": 0,
+                        "radius": 0.9,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 2.7,
+                        "y": -2.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R8",
+                        "type": 1,
+                        "radius": 0.6,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 80.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 4.55,
+                        "y": -2.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 3,
                     "slide": false,
                     "slideAxis": {
                         "x": 0.0,
@@ -14677,7 +14927,7 @@
                     "eulerAngles": {
                         "x": 0.0,
                         "y": 0.0,
-                        "z": 180.0
+                        "z": -7.016709298534874e-15
                     },
                     "rotationAxis": {
                         "x": 0.0,
@@ -14694,7 +14944,7 @@
                     "minAngle": -180.0,
                     "maxAngle": 180.0,
                     "snapStep": 0.0,
-                    "colorIndex": 5,
+                    "colorIndex": 1,
                     "slide": false,
                     "slideAxis": {
                         "x": 0.0,
@@ -14710,60 +14960,6 @@
                 {
                     "shape": {
                         "id": "K2",
-                        "type": 6,
-                        "radius": 0.2200000137090683,
-                        "tubeRadius": 0.04500000178813934,
-                        "gaps": [],
-                        "flatRatio": 0.5,
-                        "legLength": 0.3500000000000001,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": true,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 3.525,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 0.0,
-                    "colorIndex": 5,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "K3",
                         "type": 6,
                         "radius": 0.2200000137090683,
                         "tubeRadius": 0.04500000178813934,
@@ -14803,6 +14999,60 @@
                     "maxAngle": 180.0,
                     "snapStep": 0.0,
                     "colorIndex": 6,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K3",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.35000000000000053,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.775,
+                        "y": -2.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 180.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 3,
                     "slide": false,
                     "slideAxis": {
                         "x": 0.0,
@@ -15030,9 +15280,118 @@
                     "lockAngle": 0.0,
                     "keyAngle": 0.0,
                     "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H4",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 2.7,
+                        "y": -2.95,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 270.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "B0",
+                        "type": 11,
+                        "radius": 0.25,
+                        "tubeRadius": 0.05,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.3,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.0571,
+                        "y": 0.7071,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 45.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 170.0
         },
         {
             "id": "level_026",
@@ -15672,7 +16031,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 95.0
         },
         {
             "id": "level_027",
@@ -16464,7 +16824,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_028",
@@ -17243,7 +17604,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_029",
@@ -17954,7 +18316,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 100.0
         },
         {
             "id": "level_030",
@@ -17966,7 +18329,7 @@
                 "z": -1.0
             },
             "tier": 2,
-            "difficulty": 50.5,
+            "difficulty": 59.5,
             "seed": 4030,
             "rings": [
                 {
@@ -18488,6 +18851,124 @@
                     "maxAngle": 180.0,
                     "snapStep": 15.0,
                     "colorIndex": 1,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R9",
+                        "type": 1,
+                        "radius": 0.65,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 40.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -3.9,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R10",
+                        "type": 1,
+                        "radius": 0.65,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 0.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.9,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 3,
                     "slide": false,
                     "slideAxis": {
                         "x": 0.0,
@@ -19076,6 +19557,114 @@
                 },
                 {
                     "shape": {
+                        "id": "K8",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.3500000000000001,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -3.075,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": -7.016709298534877e-15
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K9",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.3500000000000001,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.075,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 180.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
                         "id": "H0",
                         "type": 9,
                         "radius": 0.2199999988079071,
@@ -19183,7 +19772,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 165.0
         },
         {
             "id": "level_031",
@@ -19936,7 +20526,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 105.0
         },
         {
             "id": "level_032",
@@ -20453,7 +21044,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 65.0
         },
         {
             "id": "level_033",
@@ -20974,7 +21566,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 100.0
         },
         {
             "id": "level_034",
@@ -21626,7 +22219,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_035",
@@ -21638,7 +22232,7 @@
                 "z": -1.0
             },
             "tier": 3,
-            "difficulty": 61.3,
+            "difficulty": 68.2,
             "seed": 4035,
             "rings": [
                 {
@@ -21817,7 +22411,7 @@
                         "z": 0.0
                     },
                     "locked": true,
-                    "keyHolder": 9,
+                    "keyHolder": 11,
                     "lockAngle": 220.0,
                     "keyAngle": 220.0,
                     "gearWith": []
@@ -21876,7 +22470,7 @@
                         "z": 0.0
                     },
                     "locked": true,
-                    "keyHolder": 10,
+                    "keyHolder": 12,
                     "lockAngle": 40.0,
                     "keyAngle": 40.0,
                     "gearWith": []
@@ -22168,6 +22762,124 @@
                 },
                 {
                     "shape": {
+                        "id": "R9",
+                        "type": 1,
+                        "radius": 0.55,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 0.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -2.8,
+                        "y": -2.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 4,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R10",
+                        "type": 1,
+                        "radius": 0.55,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 40.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 2.8,
+                        "y": -2.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 4,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
                         "id": "L0",
                         "type": 10,
                         "radius": 0.25999999046325684,
@@ -22396,6 +23108,114 @@
                     "maxAngle": 180.0,
                     "snapStep": 0.0,
                     "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K2",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.34999999999999964,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -3.525,
+                        "y": -2.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 180.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 4,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K3",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.34999999999999964,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.525,
+                        "y": -2.05,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 4,
                     "slide": false,
                     "slideAxis": {
                         "x": 0.0,
@@ -23003,7 +23823,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 180.0
         },
         {
             "id": "level_036",
@@ -23756,7 +24577,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 105.0
         },
         {
             "id": "level_037",
@@ -24346,7 +25168,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 85.0
         },
         {
             "id": "level_038",
@@ -24358,7 +25181,7 @@
                 "z": -1.0
             },
             "tier": 3,
-            "difficulty": 55.7,
+            "difficulty": 36.8,
             "seed": 4038,
             "rings": [
                 {
@@ -24369,7 +25192,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 260.0,
+                                "centerDegrees": 200.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -24430,7 +25253,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 210.0,
+                                "centerDegrees": 130.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -24492,7 +25315,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 80.0,
+                                "centerDegrees": 310.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -24554,7 +25377,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 285.0,
+                                "centerDegrees": 230.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -24669,7 +25492,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 0.0,
+                                "centerDegrees": 180.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -25225,7 +26048,8 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 120.0
         },
         {
             "id": "level_039",
@@ -26145,7 +26969,1342 @@
                     "gearWith": []
                 }
             ],
-            "tutorialRing": -1
+            "tutorialRing": -1,
+            "timeLimit": 115.0
+        },
+        {
+            "id": "level_040",
+            "version": 1,
+            "mode": 1,
+            "liftDirection": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": -1.0
+            },
+            "tier": 3,
+            "difficulty": 82.3,
+            "seed": 4040,
+            "rings": [
+                {
+                    "shape": {
+                        "id": "R0",
+                        "type": 1,
+                        "radius": 0.9,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 5.0,
+                                "widthDegrees": 55.27
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 21,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -1.075,
+                        "y": 2.6,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 2,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": [
+                        1
+                    ]
+                },
+                {
+                    "shape": {
+                        "id": "R1",
+                        "type": 1,
+                        "radius": 0.9,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 200.0,
+                                "widthDegrees": 55.27
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 21,
+                        "gearPhase": 188.57142857142856
+                    },
+                    "position": {
+                        "x": 1.075,
+                        "y": 2.6,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 2,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": [
+                        0
+                    ]
+                },
+                {
+                    "shape": {
+                        "id": "R2",
+                        "type": 1,
+                        "radius": 0.9,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 40.0,
+                                "widthDegrees": 55.27
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -2.6,
+                        "y": 0.3,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R3",
+                        "type": 1,
+                        "radius": 0.9,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 140.0,
+                                "widthDegrees": 55.27
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 2.6,
+                        "y": 0.3,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R4",
+                        "type": 1,
+                        "radius": 1.0,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 105.0,
+                                "widthDegrees": 46.982540130615234
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": true,
+                    "keyHolder": 10,
+                    "lockAngle": 220.0,
+                    "keyAngle": 40.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R5",
+                        "type": 1,
+                        "radius": 0.65,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 290.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -4.0555,
+                        "y": -0.9213,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 4,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R6",
+                        "type": 1,
+                        "radius": 0.65,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 230.0,
+                                "widthDegrees": 56.0
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 4.0555,
+                        "y": -0.9213,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 4,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R7",
+                        "type": 1,
+                        "radius": 0.95,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 355.0,
+                                "widthDegrees": 55.27
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 1.1,
+                        "y": -2.3,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 5,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R8",
+                        "type": 0,
+                        "radius": 0.95,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -1.0,
+                        "y": -2.3,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 1,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "R9",
+                        "type": 1,
+                        "radius": 0.95,
+                        "tubeRadius": 0.15000000596046448,
+                        "gaps": [
+                            {
+                                "centerDegrees": 175.0,
+                                "widthDegrees": 55.27
+                            }
+                        ],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.2,
+                        "y": -2.3,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 15.0,
+                    "colorIndex": 1,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "L0",
+                        "type": 10,
+                        "radius": 0.25999999046325684,
+                        "tubeRadius": 0.09000000357627869,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [
+                            {
+                                "x": -1.975,
+                                "y": 2.6
+                            },
+                            {
+                                "x": -2.6,
+                                "y": 2.6
+                            },
+                            {
+                                "x": -2.6,
+                                "y": 1.2
+                            }
+                        ],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 6,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "L1",
+                        "type": 10,
+                        "radius": 0.25999999046325684,
+                        "tubeRadius": 0.09000000357627869,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 1.2000000476837158,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [
+                            {
+                                "x": 1.975,
+                                "y": 2.6
+                            },
+                            {
+                                "x": 2.6,
+                                "y": 2.6
+                            },
+                            {
+                                "x": 2.6,
+                                "y": 1.2
+                            }
+                        ],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 6,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K0",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.7172504656604803,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -1.3497,
+                        "y": 0.1557,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 173.418055344822
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K1",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.7172504656604803,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 1.3497,
+                        "y": 0.1557,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 6.5819446551780105
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K2",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.3499999999999999,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -3.4235,
+                        "y": -0.391,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": -140.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K3",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.35000000000000003,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.4235,
+                        "y": -0.391,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": -40.00000000000002
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 3,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "K4",
+                        "type": 6,
+                        "radius": 0.2200000137090683,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.5995097567963924,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": true,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 0.5608,
+                        "y": -1.1726,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": -64.4400348281762
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H0",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -1.0,
+                        "y": -3.25,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 270.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H1",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 3.2,
+                        "y": -3.25,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 270.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H2",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 1.1,
+                        "y": -3.25,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 270.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H3",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": -2.6,
+                        "y": 2.6,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 135.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H4",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 2.6,
+                        "y": 2.6,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 45.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "B0",
+                        "type": 11,
+                        "radius": 0.25,
+                        "tubeRadius": 0.05,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.3,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
+                        "x": 1.575,
+                        "y": -1.4773,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 60.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                }
+            ],
+            "tutorialRing": -1,
+            "timeLimit": 210.0
         }
     ]
 }

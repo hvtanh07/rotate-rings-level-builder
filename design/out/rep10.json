@@ -1,0 +1,28 @@
+[
+ {
+  "n": 10,
+  "id": "level_010",
+  "name": "Frame",
+  "element": "Bar + Pin",
+  "hard": true,
+  "challenge": "A pinned frame on four corners with a pinwheel inside. Each corner holds two bar ends and a hook: find the turn that frees all three. A pinwheel ring can only let go once the corner it hooks is gone.",
+  "probs": [],
+  "rings": 8,
+  "pieces": 24,
+  "canWin": true,
+  "botWon": true,
+  "botMoves": 15,
+  "minMoves": 12,
+  "startFree": 4,
+  "traps": 0,
+  "choices": 67,
+  "stuckRate": 0,
+  "randMoves": 14.58,
+  "trapRate": 0,
+  "maxCombo": 3,
+  "booms": 0,
+  "needsBomb": false,
+  "sweep": 1500,
+  "difficulty": 46
+ }
+]

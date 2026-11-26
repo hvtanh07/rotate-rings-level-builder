@@ -70,12 +70,12 @@ L({name: 'Gate', element: 'Straight Bar + Pin', rule: 'A bar can be bent; it hol
   b.arm(nb(b, M, 270, {r: .8, c: C.red}), M);
   return {b};
 }});
-L({name: 'Frame', element: 'Bar + Pin', hard: true, G: {1: 80, 2: 15, 3: 15, 4: 295, 5: 35, 6: 135, 7: 170, 8: 35}, rule: 'Hard: order, direction and bars together',
-  challenge: 'A pinned frame on four corners, a pinwheel inside and a closed heart. Each corner holds two bar ends and a hook: find the turn that frees all three, then open the pinwheel without its free arms running into the bars.', make() {
-  const b = new Lv(), c = b.ring(0, 0, {c: C.red, closed: true}), k = 2.75, d = D(1, .85);
+L({name: 'Frame', element: 'Bar + Pin', hard: true, rule: 'Hard: order, direction and bars together',
+  challenge: 'A pinned frame on four corners with a pinwheel inside. Each corner holds two bar ends and a hook: find the turn that frees all three. A pinwheel ring can only let go once the corner it hooks is gone.', make() {
+  const b = new Lv(), k = 2.75, d = D(1, .85);
   const mid = [[90, C.blue], [0, C.green], [270, C.blue], [180, C.green]].map(([a, col]) => at(b, d, a, {x: 0, y: 0}, {r: .85, c: col}));
   const cor = [[45, C.yellow], [315, C.orange], [225, C.yellow], [135, C.orange]].map(([a, col]) => at(b, k * Math.SQRT2, a, {x: 0, y: 0}, {r: .85, c: col}));
-  mid.forEach(m => b.arm(c, m));
+  mid.forEach((m, i) => b.pin(m, [90, 0, 270, 180][i]));
   mid.forEach((m, i) => b.arm(m, cor[i]));            // pinwheel: N->TR, E->BR, S->BL, W->TL
   const [TR, BR, BL, TL] = cor;
   const sides = [[TL, 0, TR, 180], [TR, 270, BR, 90], [BR, 180, BL, 0], [BL, 90, TL, 270]];
@@ -125,13 +125,13 @@ L({name: 'Scales', element: 'Bomb', hard: true, rule: 'Hard: two knots, two bomb
   b.pin(Lp, 270).pin(Rp, 270).arm(ct, BL).arm(ct, BR).arm(ct, s).bomb(BL, 135).bomb(BR, 45);
   return {b};
 }});
-L({name: 'Ring road', element: 'Bomb', G: {0: 40, 1: 225, 2: 290, 3: 200, 4: 275, 5: 130}, rule: 'Two rings hooked onto each other are a knot',
+L({name: 'Ring road', element: 'Bomb', G: {0: 40, 1: 225, 2: 200, 3: 200, 4: 275, 5: 130}, rule: 'Two rings hooked onto each other are a knot',
   challenge: 'Breather: around the road, two rings hold each other and neither can turn. Clear the road up to the bomb ring and send its bomb into the pair.', make() {
   const b = new Lv(), o = {x: 0, y: 0}, R = [], cols = [C.red, C.orange, C.yellow, C.green, C.cyan, C.blue];
   for (let k = 0; k < 6; k++) R.push(at(b, D(.85, .85), 90 + 60 * k, o, {r: k === 2 ? 1 : .85, c: cols[k]}));
   b.arm(R[0], R[1]).arm(R[1], R[0]);                  // the knot
   b.arm(R[2], R[3]).arm(R[3], R[4]).arm(R[4], R[5]);  // the road: clear from R5 back
-  b.bomb(R[2], 30).pin(R[2], 210);
+  b.bomb(R[2], 30).pin(R[2], 280);
   return {b};
 }});
 
@@ -201,15 +201,15 @@ L({name: 'Partner', element: 'Gear Ring', rule: 'A gear group is held if any gea
   b.arm(nb(b, a, 90, {r: .7, c: C.yellow}), a);
   return {b};
 }});
-L({name: 'Gear train', element: 'Gear + Lock + Bomb', hard: true, rule: 'Hard: three gears, a lock and free arms',
+L({name: 'Gear train', element: 'Gear + Lock + Bomb', hard: true, G: {0: 340, 1: 195, 2: 180, 3: 305, 4: 155, 5: 150, 6: 290, 8: 80}, rule: 'Hard: three gears, a lock and free arms',
   challenge: 'Three gears turn as one, the middle one the other way, but the middle gear is locked. Get its key from the top chain. The bomb on the right gear must reach the closed knot below before the gears let go of their pins: one direction does both, the other wastes the bomb.', make() {
   const b = new Lv(), d = D(1, 1), A = b.ring(-d, 0, {c: C.orange}), B = b.ring(0, 0, {c: C.green}), Cc = b.ring(d, 0, {c: C.orange});
   b.gear(A, B).gear(B, Cc);
   const k = nb(b, B, 90, {r: .8, c: C.yellow}), t = nb(b, k, 90, {r: .65, c: C.pink}); b.arm(k, t).pin(t, 90).lock(B, k);
-  b.arm(A, nb(b, A, 180, {r: .7, c: C.blue})).arm(Cc, nb(b, Cc, 0, {r: .7, c: C.blue}));
+  b.arm(nb(b, A, 180, {r: .7, c: C.blue}), A);
   b.pin(A, 270).pin(Cc, 270).pin(B, 270);
   b.arm(nb(b, B, 270, {r: .7, c: C.purple}), B);
-  const kn = b.ring(d + .35, -2.2, {r: .9, c: C.red, closed: true}); b.pin(kn, 270).bomb(Cc, 45);
+  const kn = b.ring(d + .35, -2.05, {r: .9, c: C.red, closed: true}); b.pin(kn, 270).bomb(Cc, 45);
   const kp = nb(b, kn, 0, {r: .6, c: C.yellow}); b.arm(kp, kn);
   return {b};
 }});
@@ -342,15 +342,15 @@ L({name: 'Spiral', element: 'All so far', rule: 'A spiral: the lock key is at th
   b.arm(nb(b, R[6], dir - 40, {r: .5, c: C.pink}), R[6]);
   return {b};
 }});
-L({name: 'Crown', element: 'All', hard: true, rule: 'Finale: every rule in one picture',
+L({name: 'Crown', element: 'All', hard: true, G: {0: 5, 1: 200, 4: 105, 5: 290, 6: 230, 7: 355, 9: 175}, rule: 'Finale: every rule in one picture',
   challenge: 'Finale: a gear pair carries two pinned bars down to the pillars, the jewel is locked with its key on the left bar, and the bomb ring at the base has a decoy on the near side and the hook of the jewel blocking the far side. Bars, then jewel, then send the bomb the long way to the knot.', make() {
   const b = new Lv(), d = D(.9, .9), a = b.ring(-d / 2, 2.6, {r: .9, c: C.green}), g = b.ring(d / 2, 2.6, {r: .9, c: C.green}); b.gear(a, g);
   const L = b.ring(-2.6, .3, {r: .9, c: C.yellow, gap: 40}), R = b.ring(2.6, .3, {r: .9, c: C.yellow, gap: 140}), J = b.ring(0, 0, {r: 1, c: C.red});
   const h1 = b.bar([b.on(a, 180), [-2.6, 2.6], b.on(L, 90)], {c: C.purple}), h2 = b.bar([b.on(g, 0), [2.6, 2.6], b.on(R, 90)], {c: C.purple});
   b.pinAt(-2.6, 2.6, 135).pinAt(2.6, 2.6, 45);
-  b.arm(J, L).arm(J, R).lock(J, h1).pin(J, 90);
+  b.arm(J, L).arm(J, R).lock(J, h1);
   b.arm(L, nb(b, L, 220, {r: .65, c: C.pink})).arm(R, nb(b, R, 320, {r: .65, c: C.pink}));
-  const M = b.ring(1.1, -2.3, {r: .95, c: C.orange}), K = b.ring(-1.15, -2.3, {r: .95, c: C.blue, closed: true}), F = b.ring(3.35, -2.3, {r: .95, c: C.blue});
+  const M = b.ring(1.1, -2.3, {r: .95, c: C.orange}), K = b.ring(-1, -2.3, {r: .95, c: C.blue, closed: true}), F = b.ring(3.2, -2.3, {r: .95, c: C.blue});
   b.arm(J, M).bomb(M, 60).pin(K, 270).pin(F, 270).pin(M, 270);
   return {b};
 }});

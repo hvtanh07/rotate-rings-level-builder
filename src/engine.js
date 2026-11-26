@@ -325,6 +325,12 @@ function bombMove(g) {
   return best;
 }
 // Player moves from a state: turn one ring one way until something happens (a link frees, a piece shatters, a bomb goes off).
+// Plays one move the way eventMoves found it: in the ring's snap steps, so a found line replays to the same state.
+export function playMove(g, i, delta) {
+  const snap = g.lv.rings[i].snapStep || 15, s = Math.sign(delta); let ok = true;
+  for (let left = Math.abs(delta); left > 1e-6 && ok; left -= snap) { ok = turnRing(g, i, s * Math.min(snap, left)); if (g.events.some(e => e.type === 'bump')) break; }
+  return ok;
+}
 export function eventMoves(g) {
   const out = [];
   g.lv.rings.forEach((r, i) => {
@@ -359,7 +365,7 @@ export function searchSolve(lv, rule = 'block', maxStates = 30000) {
 export function solve(lv, rule = 'block', limit = 400) {
   const play = list => {
     const g = newGame(JSON.parse(JSON.stringify(lv)), {rule}), moves = [];
-    if (list) for (const m of list) { turnRing(g, m.ring, m.delta); moves.push(m); }
+    if (list) for (const m of list) { playMove(g, m.ring, m.delta); moves.push(m); }
     else while (!won(g) && moves.length < limit) { const m = botMove(g); if (!m) break; const k0 = stateKey(g); turnRing(g, m.ring, m.delta); if (stateKey(g) === k0) break; moves.push(m); }
     return {won: won(g), moves, stuck: g.alive.map((a, i) => a ? i : -1).filter(i => i >= 0), score: g.score, game: g};
   };
