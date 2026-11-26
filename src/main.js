@@ -2,7 +2,7 @@ import './style.css';
 import ORIGINAL from './data/levels.json';
 import {TYPE, TYPE_NAME, PALETTE, colorHex, isRing, normalize, normalizeRing, serialize, serializeFile, compact, parseLevels, analyze, check, statusOf, tally, pname,
   makePiece, placeArm, placeBar, snapToRing, nearestRing, nearestBar, snapToBar, ringsThrough, removePieces, blankLevel, connectorEnds, barPoints, P, dist, angleAt, rad, deg, wrap180, nextId, suggestTime, REVIVE_SECONDS} from './format.js';
-import {RULES, newGame, bombPos, beginMove, turnRing, canTurn, undoMove, won, left, hint, saw, removePiece, botMove, solve, barAxis, barOffset} from './engine.js';
+import {RULES, newGame, bombPos, beginMove, turnRing, canTurn, undoMove, won, left, hint, saw, removePiece, botMove, solve, barAxis, barOffset, nextMove, planFrom, keyOf} from './engine.js';
 import {drawLevel, bounds, shardsAt} from './render.js';
 
 const $ = s => document.querySelector(s);
@@ -492,20 +492,25 @@ function finishTurn(d) {
   flushEvents(); renderPlay();
 }
 function animateTurn(i, delta, done) {
+  // plays the move in the same steps the bot searched with (a snap step per frame), so it ends where the search said
   animating = true; beginMove(game); startTimer();
-  const t0 = performance.now(), dur = Math.min(900, 250 + Math.abs(delta) * 2.2); let doneA = 0;
-  const stepF = now => {
-    const k = Math.min(1, (now - t0) / dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, want = delta * e;
-    turnRing(game, i, want - doneA, {count: false}); doneA = want; flushEvents(); renderPlay();
-    if (k < 1 && game.alive[i]) requestAnimationFrame(stepF); else { animating = false; done && done(); }
+  const bar = game.lv.rings[i].shape.type === TYPE.BAR, snap = bar ? .1 : game.lv.rings[i].snapStep || 15, sg = Math.sign(delta);
+  let left = Math.abs(delta);
+  const stepF = () => {
+    const d = Math.min(snap, left); left -= d;
+    turnRing(game, i, sg * d, {count: false}); const bumped = game.events.some(e => e.type === 'bump'); flushEvents(); renderPlay();
+    if (left > 1e-6 && game.alive[i] && !bumped) requestAnimationFrame(stepF); else { animating = false; done && done(); }
   };
   requestAnimationFrame(stepF);
 }
+let botPlan = null;
 function botStep(then) {
   if (!game || won(game) || animating) return;
-  const m = botMove(game);
+  // follow one searched line while the state is the one it expects; search again after any other change
+  if (!botPlan || botPlan.at !== keyOf(game) || !botPlan.line.length) { const line = planFrom(game); botPlan = line && line.length ? {line, at: keyOf(game)} : null; }
+  const m = botPlan ? botPlan.line.shift() : botMove(game);
   if (!m) { toast('The bot finds no move: the level is stuck.'); stopAuto(); flushEvents(); renderPlay(); return; }
-  hintSet = new Set([m.ring]); animateTurn(m.ring, m.delta, then);
+  hintSet = new Set([m.ring]); animateTurn(m.ring, m.delta, () => { if (botPlan) botPlan.at = keyOf(game); then && then(); });
 }
 function stopAuto() { if (auto !== null) { clearTimeout(auto); auto = null; } $('#pAuto').setAttribute('aria-pressed', 'false'); }
 function autoLoop() { botStep(() => { if (auto !== null && !won(game)) auto = setTimeout(autoLoop, 350); else stopAuto(); }); }

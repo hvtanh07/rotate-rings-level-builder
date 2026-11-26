@@ -446,6 +446,29 @@ export function searchSolve(lv, rule = 'block', maxStates = 30000) {
   };
   return dfs(newGame(JSON.parse(JSON.stringify(lv)), {rule}));
 }
+// The next move for the bot from any state (play mode): a full search from here, else the greedy move. null when stuck.
+export const keyOf = g => stateKey(g);
+export function planFrom(g, maxStates = 30000) {
+  const seen = new Set(); let n = 0;
+  const dfs = x => {
+    if (won(x)) return [];
+    const k = stateKey(x); if (seen.has(k) || ++n > maxStates) return null; seen.add(k);
+    for (const m of eventMoves(x)) { const r = dfs(m.g); if (r) return [{ring: m.ring, delta: m.delta}, ...r]; }
+    return null;
+  };
+  return dfs(cloneGame(g));
+}
+export function nextMove(g, maxStates = 30000) {
+  const seen = new Set(); let n = 0;
+  const dfs = x => {
+    if (won(x)) return [];
+    const k = stateKey(x); if (seen.has(k) || ++n > maxStates) return null; seen.add(k);
+    for (const m of eventMoves(x)) { const r = dfs(m.g); if (r) return [{ring: m.ring, delta: m.delta}, ...r]; }
+    return null;
+  };
+  const line = dfs(cloneGame(g));
+  return line && line.length ? line[0] : botMove(g);
+}
 // Plays the level with the bot. {won, moves:[{ring,delta}], stuck:[piece indexes], score, searched}
 export function solve(lv, rule = 'block', limit = 400) {
   const play = list => {
