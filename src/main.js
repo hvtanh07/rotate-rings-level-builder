@@ -1,7 +1,7 @@
 import './style.css';
 import ORIGINAL from './data/levels.json';
 import {TYPE, TYPE_NAME, PALETTE, colorHex, isRing, normalize, normalizeRing, serialize, serializeFile, compact, parseLevels, analyze, check, statusOf, tally, pname,
-  makePiece, placeArm, placeBar, snapToRing, nearestRing, nearestBar, snapToBar, ringsThrough, removePieces, blankLevel, connectorEnds, barPoints, P, dist, angleAt, rad, deg, wrap180, nextId} from './format.js';
+  makePiece, placeArm, placeBar, snapToRing, nearestRing, nearestBar, snapToBar, ringsThrough, removePieces, blankLevel, connectorEnds, barPoints, P, dist, angleAt, rad, deg, wrap180, nextId, suggestTime, REVIVE_SECONDS} from './format.js';
 import {RULES, newGame, bombPos, beginMove, turnRing, canTurn, undoMove, won, left, hint, saw, removePiece, botMove, solve} from './engine.js';
 import {drawLevel, bounds, shardsAt} from './render.js';
 
