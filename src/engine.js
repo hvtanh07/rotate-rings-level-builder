@@ -232,13 +232,45 @@ function bombMove(g) {
   });
   return best;
 }
-// Plays the level with the bot. {won, moves:[{ring,delta}], stuck:[piece indexes], score}
+// Player moves from a state: turn one ring one way until something happens (a link frees, a piece shatters, a bomb goes off).
+export function eventMoves(g) {
+  const out = [];
+  g.lv.rings.forEach((r, i) => {
+    if (!g.alive[i] || !isRing(r) || !canTurn(g, i).ok) return;
+    const step = r.snapStep || 15;
+    for (const dir of [1, -1]) {
+      const c = cloneGame(g), l0 = c.locks.filter(L => L.on).length, a0 = c.alive.filter(Boolean).length;
+      for (let t = step; t <= 360; t += step) {
+        turnRing(c, i, dir * step, {count: false});
+        const boom = c.events.some(e => e.type === 'explode');
+        if (boom || c.locks.filter(L => L.on).length < l0 || c.alive.filter(Boolean).length < a0) { out.push({ring: i, delta: dir * t, boom, g: c}); break; }
+      }
+    }
+  });
+  return out;
+}
+const stateKey = g => g.alive.map(a => a ? 1 : 0).join('') + '|' + g.locks.map(L => L.on ? 1 : 0).join('') + '|' + g.turn.map(t => Math.round(((t % 360) + 360) % 360)).join(',');
+// Full search for a winning line (used when the greedy bot gets stuck, e.g. it set off a bomb on the wrong ring). null if none.
+export function searchSolve(lv, rule = 'block', maxStates = 30000) {
+  const seen = new Set(); let n = 0;
+  const dfs = g => {
+    if (won(g)) return [];
+    const k = stateKey(g); if (seen.has(k) || ++n > maxStates) return null; seen.add(k);
+    for (const m of eventMoves(g)) { const r = dfs(m.g); if (r) return [{ring: m.ring, delta: m.delta}, ...r]; }
+    return null;
+  };
+  return dfs(newGame(JSON.parse(JSON.stringify(lv)), {rule}));
+}
+// Plays the level with the bot. {won, moves:[{ring,delta}], stuck:[piece indexes], score, searched}
 export function solve(lv, rule = 'block', limit = 400) {
-  const g = newGame(JSON.parse(JSON.stringify(lv)), {rule});
-  const moves = [];
-  while (!won(g) && moves.length < limit) {
-    const m = botMove(g); if (!m) break;
-    turnRing(g, m.ring, m.delta); moves.push(m);
-  }
-  return {won: won(g), moves, stuck: g.alive.map((a, i) => a ? i : -1).filter(i => i >= 0), score: g.score, game: g};
+  const play = list => {
+    const g = newGame(JSON.parse(JSON.stringify(lv)), {rule}), moves = [];
+    if (list) for (const m of list) { turnRing(g, m.ring, m.delta); moves.push(m); }
+    else while (!won(g) && moves.length < limit) { const m = botMove(g); if (!m) break; turnRing(g, m.ring, m.delta); moves.push(m); }
+    return {won: won(g), moves, stuck: g.alive.map((a, i) => a ? i : -1).filter(i => i >= 0), score: g.score, game: g};
+  };
+  const r = play();
+  if (r.won || !lv.rings.some(p => p.shape.type === TYPE.BOMB)) return r;
+  const line = searchSolve(lv, rule);
+  return line ? {...play(line), searched: true, greedyStuck: true} : r;
 }

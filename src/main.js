@@ -8,7 +8,7 @@ import {drawLevel, bounds, shardsAt} from './render.js';
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const NS = 'http://www.w3.org/2000/svg';
-const STORE = 'rotateRingsLevelBuilder.v1';
+const STORE = 'rotateRingsLevelBuilder.v2';
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1nyJ1k3zGlLKoiFaT5fMqq8r27lMgC8l7iSyxq2gokow/edit';
 const CELL_LIMIT = 50000;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));

@@ -2,7 +2,7 @@ import {describe, it, expect} from 'vitest';
 import fs from 'node:fs';
 import {normalize, serialize, serializeFile, compact, parseLevels, analyze, check, fmtFloat, blankLevel, removePieces} from '../src/format.js';
 
-const RAW = fs.readFileSync(new URL('../src/data/levels.json', import.meta.url), 'utf8');
+const RAW = fs.readFileSync(new URL('../src/data/levels_sample60.json', import.meta.url), 'utf8');
 const FILE = JSON.parse(RAW);
 
 describe('level format', () => {

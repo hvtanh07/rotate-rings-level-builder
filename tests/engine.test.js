@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import {normalize, makePiece, placeBar, analyze, TYPE, serialize, parseLevels} from '../src/format.js';
 import {newGame, turnRing, canTurn, won, solve, hint, saw, removePiece, undoMove, gearGroup} from '../src/engine.js';
 
-const FILE = JSON.parse(fs.readFileSync(new URL('../src/data/levels.json', import.meta.url), 'utf8'));
+const FILE = JSON.parse(fs.readFileSync(new URL('../src/data/levels_sample60.json', import.meta.url), 'utf8'));
 const lvl = id => normalize(FILE.levels.find(l => l.id === id));
 
 describe('rules', () => {

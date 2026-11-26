@@ -1,6 +1,6 @@
 # Rotate Rings Level Builder
 
-A level builder for Rotate Rings, built on the rules in the [Rotate Rings GDD](https://hvtanh07.github.io/gdd-rotate-rings/) and on the game's own level file. The 60 levels of the game's `levels.json` (level_001 – level_060) are built in.
+A level builder for Rotate Rings, built on the rules in the [Rotate Rings GDD](https://hvtanh07.github.io/gdd-rotate-rings/) and on the game's own level file. The 40 designed levels (level_001 – level_040, the same as the Level Config sheet) are built in. The 60 sample levels from the first game file are kept in `src/data/levels_sample60.json` (Import it to look at them).
 
 **Tool:** https://hvtanh07.github.io/rotate-rings-level-builder/
 **Level sheet:** [Rotate Rings › Level Config](https://docs.google.com/spreadsheets/d/1nyJ1k3zGlLKoiFaT5fMqq8r27lMgC8l7iSyxq2gokow/edit) (columns `Id`, `Level`: one level JSON per cell)
@@ -32,9 +32,15 @@ Every push to `main` runs the tests, builds, and publishes `dist/` to the `gh-pa
 2. Export → **Download levels.json** and replace `src/data/levels.json` in this repo (this is the tool's built-in data, and the file the game reads).
 3. Export → **Copy as sheet rows** (or **Copy sheet row of this level**), click the `Id` cell of the first row in the Level Config tab, and paste.
 
+## The 40 designed levels
+
+`node design/run.mjs` builds them from `design/levels40.mjs`, playtests each one and writes `design/out/levels.json` (copy it to `src/data/levels.json`) and `design/out/report.json`. `node design/sheetrows.mjs` writes the Id/Level rows for the sheet. Difficulty = 2 × rings + 2.5 × bot moves + 40 × the share of careless (random) players who get stuck.
+
+Unlocks (GDD): Pin 7, Bomb 12, Locked Ring 17, Gear Ring 22. Hard levels: 10, 15, 20, 25, 30, 35, 40.
+
 ## Level format
 
-The tool reads and writes the same keys, in the same order, as the game's `levels.json` (Unity JsonUtility, 4-space layout). Floats are written with a decimal point (`1.0`), like the game. The test suite checks that all 60 levels go in and come out the same.
+The tool reads and writes the same keys, in the same order, as the game's `levels.json` (Unity JsonUtility, 4-space layout). Floats are written with a decimal point (`1.0`), like the game. The test suite checks that all 60 sample levels go in and come out the same, and that the bot solves all 40 built-in levels.
 
 | Key | Meaning in the tool |
 | --- | --- |
@@ -76,5 +82,7 @@ From the GDD, sections 1.2, 1.4 and 1.5:
 - `src/format.js`: the level format, reading, writing, geometry and checks.
 - `src/engine.js`: game rules, boosters and the bot.
 - `src/render.js`: draws a level as SVG.
-- `src/data/levels.json`: the built-in levels (the game file).
+- `src/data/levels.json`: the built-in levels (the 40 designed levels).
+- `src/data/levels_sample60.json`: the 60 sample levels of the first game file.
+- `design/`: the 40 levels written as code (`levels40.mjs`), the playtest (`lib.mjs`: full search, a careless random player, difficulty score) and `run.mjs`, which rebuilds `design/out/` (levels, report, contact sheet).
 - `tests/`: Vitest tests.
