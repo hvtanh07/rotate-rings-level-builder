@@ -49,39 +49,55 @@ L({name: 'Make way', element: 'Ring', rule: 'Move one arm out of the way of anot
 }});
 
 /* ---------- 7-11: Straight Bar + Pin (unlock 7) ---------- */
-L({name: 'Rail', element: 'Straight Bar + Pin (new)', rule: 'A bar comes out when no ring holds its ends; its pins go with it',
-  challenge: 'The bar rests on both rings. Turn each ring until its gap passes the end of the bar.', make() {
-  const b = new Lv(), l = b.ring(-1.6, -.4, {c: C.blue}), r = b.ring(1.6, -.4, {c: C.orange});
-  const h = b.bar([b.on(l, 90), b.on(r, 90)]); b.pinBar(h, .3).pinBar(h, .7);
-  return {b, tutorialRing: l};
+L({name: 'Slide out', element: 'Straight Bar + Pin (new)', rule: 'A pin is a sleeve: slide the bar along it and out',
+  challenge: 'Two bars run into the gaps of the top and bottom rings, so those rings cannot turn. The frame on the right is in the way of both bars: slide the frame out first, then each bar, then turn the rings.', make() {
+  const b = new Lv(), d = D(1, 1), B = b.ring(0, 0, {c: C.cyan}), A = b.ring(0, d, {c: C.blue, gap: 0}), Cc = b.ring(0, -d, {c: C.purple, gap: 0});
+  b.arm(B, A).arm(B, Cc);
+  b.arm(A, nb(b, A, 90, {r: .8, c: C.pink})).arm(Cc, nb(b, Cc, 270, {r: .8, c: C.pink}));
+  b.arm(B, nb(b, B, 180, {r: .8, c: C.yellow}));
+  const red = b.bar([[.35, d], [2.0, d]], {c: C.red}), blue = b.bar([[.35, -d], [2.0, -d]], {c: C.blue});
+  b.pinBar(red, .6, 1).pinBar(blue, .6, -1);
+  const top = d + 1.25, fr = b.bar([[1.6, top], [2.45, top], [2.45, -top], [1.6, -top]], {c: C.green});
+  b.pinBar(fr, .4, 1, 0).pinBar(fr, .6, -1, 2);
+  return {b, tutorialRing: -1};
 }});
-L({name: 'Detour', element: 'Straight Bar + Pin', rule: 'Bars and pins are solid: a free arm cannot pass the bar end',
-  challenge: 'Each pillar ring carries a free arm once its outer ring is gone. The arm cannot pass under the bar: the two pillars turn opposite ways.', make() {
-  const b = new Lv(), l = b.ring(-1.5, 0, {c: C.green, gap: 340}), r = b.ring(1.5, 0, {c: C.green, gap: 200});
-  b.arm(l, nb(b, l, 180, {r: .75, c: C.pink})).arm(r, nb(b, r, 0, {r: .75, c: C.pink}));
-  const h = b.bar([b.on(l, 90), b.on(r, 90)]); b.pinBar(h, .5);
+L({name: 'In the way', element: 'Straight Bar + Pin', rule: 'A ring can be in the way of a bar: clear the ring first',
+  challenge: 'The bar runs into the top of the middle ring and can only slide up and out, but the ring above is in its way. Clear the top ring, slide the bar out, then open the middle ring.', make() {
+  const b = new Lv(), A = b.ring(0, 0, {c: C.cyan, gap: 90}), Bt = b.ring(0, 3.35, {r: .8, c: C.orange, gap: 60});
+  const Lr = nb(b, A, 180, {r: .8, c: C.green}), Rr = nb(b, A, 0, {r: .8, c: C.green}), Dn = nb(b, A, 270, {r: .8, c: C.purple});
+  b.arm(Lr, A).arm(Rr, A).arm(Dn, A);
+  b.arm(Lr, nb(b, Lr, 270, {r: .7, c: C.pink})).arm(Rr, nb(b, Rr, 270, {r: .7, c: C.pink}));
+  const F = nb(b, Bt, 0, {r: .7, c: C.yellow}), G = nb(b, Bt, 180, {r: .7, c: C.yellow});
+  b.arm(Bt, F).arm(G, Bt);
+  const bar = b.bar([[0, -.3], [0, 2.2]], {c: C.red}); b.pinBar(bar, .76, 1);
   return {b};
 }});
-L({name: 'Gate', element: 'Straight Bar + Pin', rule: 'A bar can be bent; it holds until every end is free',
-  challenge: 'The gate stands on two posts that also hold the middle ring. A long turn of a post runs its free arm into the gate: free the hook with a short turn one way, then the gate end with a short turn the other way.', make() {
-  const b = new Lv(), A = b.ring(-2.35, -1.2, {c: C.purple, gap: 45}), M = b.ring(0, -1.2, {c: C.yellow, gap: 225}), B = b.ring(2.35, -1.2, {c: C.purple, gap: 135});
-  b.arm(M, A).arm(M, B);
-  b.arm(A, nb(b, A, 180, {r: .75, c: C.cyan})).arm(B, nb(b, B, 0, {r: .75, c: C.cyan}));
-  const [ax, ay] = b.on(A, 90), [bx, by] = b.on(B, 90), top = 1.6;
-  const h = b.bar([[ax, ay], [ax, top], [bx, top], [bx, by]], {c: C.blue}); b.pinBar(h, .5, 1, 1).pinAt(ax, top - .55, 180).pinAt(bx, top - .55, 0);
-  b.arm(nb(b, M, 270, {r: .8, c: C.red}), M);
+L({name: 'Two at once', element: 'Straight Bar + Pin', rule: 'One bent bar can run into two rings and hold both',
+  challenge: 'A bent bar runs into the gaps of the hub and of the lower ring, so neither can turn. It slides out along its pins, but the short bar above is in its way: slide that one up into its ring and out first.', make() {
+  const b = new Lv(), H = b.ring(0, 0, {c: C.cyan, gap: 20}), O = nb(b, H, 315, {c: C.orange, gap: 20});
+  const TL = nb(b, H, 135, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red}), Z = nb(b, H, 90, {r: .8, c: C.green});
+  b.arm(H, TL).arm(H, BL).arm(H, O).arm(Z, H);
+  b.arm(TL, nb(b, TL, 135, {r: .7, c: C.pink})).arm(BL, nb(b, BL, 225, {r: .7, c: C.pink})).arm(O, nb(b, O, 270, {r: .8, c: C.purple}));
+  const o = b.R[O], p = (c, r) => pol(r, 20, c);
+  const bent = b.bar([p({x: 0, y: 0}, .4), p({x: 0, y: 0}, 2), p(o, 2), p(o, .4)], {c: C.red});
+  b.pinBar(bent, .7, 1, 0).pinBar(bent, .3, -1, 2);
+  const Y = b.ring(2.6, 3.7, {r: .8, c: C.yellow, gap: 270}); b.pin(Y, 90);
+  const short = b.bar([[2.6, .6], [2.6, 3.4]], {c: C.blue}); b.pinBar(short, .22, -1);
   return {b};
 }});
-L({name: 'Frame', element: 'Bar + Pin', hard: true, rule: 'Hard: order, direction and bars together',
-  challenge: 'A pinned frame on four corners with a pinwheel inside. Each corner holds two bar ends and a hook: find the turn that frees all three. A pinwheel ring can only let go once the corner it hooks is gone.', make() {
-  const b = new Lv(), k = 2.75, d = D(1, .85);
-  const mid = [[90, C.blue], [0, C.green], [270, C.blue], [180, C.green]].map(([a, col]) => at(b, d, a, {x: 0, y: 0}, {r: .85, c: col}));
-  const cor = [[45, C.yellow], [315, C.orange], [225, C.yellow], [135, C.orange]].map(([a, col]) => at(b, k * Math.SQRT2, a, {x: 0, y: 0}, {r: .85, c: col}));
-  mid.forEach((m, i) => b.pin(m, [90, 0, 270, 180][i]));
-  mid.forEach((m, i) => b.arm(m, cor[i]));            // pinwheel: N->TR, E->BR, S->BL, W->TL
-  const [TR, BR, BL, TL] = cor;
-  const sides = [[TL, 0, TR, 180], [TR, 270, BR, 90], [BR, 180, BL, 0], [BL, 90, TL, 270]];
-  sides.forEach(([p, pa, q, qa]) => { const h = b.bar([b.on(p, pa), b.on(q, qa)], {c: C.purple}); b.pinBar(h, .5, -1); });
+L({name: 'Workshop', element: 'Bar + Pin', hard: true, rule: 'Hard: bars in the way of bars, a ring in the way of a bar',
+  challenge: 'Three bars hold three rings. The bent bar cannot slide out while the long bar is in its way, and the long bar cannot slide up while the top ring sits on its path. Clear the top corner, slide the long bar, then the bent bar, then open the hub.', make() {
+  const b = new Lv(), H = b.ring(0, 0, {c: C.cyan, gap: 20}), O = nb(b, H, 315, {c: C.orange, gap: 20});
+  const TL = nb(b, H, 135, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red, gap: 180}), Z = nb(b, H, 90, {r: .8, c: C.green});
+  b.arm(H, TL).arm(H, BL).arm(H, O).arm(Z, H);
+  b.arm(TL, nb(b, TL, 135, {r: .7, c: C.pink})).arm(BL, nb(b, BL, 270, {r: .7, c: C.pink})).arm(O, nb(b, O, 270, {r: .8, c: C.purple}));
+  const o = b.R[O], p = (c, r) => pol(r, 20, c);
+  const bent = b.bar([p({x: 0, y: 0}, .4), p({x: 0, y: 0}, 2), p(o, 2), p(o, .4)], {c: C.red});
+  b.pinBar(bent, .7, 1, 0).pinBar(bent, .3, -1, 2);
+  const V = b.bar([[2.6, .6], [2.6, 4.4]], {c: C.blue}); b.pinBar(V, .16, -1);
+  const W = b.ring(2.6, 5.45, {r: .8, c: C.yellow, gap: 30}), W2 = nb(b, W, 180, {r: .7, c: C.green}), W3 = nb(b, W, 90, {r: .7, c: C.pink});
+  b.arm(W2, W).arm(W, W3);
+  const bl = b.R[BL], left = b.bar([[bl.x - .4, bl.y], [bl.x - 2.1, bl.y]], {c: C.purple}); b.pinBar(left, .7, 1);
   return {b};
 }});
 L({name: 'Ladder', element: 'Bar + Pin', rule: 'Bar ends and pins are in the way of free arms',

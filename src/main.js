@@ -1,8 +1,8 @@
 import './style.css';
 import ORIGINAL from './data/levels.json';
 import {TYPE, TYPE_NAME, PALETTE, colorHex, isRing, normalize, normalizeRing, serialize, serializeFile, compact, parseLevels, analyze, check, statusOf, tally, pname,
-  makePiece, placeArm, placeBar, snapToRing, nearestRing, nearestBar, snapToBar, ringsThrough, removePieces, blankLevel, connectorEnds, barPoints, P, dist, angleAt, rad, deg, wrap180, nextId} from './format.js';
-import {RULES, newGame, bombPos, beginMove, turnRing, canTurn, undoMove, won, left, hint, saw, removePiece, botMove, solve} from './engine.js';
+  makePiece, placeArm, placeBar, snapToRing, nearestRing, nearestBar, snapToBar, ringsThrough, removePieces, blankLevel, connectorEnds, barPoints, P, dist, angleAt, rad, deg, wrap180, nextId, suggestTime, REVIVE_SECONDS} from './format.js';
+import {RULES, newGame, bombPos, beginMove, turnRing, canTurn, undoMove, won, left, hint, saw, removePiece, botMove, solve, barAxis, barOffset} from './engine.js';
 import {drawLevel, bounds, shardsAt} from './render.js';
 
 const $ = s => document.querySelector(s);
@@ -403,7 +403,7 @@ $('#modePlay').addEventListener('click', () => setMode('play'));
 function restart() { stopAuto(); resetTimer(); game = newGame(clone(L()), {rule: prefs.rule}); hintSet = new Set(); booster = null; $('#fx').innerHTML = ''; $('#banner').hidden = true; flushEvents(); syncBoosters(); renderPlay(); }
 function renderPlay() {
   if (!game) return;
-  $('#scene').innerHTML = drawLevel(game.lv, {turn: game.turn, alive: game.alive, open: game.open, owner: game.owner, host: game.host, hint: hintSet, ids: prefs.ids, shakeIdx, tutorial: game.moves ? -1 : game.lv.tutorialRing});
+  $('#scene').innerHTML = drawLevel(game.lv, {offset: game.lv.rings.map((r, i) => r.shape.type === TYPE.BAR ? barOffset(game, i) : null), turn: game.turn, alive: game.alive, open: game.open, owner: game.owner, host: game.host, hint: hintSet, ids: prefs.ids, shakeIdx, tutorial: game.moves ? -1 : game.lv.tutorialRing});
   $('#ui').innerHTML = '';
   svg.classList.add('play');
   const rule = RULES[game.rule];
@@ -411,7 +411,7 @@ function renderPlay() {
 }
 function pieceCenter(i) {
   const r = game.lv.rings[i];
-  if (r.shape.type === TYPE.BAR) { const p = barPoints(r); return p.length ? {x: (p[0].x + p[p.length - 1].x) / 2, y: (p[0].y + p[p.length - 1].y) / 2} : P(r); }
+  if (r.shape.type === TYPE.BAR) { const p = barPoints(r), o = barOffset(game, i); return p.length ? {x: (p[0].x + p[p.length - 1].x) / 2 + o.x, y: (p[0].y + p[p.length - 1].y) / 2 + o.y} : P(r); }
   if (r.shape.type === TYPE.BOMB) return bombPos(game, i);
   if (r.shape.type === TYPE.CONNECTOR) { const o = game.owner[i]; if (o !== undefined) { const c = P(game.lv.rings[o]), a = rad(game.turn[o]), p = P(r), dx = p.x - c.x, dy = p.y - c.y; return {x: c.x + dx * Math.cos(a) - dy * Math.sin(a), y: c.y + dx * Math.sin(a) + dy * Math.cos(a)}; } }
   return P(r);
@@ -426,7 +426,7 @@ function flushEvents() {
       g.innerHTML = shardsAt(c, colorHex(r.colorIndex), big ? 16 : 7, big ? r.shape.radius + .5 : .4) + (big ? `<text class="praise" transform="translate(${c.x} ${c.y}) scale(1 -1)">${PRAISE[Math.floor(Math.random() * PRAISE.length)]}</text>` : '');
       fx.appendChild(g); setTimeout(() => g.remove(), 900);
     }
-    if (ev.type === 'shake') { shakeIdx = ev.piece; setTimeout(() => { shakeIdx = -1; renderPlay(); }, 330); const by = ev.by; toast(ev.why === 'locked' ? `${pname(game.lv, by)} is locked. Clear the piece with its key first.` : ev.why === 'arm' ? `${pname(game.lv, by)} cannot turn: its arm still hooks another ring.` : 'This piece does not turn.'); }
+    if (ev.type === 'shake') { shakeIdx = ev.piece; setTimeout(() => { shakeIdx = -1; renderPlay(); }, 330); const by = ev.by; toast(ev.why === 'locked' ? `${pname(game.lv, by)} is locked. Clear the piece with its key first.` : ev.why === 'arm' ? `${pname(game.lv, by)} cannot turn: its arm still hooks another ring.` : ev.why === 'hooked' ? `A hook rests on this bar, so it cannot slide.` : ev.why === 'no pin' ? 'No pin holds this bar, so it has no line to slide on.' : 'This piece does not turn.'); }
     if (ev.type === 'bump') { shakeIdx = ev.by; setTimeout(() => { shakeIdx = -1; renderPlay(); }, 330); toast(`${pname(game.lv, ev.piece)} hits ${pname(game.lv, ev.by)}: parts cannot pass through each other.`); }
     if (ev.type === 'explode') {
       const g = document.createElementNS(NS, 'g'), c = ev.at;
@@ -455,6 +455,15 @@ function playDown(e) {
   let ring = i;
   if (r.shape.type === TYPE.CONNECTOR && game.owner[i] !== undefined) ring = game.owner[i];
   if (r.shape.type === TYPE.BOMB && game.host[i] !== undefined) ring = game.host[i];
+  if (game.lv.rings[ring].shape.type === TYPE.BAR) {  // a bar slides along its pins
+    if (timer.up) { toast('Time is up: Revive or Retry.'); return; }
+    const c = canTurn(game, ring);
+    if (!c.ok) { turnRing(game, ring, .01); flushEvents(); renderPlay(); return; }
+    stopAuto(); hintSet = new Set();
+    const w = toWorld(e), ax = barAxis(game, ring);
+    drag = {kind: 'turn', slide: true, ring, ax, prev: w.x * ax.x + w.y * ax.y, total: 0, started: false};
+    svg.setPointerCapture(e.pointerId); return;
+  }
   if (!isRing(game.lv.rings[ring])) return;
   if (timer.up) { toast('Time is up: Revive or Retry.'); return; }
   const c = canTurn(game, ring);
@@ -466,6 +475,11 @@ function playDown(e) {
 }
 function playMove(e, w) {
   const d = drag; if (!game.alive[d.ring]) return;
+  if (d.slide) {
+    const s = w.x * d.ax.x + w.y * d.ax.y, dd = s - d.prev; d.prev = s; if (Math.abs(dd) < 1e-4) return;
+    if (!d.started) { beginMove(game); d.started = true; startTimer(); }
+    d.total += dd; turnRing(game, d.ring, dd, {count: false}); flushEvents(); renderPlay(); return;
+  }
   const c = P(game.lv.rings[d.ring]), a = angleAt(c, w), dd = wrap180(a - d.prev);
   d.prev = a; if (!dd) return;
   if (!d.started) { beginMove(game); d.started = true; startTimer(); }
@@ -473,7 +487,7 @@ function playMove(e, w) {
 }
 function finishTurn(d) {
   if (!d || !d.started) return;
-  const r = game.lv.rings[d.ring], step = r.snapStep || 0;
+  const r = game.lv.rings[d.ring], step = r.shape.type === TYPE.BAR ? 0 : r.snapStep || 0;
   if (step && game.alive[d.ring]) { const t = game.turn[d.ring], target = Math.round(t / step) * step; if (Math.abs(target - t) > 1e-6) turnRing(game, d.ring, target - t, {count: false}); }
   flushEvents(); renderPlay();
 }
@@ -624,9 +638,10 @@ function paneHelp() {
   <kbd>Space</kbd><span>Design ↔ Play test.</span></div>
   <h3>Play test rules</h3><ul>
   <li>Drag a ring to turn it around its center (snaps to <code>snapStep</code>). Its arms turn with it.</li>
-  <li>When a ring's gap passes a hook, pin or bar end resting on it, that link comes apart.</li>
+  <li>When a ring's gap passes a hook or pin resting on it, that link comes apart.</li>
   <li>A piece with no links left shatters. A ring gives 300 points.</li>
-  <li>Pin: stands on its own in the air. On a ring it locks the ring until the gap passes it. On a Straight Bar it only holds the bar up: when nothing rests on the bar any more (every end that sat on a ring is free), the bar comes out and its pins go with it.</li>
+  <li>Pin: on a ring it locks the ring until the gap passes it. On a Straight Bar it is a sleeve: the bar can only slide along that line.</li>
+  <li>Straight Bar: does not turn. Drag it to slide it along its pins. It runs into rings through their gaps and keeps them from turning past it; it stops when it hits a ring tube or another part. Once it slides out of every pin, it comes out with its pins. (Designer, 2026-11-26.)</li>
   <li>Bomb: sits on a ring (turns with it) or a bar. When a turn brings it onto another ring or bar, the bomb blows up and both pieces shatter. Use it to break a piece that is stuck.</li>
   <li>Locked Ring: does not turn until the piece holding its key shatters.</li>
   <li>Gear Rings: meshed gears turn the other way, by the tooth ratio.</li>
@@ -635,7 +650,7 @@ function paneHelp() {
   <li>Boosters: Hint lights the rings that can turn; Saw cuts one connector or bar; Remove takes one ring off.</li></ul>
   <h3>Data</h3><ul>
   <li>Levels are read from and written to the game's <code>levels.json</code> format: same keys, same order, 4-space layout.</li>
-  <li>Links are not stored in the file. The tool works them out from the geometry like the sample levels: a connector is an arm from its ring's edge (<code>position</code> ± <code>legLength</code>/2 along <code>eulerAngles.z</code>) to a hook on another ring; bar ends and pins sit on a ring's circle.</li>
+  <li>Links are not stored in the file. The tool works them out from the geometry like the sample levels: a connector is an arm from its ring's edge (<code>position</code> ± <code>legLength</code>/2 along <code>eulerAngles.z</code>) to a hook on another ring; pins sit on a ring's circle or on a bar; a bar runs into rings through their gaps.</li>
   <li>Edits are saved in this browser. Export → <b>Download levels.json</b> for the game, and <b>Copy as sheet rows</b> to paste into the <a href="${SHEET_URL}" target="_blank" rel="noopener">Level sheet</a> (tab Level Config, columns Id and Level).</li></ul>`;
 }
 $('#pane').addEventListener('change', e => {

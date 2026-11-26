@@ -1,6 +1,6 @@
 // Helpers to write levels by hand in code, and to playtest them (bot + full search).
 import {TYPE, normalize, makePiece, placeArm, placeBar, P, dist, angleAt, wrap180, analyze, check, GAP_WIDTH, deg} from '../src/format.js';
-import {newGame, turnRing, canTurn, won, solve, gearGroup} from '../src/engine.js';
+import {newGame, turnRing, canTurn, won, solve, gearGroup, eventMoves} from '../src/engine.js';
 
 export const C = {red: 0, blue: 1, green: 2, yellow: 3, pink: 4, orange: 5, purple: 6, cyan: 7};
 const r5 = a => ((Math.round(a / 5) * 5) % 360 + 360) % 360;
@@ -96,26 +96,11 @@ export class Lv {
 
 /* ---------- playtest ---------- */
 const clone = g => ({...g, locks: g.locks.map(L => ({...L})), turn: [...g.turn], alive: [...g.alive], open: [...g.open], touch: g.touch.map(t => [...t]), events: [], history: []});
-const key = g => g.alive.map(a => a ? 1 : 0).join('') + '|' + g.locks.map(L => L.on ? 1 : 0).join('') + '|' + g.turn.map(t => Math.round(((t % 360) + 360) % 360)).join(',');
-// Player moves from a state: turn a ring one way until something happens (a link frees, a piece shatters, a bomb goes off).
+const key = g => g.alive.map(a => a ? 1 : 0).join('') + '|' + g.locks.map(L => L.on ? 1 : 0).join('') + '|' + g.turn.map((t, i) => g.lv.rings[i].shape.type === TYPE.BAR ? Math.round(t * 20) : Math.round(((t % 360) + 360) % 360)).join(',');
+// Player moves from a state: turn a ring (or slide a bar) one way until something happens. The engine's own move list.
 export function moves(g) {
-  const out = [];
-  g.lv.rings.forEach((r, i) => {
-    if (!g.alive[i] || !(r.shape.type <= 1) || !canTurn(g, i).ok) return;
-    for (const dir of [1, -1]) {
-      const c = clone(g), l0 = c.locks.filter(L => L.on).length, a0 = c.alive.filter(Boolean).length;
-      let ev = null;
-      for (let t = 15; t <= 360; t += 15) {
-        const t0 = c.turn[i];
-        turnRing(c, i, dir * 15, {count: false});
-        const boom = c.events.some(e => e.type === 'explode'), bump = c.events.some(e => e.type === 'bump');
-        if (boom || c.locks.filter(L => L.on).length < l0 || c.alive.filter(Boolean).length < a0) { ev = {ring: i, delta: dir * t, boom, cleared: a0 - c.alive.filter(Boolean).length}; break; }
-        if (bump) { const moved = dir * (t - 15) + (c.turn[i] - t0); if (Math.abs(moved) > .5) ev = {ring: i, delta: moved, boom: false, bump: true, cleared: 0}; break; }
-      }
-      if (ev) out.push({...ev, g: c});
-    }
-  });
-  return out;
+  const a0 = g.alive.filter(Boolean).length;
+  return eventMoves(g).map(m => ({ring: m.ring, delta: m.delta, boom: !!m.boom, bump: !!m.bump, cleared: a0 - m.g.alive.filter(Boolean).length, g: m.g}));
 }
 // Can the level still be won from g? (memo search)
 export function winnable(g, memo = new Map(), depth = 0, cap = Infinity) {

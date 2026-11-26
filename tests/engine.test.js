@@ -66,7 +66,7 @@ describe('Bomb', () => {
     const lv = normalize({id: 'bomb_test', rings: []});
     lv.rings.push(makePiece(lv, TYPE.RING, {position: {x: 0, y: 0}, shape: {gaps: [{centerDegrees: 270, widthDegrees: 60}]}}));
     lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: 0, y: 1}, eulerAngles: {z: 90}}));
-    const bar = makePiece(lv, TYPE.BAR); placeBar(bar, {x: 0, y: -2}, {x: 0, y: -0.4}); lv.rings.push(bar);
+    const bar = makePiece(lv, TYPE.BAR); placeBar(bar, {x: 0, y: -3.2}, {x: 0, y: -0.4}); lv.rings.push(bar);
     lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: 0, y: -1.6}, eulerAngles: {z: 180}}));
     if (withBomb) { const a = 250 * Math.PI / 180; lv.rings.push(makePiece(lv, TYPE.BOMB, {position: {x: Math.cos(a), y: Math.sin(a)}})); }
     return lv;
@@ -90,12 +90,16 @@ describe('Bomb', () => {
     turnRing(g, 0, 15);
     expect(g.alive[0]).toBe(false); expect(g.alive[2]).toBe(false); expect(won(g)).toBe(true);
   });
-  it('a bar comes out when it runs into no ring; its pins go with it', () => {
-    const lv = make(false); lv.rings[0].position = {x: 6, y: 6, z: 0};
-    const g = newGame(lv); expect(g.alive[2]).toBe(false); expect(g.alive[3]).toBe(false);
+  it('a pin is a sleeve: the bar slides on one line, out of its pin, and comes out with it', () => {
+    const g = newGame(make(false));
+    turnRing(g, 2, 2); // up: the top end runs into the tube of R0
+    expect(g.events.some(e => e.type === 'bump' && e.by === 0)).toBe(true); expect(g.turn[2]).toBeLessThan(1.3); expect(g.alive[2]).toBe(true);
+    turnRing(g, 2, -3); // down and out of the pin
+    expect(g.alive[2]).toBe(false); expect(g.alive[3]).toBe(false);
+    turnRing(g, 0, 180); expect(won(g)).toBe(true);
   });
-  it('without the bomb the bar keeps the ring from reaching its pin', () => {
-    const s = solve(make(false)); expect(s.won).toBe(false); expect(s.stuck).toContain(0);
+  it('the bot slides the bar out when that is what frees the ring', () => {
+    const s = solve(make(false)); expect(s.won).toBe(true); expect(s.moves.some(m => m.ring === 2)).toBe(true);
   });
   it('the bot uses the bomb when nothing else frees a piece', () => {
     const s = solve(make()); expect(s.won).toBe(true);

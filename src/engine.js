@@ -1,5 +1,5 @@
 // Play-test rules of Rotate Rings (GDD 1.2 and 1.4), and a bot that solves a level.
-import {TYPE, isRing, analyze, inGap, gapDepth, barMargin, P, angleAt, wrap180, barPoints, segDist, dist, rad, connectorEnds, dirOf} from './format.js';
+import {TYPE, isRing, analyze, inGap, gapDepth, P, angleAt, wrap180, barPoints, segDist, dist, rad, connectorEnds, dirOf} from './format.js';
 
 export const RULES = {
   block: {name: 'Arms hold their ring', text: 'A ring whose arm still hooks another ring cannot turn. Free the hooked ring first.'},
@@ -55,6 +55,11 @@ export function gearGroup(g, i) {
 // Can ring i be turned now? {ok, why, by}
 export function canTurn(g, i) {
   const r = g.lv.rings[i];
+  if (r && r.shape.type === TYPE.BAR && g.alive[i]) {
+    if (!barAxis(g, i)) return {ok: false, why: 'no pin'};
+    const h = g.locks.find(L => L.on && L.kind === 'arm' && L.ring === i);
+    return h ? {ok: false, why: 'hooked', by: h.piece} : {ok: true};
+  }
   if (!r || !isRing(r) || !g.alive[i]) return {ok: false, why: 'not a ring'};
   for (const {i: j} of gearGroup(g, i)) {
     if (!g.open[j]) return {ok: false, why: 'locked', by: j};
@@ -69,6 +74,7 @@ export function turnRing(g, i, delta, {count = true} = {}) {
   if (!c.ok) { g.events.push({type: 'shake', piece: i, why: c.why, by: c.by}); return false; }
   if (!delta) return true;
   if (count) { g.history.push(snapshot(g)); g.moves++; }
+  if (g.lv.rings[i].shape.type === TYPE.BAR) return slideBar(g, i, delta);
   const grp = gearGroup(g, i), n = Math.max(1, Math.ceil(Math.abs(delta) / STEP));
   for (let s = 1; s <= n; s++) {
     const d = delta / n;
@@ -102,13 +108,78 @@ export function resolve(g) {
       if (t === TYPE.RING || t === TYPE.CLOSED) links = locksOn(g, i).length + armsOf(g, i).length;
       else if (t === TYPE.CONNECTOR) links = g.owner[i] !== undefined ? (g.alive[g.owner[i]] ? 1 : 0) : g.locks.filter(L => L.on && L.piece === i).length;
       else if (t === TYPE.PIN) links = g.locks.filter(L => L.on && L.piece === i).length;
-      else if (t === TYPE.BAR) links = g.thru.filter(T => T.bar === i && g.alive[T.ring]).length + g.locks.filter(L => L.on && L.ring === i && L.kind === 'arm').length; // rings it runs into and hooks on it; pins only hold it in place and go with it
+      else if (t === TYPE.BAR) links = g.locks.filter(L => L.on && L.ring === i).length; // the pins it runs through and the hooks on it (designer, 2026-11-26)
       else if (t === TYPE.BOMB) links = g.host[i] !== undefined && g.alive[g.host[i]] ? 1 : 0;
       else return;
       if (!links) { shatter(g, i); again = true; }
     });
   }
 }
+/* ---------- Straight Bar slides through its pins (designer, 2026-11-26) ---------- */
+// A pin is a sleeve: the bar it holds moves on one line only. The player slides the bar out of its pins;
+// the bar comes out (with its pins) when no pin holds it any more. g.turn[i] of a bar = how far it has slid.
+export const SLIDE = 0.1, SLIDE_MAX = 12;
+export function barAxis(g, i) {
+  const cache = g.axis || (g.axis = {});
+  if (i in cache) return cache[i];
+  const L = g.locks.find(k => k.kind === 'pin' && k.ring === i), pts = barPoints(g.lv.rings[i]);
+  let best = null, bd = Infinity;
+  if (L) for (let k = 0; k + 1 < pts.length; k++) { const d = segDist(L.point, [pts[k], pts[k + 1]]); if (d < bd) { bd = d; const dx = pts[k + 1].x - pts[k].x, dy = pts[k + 1].y - pts[k].y, n = Math.hypot(dx, dy) || 1; best = {x: dx / n, y: dy / n}; } }
+  return (cache[i] = best);
+}
+export function barPointsAt(g, i) {
+  const pts = barPoints(g.lv.rings[i]), s = g.turn[i];
+  if (!s) return pts;
+  const a = barAxis(g, i); return pts.map(p => ({x: p.x + a.x * s, y: p.y + a.y * s}));
+}
+export function barOffset(g, i) { const a = g.turn[i] && barAxis(g, i); return a ? {x: a.x * g.turn[i], y: a.y * g.turn[i]} : {x: 0, y: 0}; }
+// How deep a bar (points pts, tube tb) runs into the tube of ring q turned by `turn` (0 = clear). A gap lets the bar through.
+function tubeOverlap(pts, tb, q, turn) {
+  if (!isRing(q)) return 0;
+  const c = P(q), R = q.shape.radius, band = q.shape.tubeRadius + tb, m = tb / R * 180 / Math.PI;
+  if (segDist(c, pts) > R + band) return 0;
+  let sum = 0;
+  for (let k = 0; k + 1 < pts.length; k++) {
+    const a = pts[k], b = pts[k + 1], n = Math.max(1, Math.ceil(dist(a, b) / .03));
+    for (let s = 0; s <= n; s++) {
+      const p = {x: a.x + (b.x - a.x) * s / n, y: a.y + (b.y - a.y) * s / n}, rad0 = band - Math.abs(dist(p, c) - R);
+      if (rad0 <= 0) continue;
+      const gd = gapDepth(q, turn, p, m);
+      if (gd < 0) sum += Math.min(rad0, -gd * Math.PI / 180 * R);
+    }
+  }
+  return sum;
+}
+function barBump(g, i, s0, s1) {
+  const R = g.lv.rings, own = new Set(g.locks.filter(L => L.kind === 'pin' && L.ring === i).map(L => L.piece));
+  const t0 = [...g.turn], t1 = [...g.turn]; t0[i] = s0; t1[i] = s1;
+  const A0 = shapeAt(g, i, t0), A1 = shapeAt(g, i, t1), pts0 = barPointsAt({...g, turn: t0}, i), pts1 = barPointsAt({...g, turn: t1}, i), tb = R[i].shape.tubeRadius;
+  for (let o = 0; o < R.length; o++) {
+    if (o === i || !g.alive[o]) continue;
+    const t = R[o].shape.type;
+    if (isRing(R[o])) { if (tubeOverlap(pts1, tb, R[o], g.turn[o]) > tubeOverlap(pts0, tb, R[o], g.turn[o]) + 1e-9) return {piece: i, by: o}; continue; }
+    if (!SOLID[t] || own.has(o) || t === TYPE.BOMB || g.host[o] === i) continue;
+    const B = shapeAt(g, o, g.turn), d1 = partGap(A1, B);
+    if (d1 < 0 && d1 < partGap(A0, B) - 1e-6) return {piece: i, by: o};
+  }
+  return null;
+}
+function slideBar(g, i, delta) {
+  const n = Math.max(1, Math.ceil(Math.abs(delta) / .05)), d = delta / n, tb = g.lv.rings[i].shape.tubeRadius;
+  for (let k = 0; k < n; k++) {
+    const s1 = g.turn[i] + d, bump = barBump(g, i, g.turn[i], s1);
+    if (bump) { g.events.push({type: 'bump', ...bump}); break; }
+    g.turn[i] = s1;
+    const pts = barPointsAt(g, i);
+    for (const L of g.locks) if (L.on && L.kind === 'pin' && L.ring === i && segDist(L.point, pts) > tb * .5) release(g, L, 'slide');
+    checkBombs(g);
+    resolve(g);
+    if (!g.alive[i]) break;
+  }
+  resolve(g);
+  return true;
+}
+
 /* ---------- solid parts (designer, 2026-11-26) ---------- */
 // Pins, connectors, bars and bombs are solid: none can pass through another. Ring tubes still overlap freely.
 // A part turns with its carrier ring: an arm with its owner, a bomb with its ring. Pins and bars stay put.
@@ -138,6 +209,7 @@ function restShape(r) {
 const rot = (p, c, a) => { const cs = Math.cos(a), sn = Math.sin(a), dx = p.x - c.x, dy = p.y - c.y; return {x: c.x + dx * cs - dy * sn, y: c.y + dx * sn + dy * cs}; };
 function shapeAt(g, i, turn) {
   const R = g.lv.rings, base = g.rest[i] || (g.rest[i] = restShape(R[i])), c = carrierOf(g, i);
+  if (R[i].shape.type === TYPE.BAR && turn[i]) { const a = barAxis(g, i), s = turn[i]; return base.map(q => ({a: {x: q.a.x + a.x * s, y: q.a.y + a.y * s}, b: {x: q.b.x + a.x * s, y: q.b.y + a.y * s}, r: q.r})); }
   if (c === undefined || !turn[c]) return base;
   const o = P(R[c]), a = rad(turn[c]);
   return base.map(q => ({a: rot(q.a, o, a), b: rot(q.b, o, a), r: q.r}));
@@ -168,7 +240,7 @@ function candidates(g, m) {
     if (o === m || !SOLID[r.shape.type]) return;
     const co = carrierOf(g, o);
     if (co === cm) return;
-    if (co !== undefined) { out.push(o); return; }
+    if (co !== undefined || (r.shape.type === TYPE.BAR && barAxis(g, o))) { out.push(o); return; }
     let olo = Infinity, ohi = 0;
     for (const q of shapeAt(g, o, R.map(() => 0))) { olo = Math.min(olo, segDist(c, [q.a, q.b]) - q.r); for (const p of [q.a, q.b]) ohi = Math.max(ohi, dist(p, c) + q.r); }
     if (ohi < lo || olo > hi) return;
@@ -178,11 +250,14 @@ function candidates(g, m) {
 }
 function bumpOf(g, moving, turn0, turn1) {
   const R = g.lv.rings;
-  // a ring's tube cannot turn into a bar that runs into it: the bar must stay in the gap (designer, 2026-11-26)
-  for (const T of g.thru) {
-    if (!moving.has(T.ring) || !g.alive[T.bar] || !g.alive[T.ring]) continue;
-    const q = R[T.ring], m = barMargin(R[T.bar], q);
-    for (const p of T.points) { const d1 = gapDepth(q, turn1[T.ring], p, m); if (d1 < 0 && d1 < gapDepth(q, turn0[T.ring], p, m) - 1e-6) return {piece: T.ring, by: T.bar}; }
+  // a ring's tube cannot turn into a bar: a bar that runs into a ring keeps it from turning past the bar (designer, 2026-11-26)
+  for (const j of moving) {
+    if (!g.alive[j]) continue;
+    for (let b = 0; b < R.length; b++) {
+      if (!g.alive[b] || R[b].shape.type !== TYPE.BAR) continue;
+      const pts = barPointsAt(g, b), tb = R[b].shape.tubeRadius;
+      if (tubeOverlap(pts, tb, R[j], turn1[j]) > tubeOverlap(pts, tb, R[j], turn0[j]) + 1e-9) return {piece: j, by: b};
+    }
   }
   for (let m = 0; m < R.length; m++) {
     if (!g.alive[m] || !SOLID[R[m].shape.type]) continue;
@@ -208,6 +283,7 @@ function bumpOf(g, moving, turn0, turn1) {
 // Where bomb b is now: it turns with its ring; on a bar it stays put.
 export function bombPos(g, b) {
   const r = g.lv.rings[b], h = g.host[b], p = P(r);
+  if (h !== undefined && g.lv.rings[h].shape.type === TYPE.BAR && g.turn[h]) { const a = barAxis(g, h); return {x: p.x + a.x * g.turn[h], y: p.y + a.y * g.turn[h]}; }
   if (h === undefined || !isRing(g.lv.rings[h])) return p;
   const c = P(g.lv.rings[h]), a = rad(g.turn[h]), dx = p.x - c.x, dy = p.y - c.y;
   return {x: c.x + dx * Math.cos(a) - dy * Math.sin(a), y: c.y + dx * Math.sin(a) + dy * Math.cos(a)};
@@ -218,7 +294,7 @@ export function bombContacts(g, b) {
   R.forEach((r, j) => {
     if (j === b || j === g.host[b] || !g.alive[j]) return;
     if (isRing(r)) { const c = P(r); if (Math.abs(dist(p, c) - r.shape.radius) < r.shape.tubeRadius + br && !inGap(r, g.turn[j], p)) out.push(j); }
-    else if (r.shape.type === TYPE.BAR && segDist(p, barPoints(r)) < r.shape.tubeRadius + br) out.push(j);
+    else if (r.shape.type === TYPE.BAR && segDist(p, barPointsAt(g, j)) < r.shape.tubeRadius + br) out.push(j);
   });
   return out;
 }
@@ -318,44 +394,47 @@ const cloneGame = g => ({...g, locks: g.locks.map(L => ({...L})), turn: [...g.tu
 function bombMove(g) {
   let best = null;
   g.lv.rings.forEach((r, i) => {
-    if (!isRing(r) || !g.alive[i] || !canTurn(g, i).ok) return;
-    const step = r.snapStep || 15;
+    const bar = r.shape.type === TYPE.BAR;
+    if (!(isRing(r) || bar) || !g.alive[i] || !canTurn(g, i).ok) return;
+    const step = bar ? SLIDE : r.snapStep || 15, max = bar ? SLIDE_MAX : 360;
     for (const dir of [1, -1]) {
       const c = cloneGame(g), before = c.alive.filter(Boolean).length;
-      for (let t = step; t <= 360; t += step) {
+      for (let t = step; t <= max + 1e-9; t += step) {
         turnRing(c, i, dir * step, {count: false});
-        if (c.alive.filter(Boolean).length < before) { if (!best || t < Math.abs(best.delta)) best = {ring: i, delta: dir * t}; break; }
+        if (c.alive.filter(Boolean).length < before) { const cost = bar ? t * 30 : t; if (!best || cost < best.cost) best = {ring: i, delta: dir * t, cost}; break; }
+        if (c.events.some(e => e.type === 'bump')) break;
       }
     }
   });
-  return best;
+  return best && {ring: best.ring, delta: best.delta};
 }
 // Player moves from a state: turn one ring one way until something happens (a link frees, a piece shatters, a bomb goes off).
 // Plays one move the way eventMoves found it: in the ring's snap steps, so a found line replays to the same state.
 export function playMove(g, i, delta) {
-  const snap = g.lv.rings[i].snapStep || 15, s = Math.sign(delta); let ok = true;
+  const snap = g.lv.rings[i].shape.type === TYPE.BAR ? SLIDE : g.lv.rings[i].snapStep || 15, s = Math.sign(delta); let ok = true;
   for (let left = Math.abs(delta); left > 1e-6 && ok; left -= snap) { ok = turnRing(g, i, s * Math.min(snap, left)); if (g.events.some(e => e.type === 'bump')) break; }
   return ok;
 }
 export function eventMoves(g) {
   const out = [];
   g.lv.rings.forEach((r, i) => {
-    if (!g.alive[i] || !isRing(r) || !canTurn(g, i).ok) return;
-    const step = r.snapStep || 15;
+    const bar = r.shape.type === TYPE.BAR;
+    if (!g.alive[i] || !(isRing(r) || bar) || !canTurn(g, i).ok) return;
+    const step = bar ? SLIDE : r.snapStep || 15, max = bar ? SLIDE_MAX : 360;
     for (const dir of [1, -1]) {
       const c = cloneGame(g), l0 = c.locks.filter(L => L.on).length, a0 = c.alive.filter(Boolean).length;
-      for (let t = step; t <= 360; t += step) {
+      for (let t = step; t <= max + 1e-9; t += step) {
         const t0 = c.turn[i];
         turnRing(c, i, dir * step, {count: false});
         const boom = c.events.some(e => e.type === 'explode'), bump = c.events.some(e => e.type === 'bump');
         if (boom || c.locks.filter(L => L.on).length < l0 || c.alive.filter(Boolean).length < a0) { out.push({ring: i, delta: dir * t, boom, g: c}); break; }
-        if (bump) { const moved = dir * (t - step) + (c.turn[i] - t0); if (Math.abs(moved) > .5) out.push({ring: i, delta: moved, bump: true, g: c}); break; }
+        if (bump) { const moved = dir * (t - step) + (c.turn[i] - t0); if (Math.abs(moved) > (bar ? .02 : .5)) out.push({ring: i, delta: moved, bump: true, g: c}); break; }
       }
     }
   });
   return out;
 }
-const stateKey = g => g.alive.map(a => a ? 1 : 0).join('') + '|' + g.locks.map(L => L.on ? 1 : 0).join('') + '|' + g.turn.map(t => Math.round(((t % 360) + 360) % 360)).join(',');
+const stateKey = g => g.alive.map(a => a ? 1 : 0).join('') + '|' + g.locks.map(L => L.on ? 1 : 0).join('') + '|' + g.turn.map((t, i) => g.lv.rings[i].shape.type === TYPE.BAR ? Math.round(t * 20) : Math.round(((t % 360) + 360) % 360)).join(',');
 // Full search for a winning line (used when the greedy bot gets stuck: a bomb on the wrong ring, or parts that bump). null if none.
 export function searchSolve(lv, rule = 'block', maxStates = 30000) {
   const seen = new Set(); let n = 0;

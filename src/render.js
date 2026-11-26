@@ -95,7 +95,8 @@ export function bounds(lv) {
 /* opts: {turn, alive, open, owner, sel:Set, hint:Set, ids, links:[{a,b,kind}], ghost, play, shakeIdx, dim:Set} */
 export function drawLevel(lv, o = {}) {
   const R = lv.rings, alive = o.alive || R.map(() => true), turn = o.turn || R.map(() => 0), open = o.open || R.map(r => !r.locked), owner = o.owner || {}, host = o.host || {};
-  const sel = o.sel || new Set(), hint = o.hint || new Set();
+  const sel = o.sel || new Set(), hint = o.hint || new Set(), off = o.offset || [];
+  const tr = i => off[i] && (off[i].x || off[i].y) ? ` transform="translate(${f(off[i].x)} ${f(off[i].y)})"` : '';
   const order = R.map((r, i) => i).sort((a, b) => layer(R[a]) - layer(R[b]));
   const inRing = {}; Object.entries(owner).forEach(([c, i]) => { (inRing[i] = inRing[i] || []).push(+c); });
   const bombsOn = {}; Object.entries(host).forEach(([b, i]) => { if (isRing(R[i])) (bombsOn[i] = bombsOn[i] || []).push(+b); });
@@ -117,10 +118,10 @@ export function drawLevel(lv, o = {}) {
     if (t === TYPE.BAR) {
       let inner = barBody(r);
       R.forEach((k, j) => { if (k.locked && k.keyHolder === i && !open[j] && alive[j]) { const p = barPoints(r); if (p.length) inner += keyIcon({x: (p[0].x + p[p.length - 1].x) / 2, y: (p[0].y + p[p.length - 1].y) / 2}, .024); } });
-      return `<g class="${cls}" data-i="${i}">${inner}</g>`;
+      return `<g class="${cls}" data-i="${i}"${tr(i)}>${inner}</g>`;
     }
     if (t === TYPE.PIN) return `<g class="${cls}" data-i="${i}">${pinBody(r)}</g>`;
-    if (t === TYPE.BOMB) return host[i] !== undefined && isRing(R[host[i]]) ? '' : `<g class="${cls}" data-i="${i}">${bombBody(r)}</g>`;
+    if (t === TYPE.BOMB) return host[i] !== undefined && isRing(R[host[i]]) ? '' : `<g class="${cls}" data-i="${i}"${tr(host[i])}>${bombBody(r)}</g>`;
     return `<g class="${cls} unknown" data-i="${i}"><circle cx="${f(r.position.x)}" cy="${f(r.position.y)}" r=".3" class="unk"/><circle class="hit" cx="${f(r.position.x)}" cy="${f(r.position.y)}" r=".3"/></g>`;
   };
   for (const i of order) if (alive[i] && !(R[i].shape.type === TYPE.CONNECTOR && owner[i] !== undefined && !alive[owner[i]])) s += piece(i);
