@@ -1,5 +1,5 @@
 // Play-test rules of Rotate Rings (GDD 1.2 and 1.4), and a bot that solves a level.
-import {TYPE, isRing, analyze, inGap, P, angleAt, wrap180, barPoints, segDist, dist, rad} from './format.js';
+import {TYPE, isRing, analyze, inGap, P, angleAt, wrap180, barPoints, segDist, dist, rad, connectorEnds, dirOf} from './format.js';
 
 export const RULES = {
   block: {name: 'Arms hold their ring', text: 'A ring whose arm still hooks another ring cannot turn. Free the hooked ring first.'},
@@ -14,7 +14,7 @@ export function newGame(lv, opts = {}) {
   const g = {
     lv, rule: opts.rule || 'block', locks: locks.map((L, k) => ({...L, id: k, on: true})), owner, host,
     turn: lv.rings.map(() => 0), alive: lv.rings.map(r => r.shape.type in {0: 1, 1: 1, 6: 1, 9: 1, 10: 1, 11: 1}),
-    open: lv.rings.map(r => !r.locked), touch: lv.rings.map(() => []), moves: 0, score: 0, events: [], history: []
+    open: lv.rings.map(r => !r.locked), touch: lv.rings.map(() => []), rest: [], moves: 0, score: 0, events: [], history: []
   };
   // pieces a bomb touches at the start do not set it off; only a new touch does
   lv.rings.forEach((r, b) => { if (r.shape.type === TYPE.BOMB) g.touch[b] = bombContacts(g, b); });
@@ -75,6 +75,9 @@ export function turnRing(g, i, delta, {count = true} = {}) {
     let blocked = false;
     for (const {i: j, k} of grp) { const r = g.lv.rings[j]; if (r.limitAngle) { const t = g.turn[j] + d * k; if (t < r.minAngle - 1e-6 || t > r.maxAngle + 1e-6) blocked = true; } }
     if (blocked) break;
+    const t1 = [...g.turn]; for (const {i: j, k} of grp) t1[j] += d * k;
+    const bump = bumpOf(g, new Set(grp.map(q => q.i)), g.turn, t1);
+    if (bump) { g.events.push({type: 'bump', ...bump}); break; }
     for (const {i: j, k} of grp) {
       g.turn[j] += d * k;
       const r = g.lv.rings[j];
@@ -105,6 +108,72 @@ export function resolve(g) {
       if (!links) { shatter(g, i); again = true; }
     });
   }
+}
+/* ---------- solid parts (designer, 2026-11-26) ---------- */
+// Pins, connectors, bars and bombs are solid: none can pass through another. Ring tubes still overlap freely.
+// A part turns with its carrier ring: an arm with its owner, a bomb with its ring. Pins and bars stay put.
+export function carrierOf(g, i) {
+  const t = g.lv.rings[i].shape.type;
+  if (t === TYPE.CONNECTOR) return g.owner[i];
+  if (t === TYPE.BOMB) { const h = g.host[i]; return h !== undefined && isRing(g.lv.rings[h]) ? h : undefined; }
+  return undefined;
+}
+const SOLID = {6: 1, 9: 1, 10: 1, 11: 1};
+// Capsules {a, b, r} of part i, in its rest pose (before its carrier turns).
+function restShape(r) {
+  const t = r.shape.type, out = [];
+  if (t === TYPE.CONNECTOR) {
+    const {tail, head} = connectorEnds(r), w = Math.max(.1, r.shape.tubeRadius * 2.6) / 2;
+    out.push({a: tail, b: head, r: w});
+    if (r.shape.hook) out.push({a: head, b: head, r: r.shape.radius * .62 + r.shape.tubeRadius * 1.1});
+  } else if (t === TYPE.PIN) {
+    const p = P(r), d = dirOf(r), L = r.shape.legLength * .55, e = {x: p.x + d.x * L, y: p.y + d.y * L};
+    out.push({a: p, b: e, r: .05}, {a: e, b: e, r: r.shape.radius * .75}, {a: p, b: p, r: r.shape.radius * .6});
+  } else if (t === TYPE.BAR) {
+    const pts = barPoints(r);
+    for (let k = 0; k + 1 < pts.length; k++) out.push({a: pts[k], b: pts[k + 1], r: r.shape.tubeRadius});
+  } else if (t === TYPE.BOMB) { const p = P(r); out.push({a: p, b: p, r: r.shape.radius}); }
+  return out;
+}
+const rot = (p, c, a) => { const cs = Math.cos(a), sn = Math.sin(a), dx = p.x - c.x, dy = p.y - c.y; return {x: c.x + dx * cs - dy * sn, y: c.y + dx * sn + dy * cs}; };
+function shapeAt(g, i, turn) {
+  const R = g.lv.rings, base = g.rest[i] || (g.rest[i] = restShape(R[i])), c = carrierOf(g, i);
+  if (c === undefined || !turn[c]) return base;
+  const o = P(R[c]), a = rad(turn[c]);
+  return base.map(q => ({a: rot(q.a, o, a), b: rot(q.b, o, a), r: q.r}));
+}
+function segSeg(p1, p2, q1, q2) {
+  const cr = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+  const d1 = cr(q1, q2, p1), d2 = cr(q1, q2, p2), d3 = cr(p1, p2, q1), d4 = cr(p1, p2, q2);
+  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return 0;
+  return Math.min(segDist(p1, [q1, q2]), segDist(p2, [q1, q2]), segDist(q1, [p1, p2]), segDist(q2, [p1, p2]));
+}
+// Gap between two parts (negative = overlapping).
+function partGap(A, B) {
+  let best = Infinity;
+  for (const x of A) for (const y of B) best = Math.min(best, segSeg(x.a, x.b, y.a, y.b) - x.r - y.r);
+  return best;
+}
+// First pair of parts that the step from turn0 to turn1 pushes into each other, or null.
+function bumpOf(g, moving, turn0, turn1) {
+  const R = g.lv.rings, parts = R.map((r, i) => i).filter(i => g.alive[i] && SOLID[R[i].shape.type]);
+  for (const m of parts) {
+    const cm = carrierOf(g, m); if (cm === undefined || !moving.has(cm)) continue;
+    const A0 = shapeAt(g, m, turn0), A1 = shapeAt(g, m, turn1);
+    for (const o of parts) {
+      if (o === m) continue;
+      const co = carrierOf(g, o);
+      if (co === cm) continue;
+      if (co !== undefined && moving.has(co) && o < m) continue; // pair already checked from the other side
+      const tm = R[m].shape.type, to = R[o].shape.type;
+      if ((tm === TYPE.BOMB && to === TYPE.BAR) || (to === TYPE.BOMB && tm === TYPE.BAR)) continue; // a bomb on a bar goes off instead
+      const d1 = partGap(A1, shapeAt(g, o, turn1));
+      if (d1 >= 0) continue;
+      const d0 = partGap(A0, shapeAt(g, o, turn0));
+      if (d1 < d0 - 1e-6) return {piece: m, by: o};
+    }
+  }
+  return null;
 }
 /* ---------- Bomb ---------- */
 // Where bomb b is now: it turns with its ring; on a bar it stays put.
@@ -241,16 +310,18 @@ export function eventMoves(g) {
     for (const dir of [1, -1]) {
       const c = cloneGame(g), l0 = c.locks.filter(L => L.on).length, a0 = c.alive.filter(Boolean).length;
       for (let t = step; t <= 360; t += step) {
+        const t0 = c.turn[i];
         turnRing(c, i, dir * step, {count: false});
-        const boom = c.events.some(e => e.type === 'explode');
+        const boom = c.events.some(e => e.type === 'explode'), bump = c.events.some(e => e.type === 'bump');
         if (boom || c.locks.filter(L => L.on).length < l0 || c.alive.filter(Boolean).length < a0) { out.push({ring: i, delta: dir * t, boom, g: c}); break; }
+        if (bump) { const moved = dir * (t - step) + (c.turn[i] - t0); if (Math.abs(moved) > .5) out.push({ring: i, delta: moved, bump: true, g: c}); break; }
       }
     }
   });
   return out;
 }
 const stateKey = g => g.alive.map(a => a ? 1 : 0).join('') + '|' + g.locks.map(L => L.on ? 1 : 0).join('') + '|' + g.turn.map(t => Math.round(((t % 360) + 360) % 360)).join(',');
-// Full search for a winning line (used when the greedy bot gets stuck, e.g. it set off a bomb on the wrong ring). null if none.
+// Full search for a winning line (used when the greedy bot gets stuck: a bomb on the wrong ring, or parts that bump). null if none.
 export function searchSolve(lv, rule = 'block', maxStates = 30000) {
   const seen = new Set(); let n = 0;
   const dfs = g => {
@@ -266,11 +337,11 @@ export function solve(lv, rule = 'block', limit = 400) {
   const play = list => {
     const g = newGame(JSON.parse(JSON.stringify(lv)), {rule}), moves = [];
     if (list) for (const m of list) { turnRing(g, m.ring, m.delta); moves.push(m); }
-    else while (!won(g) && moves.length < limit) { const m = botMove(g); if (!m) break; turnRing(g, m.ring, m.delta); moves.push(m); }
+    else while (!won(g) && moves.length < limit) { const m = botMove(g); if (!m) break; const k0 = stateKey(g); turnRing(g, m.ring, m.delta); if (stateKey(g) === k0) break; moves.push(m); }
     return {won: won(g), moves, stuck: g.alive.map((a, i) => a ? i : -1).filter(i => i >= 0), score: g.score, game: g};
   };
   const r = play();
-  if (r.won || !lv.rings.some(p => p.shape.type === TYPE.BOMB)) return r;
+  if (r.won) return r;
   const line = searchSolve(lv, rule);
   return line ? {...play(line), searched: true, greedyStuck: true} : r;
 }

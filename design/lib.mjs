@@ -74,9 +74,11 @@ export function moves(g) {
       const c = clone(g), l0 = c.locks.filter(L => L.on).length, a0 = c.alive.filter(Boolean).length;
       let ev = null;
       for (let t = 15; t <= 360; t += 15) {
+        const t0 = c.turn[i];
         turnRing(c, i, dir * 15, {count: false});
-        const boom = c.events.some(e => e.type === 'explode');
+        const boom = c.events.some(e => e.type === 'explode'), bump = c.events.some(e => e.type === 'bump');
         if (boom || c.locks.filter(L => L.on).length < l0 || c.alive.filter(Boolean).length < a0) { ev = {ring: i, delta: dir * t, boom, cleared: a0 - c.alive.filter(Boolean).length}; break; }
+        if (bump) { const moved = dir * (t - 15) + (c.turn[i] - t0); if (Math.abs(moved) > .5) ev = {ring: i, delta: moved, boom: false, bump: true, cleared: 0}; break; }
       }
       if (ev) out.push({...ev, g: c});
     }

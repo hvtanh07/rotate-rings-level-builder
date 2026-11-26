@@ -35,7 +35,14 @@ describe('rules', () => {
     expect(g.alive[3]).toBe(true);
     expect(canTurn(g, 0).ok).toBe(false);
     turnRing(g, 1, 360); expect(g.alive[1]).toBe(false);
-    turnRing(g, 0, 360); expect(g.alive[3]).toBe(false); expect(won(g)).toBe(true);
+    turnRing(g, 0, -360); expect(g.alive[3]).toBe(false); expect(won(g)).toBe(true);
+  });
+  it('solid parts do not pass through each other', () => {
+    // level_010 again: once R1 is gone, R0's free arm swings with it; turning the long way hits the pin first
+    const g = newGame(lvl('level_010'));
+    turnRing(g, 1, 360); turnRing(g, 0, 360);
+    expect(g.events.some(e => e.type === 'bump' && e.piece === 2 && e.by === 3)).toBe(true);
+    expect(g.alive[3]).toBe(true); expect(g.turn[0]).toBeLessThan(180);
   });
   it('boosters and undo', () => {
     const g = newGame(lvl('level_001'));

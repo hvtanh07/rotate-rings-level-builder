@@ -414,6 +414,7 @@ function flushEvents() {
       fx.appendChild(g); setTimeout(() => g.remove(), 900);
     }
     if (ev.type === 'shake') { shakeIdx = ev.piece; setTimeout(() => { shakeIdx = -1; renderPlay(); }, 330); const by = ev.by; toast(ev.why === 'locked' ? `${pname(game.lv, by)} is locked. Clear the piece with its key first.` : ev.why === 'arm' ? `${pname(game.lv, by)} cannot turn: its arm still hooks another ring.` : 'This piece does not turn.'); }
+    if (ev.type === 'bump') { shakeIdx = ev.by; setTimeout(() => { shakeIdx = -1; renderPlay(); }, 330); toast(`${pname(game.lv, ev.piece)} hits ${pname(game.lv, ev.by)}: parts cannot pass through each other.`); }
     if (ev.type === 'explode') {
       const g = document.createElementNS(NS, 'g'), c = ev.at;
       g.innerHTML = `<circle cx="${c.x}" cy="${c.y}" r=".2" fill="#FFB020" opacity=".9"><animate attributeName="r" from=".2" to="1.6" dur=".5s" fill="freeze"/><animate attributeName="opacity" from=".9" to="0" dur=".5s" fill="freeze"/></circle>` + shardsAt(c, '#F2560F', 14, 1.1) + `<text class="praise" transform="translate(${c.x} ${c.y + .4}) scale(1 -1)">Boom!</text>`;
@@ -614,6 +615,7 @@ function paneHelp() {
   <li>Locked Ring: does not turn until the piece holding its key shatters.</li>
   <li>Gear Rings: meshed gears turn the other way, by the tooth ratio.</li>
   <li>A ring whose arm still hooks another ring is held: it cannot turn (a tap only shakes it). Free the hooked ring first.</li>
+  <li>Pins, connectors, bars and bombs are solid: none passes through another. A ring stops turning when a part it carries (a free arm, a bomb) hits another part. Ring tubes still overlap.</li>
   <li>Boosters: Hint lights the rings that can turn; Saw cuts one connector or bar; Remove takes one ring off.</li></ul>
   <h3>Data</h3><ul>
   <li>Levels are read from and written to the game's <code>levels.json</code> format: same keys, same order, 4-space layout.</li>
