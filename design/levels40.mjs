@@ -246,8 +246,8 @@ L({name: 'Nest', element: 'Ring', rule: 'Breather: rings inside rings',
 }});
 
 /* ---------- 27-40: mixing everything ---------- */
-L({name: 'Crossfire', element: 'Bomb + Bar', rule: 'Two bombs, each must cross to the far knot',
-  challenge: 'Each bomb ring sits next to the wrong knot: the near hit is on a free ring. Clear the bar first so each bomb can reach across.', make() {
+L({name: 'Crossfire', element: 'Bomb', rule: 'Two bombs, each must cross to the far knot',
+  challenge: 'Each bomb ring sits next to the wrong knot: the near hit is on a free ring. Send each bomb across to the far knot.', make() {
   const b = new Lv(), m1 = b.ring(-1.1, 1.1, {c: C.orange}), m2 = b.ring(1.1, -1.1, {c: C.orange});
   const k1 = b.ring(1.1, 1.1, {c: C.blue, closed: true}), k2 = b.ring(-1.1, -1.1, {c: C.blue, closed: true});
   b.pin(k1, 45).pin(k2, 225).bomb(m1, 270).bomb(m2, 90).pin(m1, 135).pin(m2, 315);
