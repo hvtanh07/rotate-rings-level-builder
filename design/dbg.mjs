@@ -6,4 +6,4 @@ const n = +process.argv[2], L = LEVELS[n - 1], lv = L.make().b.build({id: 'x'});
 let g = newGame(lv);
 for (const m of (process.argv[3] || '').split(',').filter(Boolean)) { const [i, d] = m.split(':').map(Number); turnRing(g, i, d); console.log('turn', i, d, g.events.map(e => e.type + ':' + (e.piece ?? '') + (e.hit !== undefined ? '>' + e.hit : '')).join(' ')); }
 console.log('alive', g.alive.map((a, i) => a ? i : '').filter(x => x !== '').join(','));
-for (const m of moves(g)) console.log('move', m.ring, m.delta, 'boom', m.boom, 'cleared', m.cleared, 'win?', winnable(m.g), 'alive', m.g.alive.map((a, i) => a ? i : '').filter(x => x !== '').join(','));
+for (const m of moves(g)) console.log('move', m.ring, Math.round(m.delta), m.bump ? 'BUMP' : '', 'boom', m.boom, 'cleared', m.cleared, 'win?', winnable(m.g), 'alive', m.g.alive.map((a, i) => a ? i : '').filter(x => x !== '').join(','));
