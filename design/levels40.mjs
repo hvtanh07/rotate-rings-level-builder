@@ -72,7 +72,7 @@ L({name: 'In the way', element: 'Straight Bar + Pin', rule: 'A ring can be in th
   const bar = b.bar([[0, -.3], [0, 2.2]], {c: C.red}); b.pinBar(bar, .76, 1);
   return {b};
 }});
-L({name: 'Two at once', element: 'Straight Bar + Pin', rule: 'One bent bar can run into two rings and hold both',
+L({name: 'Two at once', element: 'Straight Bar + Pin', G: {2: 225}, rule: 'One bent bar can run into two rings and hold both',
   challenge: 'A bent bar runs into the gaps of the hub and of the lower ring, so neither can turn. It slides out along its pins, but the short bar above is in its way: slide that one up into its ring and out first.', make() {
   const b = new Lv(), H = b.ring(0, 0, {c: C.cyan, gap: 20}), O = nb(b, H, 315, {c: C.orange, gap: 20});
   const TL = nb(b, H, 135, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red}), Z = nb(b, H, 90, {r: .8, c: C.green});
@@ -85,7 +85,7 @@ L({name: 'Two at once', element: 'Straight Bar + Pin', rule: 'One bent bar can r
   const short = b.bar([[2.6, .6], [2.6, 3.4]], {c: C.blue}); b.pinBar(short, .22, -1);
   return {b};
 }});
-L({name: 'Workshop', element: 'Bar + Pin', hard: true, rule: 'Hard: bars in the way of bars, a ring in the way of a bar',
+L({name: 'Workshop', element: 'Bar + Pin', hard: true, G: {2: 225}, rule: 'Hard: bars in the way of bars, a ring in the way of a bar',
   challenge: 'Three bars hold three rings. The bent bar cannot slide out while the long bar is in its way, and the long bar cannot slide up while the top ring sits on its path. Clear the top corner, slide the long bar, then the bent bar, then open the hub.', make() {
   const b = new Lv(), H = b.ring(0, 0, {c: C.cyan, gap: 20}), O = nb(b, H, 315, {c: C.orange, gap: 20});
   const TL = nb(b, H, 135, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red, gap: 180}), Z = nb(b, H, 90, {r: .8, c: C.green});
@@ -127,22 +127,22 @@ L({name: 'Aim', element: 'Bomb', rule: 'Pick the right target: a bomb spent on a
 }});
 L({name: 'Long way', element: 'Bomb', rule: 'A bomb is solid: it cannot pass a pin',
   challenge: 'Free the small ring, then turn the bomb ring. The short way runs the bomb into its own pin; go the long way round to the knot.', make() {
-  const b = new Lv(), m = b.ring(0, 0, {c: C.yellow, gap: 300}), k = b.ring(-2.2, 0, {c: C.purple, closed: true}), s = nb(b, m, 315, {r: .65, c: C.green, gap: 45});
+  const b = new Lv(), m = b.ring(0, 0, {c: C.yellow, gap: 300}), k = b.ring(-2.2, 0, {c: C.purple, closed: true}), s = nb(b, m, 45, {r: .65, c: C.green, gap: 135});
   b.arm(m, s).bomb(m, 0).pin(m, 90).pin(k, 90).pin(k, 270);
   const t = nb(b, k, 180, {r: .7, c: C.pink}); b.arm(t, k);
   return {b};
 }});
-L({name: 'Scales', element: 'Bomb', hard: true, rule: 'Hard: two knots, two bombs, one decoy',
-  challenge: 'Two bars run into the side rings, and each bar is hooked from above, so neither can slide (two knots). Each bomb ring must turn up into its own bar; turned the other way, its bomb hits the center ring instead and the level is lost.', make() {
+L({name: 'Scales', element: 'Bomb', hard: true, rule: 'Hard: a knot, two bombs, one decoy',
+  challenge: 'Two bars run into the side rings. The left bar is hooked from above, so it cannot slide (a knot): only the left bomb, turned up, clears it. The right bar slides out. Turn a bomb the wrong way and it hits the small decoy ring in the middle; waste the left one and the level is lost.', make() {
   const b = new Lv(), y = .6, Lp = b.ring(-3.6, y, {r: .9, c: C.blue, gap: 0}), Rp = b.ring(3.6, y, {r: .9, c: C.blue, gap: 180});
   const hL = b.bar([[-3.35, y], [-.9, y]], {c: C.purple}), hR = b.bar([[3.35, y], [.9, y]], {c: C.purple});
   b.pinBar(hL, .2, 1).pinBar(hR, .2, -1).pin(Lp, 270).pin(Rp, 270);
   b.arm(Lp, nb(b, Lp, 180, {r: .6, c: C.pink})).arm(Rp, nb(b, Rp, 0, {r: .6, c: C.pink}));
-  const kL = b.ring(-2.1, y + 1.35, {r: .9, c: C.green, gap: 90}), kR = b.ring(2.1, y + 1.35, {r: .9, c: C.green, gap: 90});
-  b.hookBar(kL, hL, [-2.1, y]).hookBar(kR, hR, [2.1, y]);
+  const kL = b.ring(-2.1, y + 1.35, {r: .9, c: C.green, gap: 90});
+  b.hookBar(kL, hL, [-2.1, y]);
   const BL = b.ring(-1.6, y - 1.2, {c: C.orange, gap: 200}), BR = b.ring(1.6, y - 1.2, {c: C.orange, gap: 340});
-  const ct = b.ring(0, -2.8, {r: .8, c: C.yellow}), s = nb(b, ct, 270, {r: .6, c: C.pink}), dc = b.ring(0, -1.2, {r: .5, c: C.cyan, gap: 90}); b.pin(dc, 270);
-  b.arm(ct, BL).arm(ct, BR).arm(ct, s).bomb(BL, 45).bomb(BR, 135);
+  const ct = b.ring(0, -2.8, {r: .8, c: C.yellow}), dc = b.ring(0, -1.2, {r: .5, c: C.cyan, gap: 90}); b.pin(dc, 270);
+  b.arm(ct, BL).arm(ct, BR).pin(ct, 270).bomb(BL, 45).bomb(BR, 135);
   return {b};
 }});
 L({name: 'Ring road', element: 'Bomb', G: {0: 40, 1: 225, 2: 200, 3: 200, 4: 275, 5: 130}, rule: 'Two rings hooked onto each other are a knot',
@@ -217,7 +217,7 @@ L({name: 'Drawbridge', element: 'Gear Ring', rule: 'A bent bar in two gears: lif
   b.arm(a, nb(b, a, 200, {r: .7, c: C.pink})).arm(g, nb(b, g, 340, {r: .7, c: C.pink}));
   return {b};
 }});
-L({name: 'Partner', element: 'Gear Ring', rule: 'A gear group is held if any gear has an arm out',
+L({name: 'Partner', element: 'Gear Ring', G: {0: 255, 1: 50, 2: 135, 3: 210}, rule: 'A gear group is held if any gear has an arm out',
   challenge: 'The orange gear looks free but only shakes: its partner still hooks the purple ring. Free purple first, then turn the pair the way that keeps the free arm off the pin.', make() {
   const b = new Lv(), d = D(1, 1), a = b.ring(-d / 2, 0, {c: C.orange}), g = b.ring(d / 2, 0, {c: C.green});
   b.gear(a, g).pin(a, 180).pin(g, 270).arm(g, nb(b, g, 0, {r: .8, c: C.purple}));
@@ -286,7 +286,7 @@ L({name: 'Grid', element: 'All so far', hard: true, G: {1: 135, 3: 340, 4: 40, 5
   b.arm(nb(b, g[3], 180, {r: .65, c: C.yellow}), g[3]).arm(nb(b, g[5], 0, {r: .65, c: C.yellow}), g[5]);
   return {b};
 }});
-L({name: 'Branches', element: 'Ring', rule: 'Breather: a tree of rings',
+L({name: 'Branches', element: 'Ring', G: {0: 335, 1: 235, 2: 165, 3: 235, 4: 125, 5: 85, 6: 50}, rule: 'Breather: a tree of rings',
   challenge: 'Breather: a branching tree. Every leaf is free; clear the leaves and the branches follow.', make() {
   const b = new Lv(), root = b.ring(0, -2.2, {c: C.green});
   const l = nb(b, root, 120, {r: .85, c: C.yellow}), r = nb(b, root, 60, {r: .85, c: C.orange}); b.arm(root, l).arm(root, r);

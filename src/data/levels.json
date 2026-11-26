@@ -5062,7 +5062,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 95.0,
+                                "centerDegrees": 225.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -6209,7 +6209,7 @@
                 "z": -1.0
             },
             "tier": 0,
-            "difficulty": 54.5,
+            "difficulty": 52.0,
             "seed": 4010,
             "rings": [
                 {
@@ -6338,7 +6338,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 95.0,
+                                "centerDegrees": 225.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -7762,7 +7762,7 @@
                 }
             ],
             "tutorialRing": -1,
-            "timeLimit": 155.0
+            "timeLimit": 150.0
         },
         {
             "id": "level_011",
@@ -9763,7 +9763,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 45.0,
+                                "centerDegrees": 135.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -9778,7 +9778,7 @@
                     },
                     "position": {
                         "x": 1.4142,
-                        "y": -1.4142,
+                        "y": 1.4142,
                         "z": 0.0
                     },
                     "eulerAngles": {
@@ -9881,7 +9881,7 @@
                         "tubeRadius": 0.04500000178813934,
                         "gaps": [],
                         "flatRatio": 0.5,
-                        "legLength": 0.35,
+                        "legLength": 0.35000000000000003,
                         "arcDegrees": 240.0,
                         "flexDepth": 0.0,
                         "hook": true,
@@ -9891,13 +9891,13 @@
                     },
                     "position": {
                         "x": 0.8309,
-                        "y": -0.8309,
+                        "y": 0.8309,
                         "z": 0.0
                     },
                     "eulerAngles": {
                         "x": 0.0,
                         "y": 0.0,
-                        "z": -45.00000000000001
+                        "z": 45.0
                     },
                     "rotationAxis": {
                         "x": 0.0,
@@ -10211,7 +10211,7 @@
                 "z": -1.0
             },
             "tier": 1,
-            "difficulty": 55.2,
+            "difficulty": 58.0,
             "seed": 4015,
             "rings": [
                 {
@@ -10513,65 +10513,6 @@
                     "shape": {
                         "id": "R5",
                         "type": 1,
-                        "radius": 0.9,
-                        "tubeRadius": 0.15000000596046448,
-                        "gaps": [
-                            {
-                                "centerDegrees": 90.0,
-                                "widthDegrees": 55.27
-                            }
-                        ],
-                        "flatRatio": 0.5,
-                        "legLength": 1.2000000476837158,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": false,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 2.1,
-                        "y": 1.95,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 15.0,
-                    "colorIndex": 2,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "R6",
-                        "type": 1,
                         "radius": 1.0,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
@@ -10629,7 +10570,7 @@
                 },
                 {
                     "shape": {
-                        "id": "R7",
+                        "id": "R6",
                         "type": 1,
                         "radius": 1.0,
                         "tubeRadius": 0.15000000596046448,
@@ -10688,13 +10629,13 @@
                 },
                 {
                     "shape": {
-                        "id": "R8",
+                        "id": "R7",
                         "type": 1,
                         "radius": 0.8,
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 0.0,
+                                "centerDegrees": 10.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -10747,66 +10688,7 @@
                 },
                 {
                     "shape": {
-                        "id": "R9",
-                        "type": 1,
-                        "radius": 0.6,
-                        "tubeRadius": 0.15000000596046448,
-                        "gaps": [
-                            {
-                                "centerDegrees": 270.0,
-                                "widthDegrees": 56.0
-                            }
-                        ],
-                        "flatRatio": 0.5,
-                        "legLength": 1.2000000476837158,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": false,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 0.0,
-                        "y": -4.55,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 15.0,
-                    "colorIndex": 4,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "R10",
+                        "id": "R8",
                         "type": 1,
                         "radius": 0.5,
                         "tubeRadius": 0.15000000596046448,
@@ -11213,60 +11095,6 @@
                         "tubeRadius": 0.04500000178813934,
                         "gaps": [],
                         "flatRatio": 0.5,
-                        "legLength": 0.3500000000000001,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": true,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 0.0,
-                        "y": -3.775,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": -90.00000000000001
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 0.0,
-                    "colorIndex": 3,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "K5",
-                        "type": 6,
-                        "radius": 0.2200000137090683,
-                        "tubeRadius": 0.04500000178813934,
-                        "gaps": [],
-                        "flatRatio": 0.5,
                         "legLength": 0.45000000000000007,
                         "arcDegrees": 240.0,
                         "flexDepth": 0.0,
@@ -11277,60 +11105,6 @@
                     },
                     "position": {
                         "x": -2.1,
-                        "y": 0.825,
-                        "z": 0.0
-                    },
-                    "eulerAngles": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": -90.0
-                    },
-                    "rotationAxis": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 1.0
-                    },
-                    "pivot": {
-                        "x": 0.0,
-                        "y": 0.0,
-                        "z": 0.0
-                    },
-                    "startAngle": 0.0,
-                    "limitAngle": false,
-                    "minAngle": -180.0,
-                    "maxAngle": 180.0,
-                    "snapStep": 0.0,
-                    "colorIndex": 2,
-                    "slide": false,
-                    "slideAxis": {
-                        "x": 0.0,
-                        "y": 1.0,
-                        "z": 0.0
-                    },
-                    "locked": false,
-                    "keyHolder": -1,
-                    "lockAngle": 0.0,
-                    "keyAngle": 0.0,
-                    "gearWith": []
-                },
-                {
-                    "shape": {
-                        "id": "K6",
-                        "type": 6,
-                        "radius": 0.2200000137090683,
-                        "tubeRadius": 0.04500000178813934,
-                        "gaps": [],
-                        "flatRatio": 0.5,
-                        "legLength": 0.45000000000000007,
-                        "arcDegrees": 240.0,
-                        "flexDepth": 0.0,
-                        "hook": true,
-                        "points": [],
-                        "gearTeeth": 0,
-                        "gearPhase": 0.0
-                    },
-                    "position": {
-                        "x": 2.1,
                         "y": 0.825,
                         "z": 0.0
                     },
@@ -11546,6 +11320,60 @@
                         "gearPhase": 0.0
                     },
                     "position": {
+                        "x": 0.0,
+                        "y": -3.6,
+                        "z": 0.0
+                    },
+                    "eulerAngles": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 270.0
+                    },
+                    "rotationAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    },
+                    "pivot": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "startAngle": 0.0,
+                    "limitAngle": false,
+                    "minAngle": -180.0,
+                    "maxAngle": 180.0,
+                    "snapStep": 0.0,
+                    "colorIndex": 0,
+                    "slide": false,
+                    "slideAxis": {
+                        "x": 0.0,
+                        "y": 1.0,
+                        "z": 0.0
+                    },
+                    "locked": false,
+                    "keyHolder": -1,
+                    "lockAngle": 0.0,
+                    "keyAngle": 0.0,
+                    "gearWith": []
+                },
+                {
+                    "shape": {
+                        "id": "H4",
+                        "type": 9,
+                        "radius": 0.2199999988079071,
+                        "tubeRadius": 0.04500000178813934,
+                        "gaps": [],
+                        "flatRatio": 0.5,
+                        "legLength": 0.75,
+                        "arcDegrees": 240.0,
+                        "flexDepth": 0.0,
+                        "hook": false,
+                        "points": [],
+                        "gearTeeth": 0,
+                        "gearPhase": 0.0
+                    },
+                    "position": {
                         "x": -2.86,
                         "y": 0.6,
                         "z": 0.0
@@ -11585,7 +11413,7 @@
                 },
                 {
                     "shape": {
-                        "id": "H4",
+                        "id": "H5",
                         "type": 9,
                         "radius": 0.2199999988079071,
                         "tubeRadius": 0.04500000178813934,
@@ -11747,7 +11575,7 @@
                 }
             ],
             "tutorialRing": -1,
-            "timeLimit": 155.0
+            "timeLimit": 160.0
         },
         {
             "id": "level_016",
@@ -14096,7 +13924,7 @@
                 "z": -1.0
             },
             "tier": 1,
-            "difficulty": 60.3,
+            "difficulty": 61.5,
             "seed": 4020,
             "rings": [
                 {
@@ -15289,7 +15117,7 @@
                 }
             ],
             "tutorialRing": -1,
-            "timeLimit": 165.0
+            "timeLimit": 170.0
         },
         {
             "id": "level_021",
@@ -17278,7 +17106,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 315.0,
+                                "centerDegrees": 255.0,
                                 "widthDegrees": 46.982540130615234
                             }
                         ],
@@ -17339,7 +17167,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 90.0,
+                                "centerDegrees": 50.0,
                                 "widthDegrees": 46.982540130615234
                             }
                         ],
@@ -17400,7 +17228,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 0.0,
+                                "centerDegrees": 135.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -17459,7 +17287,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 0.0,
+                                "centerDegrees": 210.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -23886,7 +23714,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 0.0,
+                                "centerDegrees": 335.0,
                                 "widthDegrees": 46.982540130615234
                             }
                         ],
@@ -23945,7 +23773,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 50.0,
+                                "centerDegrees": 235.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -24004,7 +23832,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 130.0,
+                                "centerDegrees": 165.0,
                                 "widthDegrees": 55.27
                             }
                         ],
@@ -24063,7 +23891,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 150.0,
+                                "centerDegrees": 235.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -24122,7 +23950,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 90.0,
+                                "centerDegrees": 125.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -24181,7 +24009,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 90.0,
+                                "centerDegrees": 85.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -24240,7 +24068,7 @@
                         "tubeRadius": 0.15000000596046448,
                         "gaps": [
                             {
-                                "centerDegrees": 30.0,
+                                "centerDegrees": 50.0,
                                 "widthDegrees": 56.0
                             }
                         ],
@@ -26380,7 +26208,7 @@
                 "z": -1.0
             },
             "tier": 3,
-            "difficulty": 72.0,
+            "difficulty": 73.2,
             "seed": 4035,
             "rings": [
                 {
@@ -29434,7 +29262,7 @@
                 "z": -1.0
             },
             "tier": 3,
-            "difficulty": 37.7,
+            "difficulty": 40.1,
             "seed": 4038,
             "rings": [
                 {
@@ -30302,7 +30130,7 @@
                 }
             ],
             "tutorialRing": -1,
-            "timeLimit": 120.0
+            "timeLimit": 125.0
         },
         {
             "id": "level_039",

@@ -44,6 +44,21 @@ describe('rules', () => {
     expect(g.events.some(e => e.type === 'bump' && e.piece === 2 && e.by === 3)).toBe(true);
     expect(g.alive[3]).toBe(true); expect(g.turn[0]).toBeLessThan(180);
   });
+  it('a free arm cannot pass through another ring\'s tube, only through its gap', () => {
+    const mk = gapB => {
+      const lv = normalize({id: 't', rings: []});
+      const ring = (x, y, gap) => { const r = makePiece(lv, TYPE.RING, {position: {x, y}}); r.shape.radius = 1; r.shape.gaps = [{centerDegrees: gap, widthDegrees: 60}]; lv.rings.push(r); };
+      ring(0, 0, 0); ring(0, 2.2, gapB);                                       // A, and B above it
+      const k = makePiece(lv, TYPE.CONNECTOR, {position: {x: 1.3, y: 0}}); k.shape.legLength = .6; lv.rings.push(k); // A's free arm, pointing right
+      lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: -1, y: 0}, eulerAngles: {z: 180}}));
+      lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: 1, y: 2.2}, eulerAngles: {z: 0}}));
+      return newGame(lv);
+    };
+    let g = mk(90); turnRing(g, 0, 60);                                       // B's tube is solid below: the arm stops on it
+    expect(g.events.some(e => e.type === 'bump' && e.piece === 2 && e.by === 1)).toBe(true); expect(g.turn[0]).toBeLessThan(55);
+    g = mk(312); turnRing(g, 0, 60);                                          // B's gap is where the arm meets it: it goes in
+    expect(g.events.some(e => e.type === 'bump')).toBe(false); expect(g.turn[0]).toBeCloseTo(60);
+  });
   it('boosters and undo', () => {
     const g = newGame(lvl('level_001'));
     expect(hint(g)).toEqual([0]);

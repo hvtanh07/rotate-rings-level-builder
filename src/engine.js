@@ -259,6 +259,28 @@ function bumpOf(g, moving, turn0, turn1) {
       if (tubeOverlap(pts, tb, R[j], turn1[j]) > tubeOverlap(pts, tb, R[j], turn0[j]) + 1e-9) return {piece: j, by: b};
     }
   }
+  // Ring tubes are solid to parts too (designer, 2026-11-26): an arm cannot pass through another ring's tube, and a
+  // turning tube cannot sweep over a pin or an arm of a ring that stays put. A gap lets a part through. Ring tubes
+  // still overlap each other freely, and a part resting on a ring (its hook or pin, held or let go) never bumps it.
+  const lk = g.tubeLinks || (g.tubeLinks = new Set(g.locks.map(L => L.piece + ':' + L.ring)));
+  for (let m = 0; m < R.length; m++) {
+    if (!g.alive[m]) continue;
+    const t = R[m].shape.type;
+    if (t !== TYPE.CONNECTOR && t !== TYPE.PIN) continue;
+    const cm = carrierOf(g, m), carried = cm !== undefined && moving.has(cm);
+    let A0 = null, A1 = null;
+    for (const o of carried ? R.keys() : moving) {
+      if (o === cm || !g.alive[o] || !isRing(R[o]) || lk.has(m + ':' + o)) continue;
+      if (!carried && !moving.has(o)) continue;
+      if (!A0) { A0 = shapeAt(g, m, turn0); A1 = shapeAt(g, m, turn1); }
+      let d1 = 0, d0 = 0;
+      for (let k = 0; k < A1.length; k++) {
+        d1 += tubeOverlap([A1[k].a, A1[k].b], A1[k].r, R[o], turn1[o]);
+        d0 += tubeOverlap([A0[k].a, A0[k].b], A0[k].r, R[o], turn0[o]);
+      }
+      if (d1 > d0 + 1e-9) return {piece: carried ? m : o, by: carried ? o : m};
+    }
+  }
   for (let m = 0; m < R.length; m++) {
     if (!g.alive[m] || !SOLID[R[m].shape.type]) continue;
     const cm = carrierOf(g, m); if (cm === undefined || !moving.has(cm)) continue;
