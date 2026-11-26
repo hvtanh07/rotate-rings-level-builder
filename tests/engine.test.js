@@ -60,7 +60,7 @@ describe('rules', () => {
 });
 
 describe('Bomb', () => {
-  // R0 held by a pin; a bar held only by a pin (it touches no ring); a bomb on R0 at 180°.
+  // R0 held by a pin; a bar held up by a pin, its end resting on a closed ring (no turn frees it); a bomb on R0 at 180°.
   const make = (withBomb = true) => {
     const lv = normalize({id: 'bomb_test', rings: []});
     const R0 = makePiece(lv, TYPE.RING, {position: {x: 0, y: 0}}); lv.rings.push(R0);
@@ -68,6 +68,7 @@ describe('Bomb', () => {
     const bar = makePiece(lv, TYPE.BAR); placeBar(bar, {x: -0.5, y: -2}, {x: -0.5, y: -0.5}); lv.rings.push(bar);
     lv.rings.push(makePiece(lv, TYPE.PIN, {position: {x: -0.5, y: -1.5}, eulerAngles: {z: 180}}));
     if (withBomb) lv.rings.push(makePiece(lv, TYPE.BOMB, {position: {x: -1, y: 0}}));
+    lv.rings.push(makePiece(lv, TYPE.CLOSED, {position: {x: -0.5, y: -3}}));
     return lv;
   };
   it('finds what each piece sits on', () => {
@@ -82,7 +83,11 @@ describe('Bomb', () => {
     turnRing(g, 0, 40);
     expect(g.alive[0]).toBe(false); expect(g.alive[2]).toBe(false); expect(won(g)).toBe(true);
   });
-  it('without the bomb the bar held by a pin is stuck', () => {
+  it('a bar comes out when nothing rests on it; its pins go with it', () => {
+    const lv = make(false); lv.rings.pop(); // no closed ring: the bar touches no ring
+    const g = newGame(lv); expect(g.alive[2]).toBe(false); expect(g.alive[3]).toBe(false);
+  });
+  it('without the bomb the bar on a closed ring is stuck', () => {
     const s = solve(make(false)); expect(s.won).toBe(false); expect(s.stuck).toContain(2);
   });
   it('the bot uses the bomb when nothing else frees a piece', () => {

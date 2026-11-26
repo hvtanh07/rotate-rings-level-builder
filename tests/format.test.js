@@ -7,7 +7,8 @@ const FILE = JSON.parse(RAW);
 
 describe('level format', () => {
   it('writes the game file with the same keys, order and layout', () => {
-    const out = serializeFile(FILE.levels.map(normalize), FILE);
+    // the sample file is older than timeLimit (added 2026-11-26): leave that one new key out of the comparison
+    const out = serializeFile(FILE.levels.map(normalize), FILE).replace(/,\n\s*"timeLimit": 0/g, '');
     expect(JSON.parse(out)).toEqual(FILE);
     // same lines apart from the last digits of a few floats (the game prints 17 digits, JS prints the shortest form)
     const a = RAW.split('\n'), b = out.split('\n');
@@ -32,7 +33,7 @@ describe('level format', () => {
   });
   it('fills missing keys with defaults in game order', () => {
     const lv = normalize({id: 'a', rings: [{shape: {type: 1}}]});
-    expect(Object.keys(lv)).toEqual(['id', 'version', 'mode', 'liftDirection', 'tier', 'difficulty', 'seed', 'rings', 'tutorialRing']);
+    expect(Object.keys(lv)).toEqual(['id', 'version', 'mode', 'liftDirection', 'tier', 'difficulty', 'seed', 'rings', 'tutorialRing', 'timeLimit']);
     expect(Object.keys(lv.rings[0])).toEqual(Object.keys(normalize(FILE.levels[0]).rings[0]));
   });
 });

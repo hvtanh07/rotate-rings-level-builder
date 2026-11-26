@@ -377,6 +377,19 @@ function nudge(dx, dy) { if (!sel.size) return; levels[cur] = movePieces(L(), [.
 
 /* ---------- play test ---------- */
 let game = null, auto = null, booster = null, hintSet = new Set(), shakeIdx = -1, animating = false;
+// level timer: starts at the first move; at 0 the level is lost; Revive adds REVIVE_SECONDS
+const timer = {left: 0, on: false, up: false, id: 0, t: 0};
+function resetTimer() { clearInterval(timer.id); Object.assign(timer, {left: +(L().timeLimit || 0), on: false, up: false, id: 0}); }
+function startTimer() { if (timer.on || !(timer.left > 0) || timer.up) return; timer.on = true; timer.t = performance.now(); timer.id = setInterval(tickTimer, 200); }
+function stopTimer() { clearInterval(timer.id); timer.on = false; }
+function tickTimer() {
+  const now = performance.now(); timer.left = Math.max(0, timer.left - (now - timer.t) / 1000); timer.t = now;
+  if (game && won(game)) { stopTimer(); return; }
+  if (timer.left <= 0) { stopTimer(); timer.up = true; stopAuto(); const b = $('#banner'); b.className = 'banner lost'; b.innerHTML = `Time is up. <button class="btn" type="button" id="revive">Revive +${REVIVE_SECONDS} s</button> <button class="btn" type="button" id="retry">Retry</button>`; b.hidden = false;
+    $('#revive').onclick = () => { timer.up = false; timer.left += REVIVE_SECONDS; b.hidden = true; startTimer(); renderPlay(); }; $('#retry').onclick = () => restart(); }
+  renderPlay();
+}
+const fmtTime = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 function setMode(m) {
   if (m === mode) return;
   mode = m; stopAuto(); booster = null; pick = null;
@@ -387,14 +400,14 @@ function setMode(m) {
 }
 $('#modeEdit').addEventListener('click', () => setMode('edit'));
 $('#modePlay').addEventListener('click', () => setMode('play'));
-function restart() { stopAuto(); game = newGame(clone(L()), {rule: prefs.rule}); hintSet = new Set(); booster = null; $('#fx').innerHTML = ''; $('#banner').hidden = true; flushEvents(); syncBoosters(); renderPlay(); }
+function restart() { stopAuto(); resetTimer(); game = newGame(clone(L()), {rule: prefs.rule}); hintSet = new Set(); booster = null; $('#fx').innerHTML = ''; $('#banner').hidden = true; flushEvents(); syncBoosters(); renderPlay(); }
 function renderPlay() {
   if (!game) return;
   $('#scene').innerHTML = drawLevel(game.lv, {turn: game.turn, alive: game.alive, open: game.open, owner: game.owner, host: game.host, hint: hintSet, ids: prefs.ids, shakeIdx, tutorial: game.moves ? -1 : game.lv.tutorialRing});
   $('#ui').innerHTML = '';
   svg.classList.add('play');
   const rule = RULES[game.rule];
-  $('#pStats').innerHTML = `<span>Moves <b>${game.moves}</b></span><span>Score <b>${game.score}</b></span><span>Pieces left <b>${left(game)}</b></span>`;
+  $('#pStats').innerHTML = (L().timeLimit > 0 ? `<span>Time <b>${fmtTime(Math.ceil(timer.left))}</b></span>` : '') + `<span>Moves <b>${game.moves}</b></span><span>Score <b>${game.score}</b></span><span>Pieces left <b>${left(game)}</b></span>`;
 }
 function pieceCenter(i) {
   const r = game.lv.rings[i];
@@ -423,7 +436,8 @@ function flushEvents() {
     if (ev.type === 'unlock') toast(`The key flew to ${pname(game.lv, ev.piece)}: it is open now.`);
   }
   game.events = [];
-  if (won(game)) { $('#banner').className = 'banner won'; $('#banner').textContent = `Level clear in ${game.moves} move${game.moves === 1 ? '' : 's'}. Score ${game.score}.`; $('#banner').hidden = false; stopAuto(); }
+  if (won(game)) { stopTimer(); $('#banner').className = 'banner won'; $('#banner').textContent = `Level clear in ${game.moves} move${game.moves === 1 ? '' : 's'}. Score ${game.score}.`; $('#banner').hidden = false; stopAuto(); }
+  else if (timer.up) {}
   else if (auto === null && !botMove(game) && !hint(game).length) { $('#banner').className = 'banner lost'; $('#banner').textContent = 'Stuck: no ring can free anything. See Check for the pieces left.'; $('#banner').hidden = false; }
   else $('#banner').hidden = true;
 }
@@ -442,6 +456,7 @@ function playDown(e) {
   if (r.shape.type === TYPE.CONNECTOR && game.owner[i] !== undefined) ring = game.owner[i];
   if (r.shape.type === TYPE.BOMB && game.host[i] !== undefined) ring = game.host[i];
   if (!isRing(game.lv.rings[ring])) return;
+  if (timer.up) { toast('Time is up: Revive or Retry.'); return; }
   const c = canTurn(game, ring);
   if (!c.ok) { turnRing(game, ring, 1); flushEvents(); renderPlay(); return; }
   stopAuto(); hintSet = new Set();
@@ -453,7 +468,7 @@ function playMove(e, w) {
   const d = drag; if (!game.alive[d.ring]) return;
   const c = P(game.lv.rings[d.ring]), a = angleAt(c, w), dd = wrap180(a - d.prev);
   d.prev = a; if (!dd) return;
-  if (!d.started) { beginMove(game); d.started = true; }
+  if (!d.started) { beginMove(game); d.started = true; startTimer(); }
   d.total += dd; turnRing(game, d.ring, dd, {count: false}); flushEvents(); renderPlay();
 }
 function finishTurn(d) {
@@ -463,7 +478,7 @@ function finishTurn(d) {
   flushEvents(); renderPlay();
 }
 function animateTurn(i, delta, done) {
-  animating = true; beginMove(game);
+  animating = true; beginMove(game); startTimer();
   const t0 = performance.now(), dur = Math.min(900, 250 + Math.abs(delta) * 2.2); let doneA = 0;
   const stepF = now => {
     const k = Math.min(1, (now - t0) / dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, want = delta * e;
@@ -525,6 +540,7 @@ function paneLevel(lv) {
     ${fld('Id <code>id</code>', 'L.id', lv.id, '', 'full')}
     ${nfld('Tier <code>tier</code>', 'L.tier', lv.tier, 1)}${nfld('Difficulty <code>difficulty</code>', 'L.difficulty', lv.difficulty, 'any')}
     ${nfld('Seed <code>seed</code>', 'L.seed', lv.seed, 1)}${nfld('Mode <code>mode</code>', 'L.mode', lv.mode, 1)}
+    ${nfld('Time limit <code>timeLimit</code> (s, 0 = none)', 'L.timeLimit', lv.timeLimit, 5)}<label class="fld"><span>Suggested from difficulty</span><button class="btn" type="button" data-act="suggestTime">Use ${suggestTime(+lv.difficulty)} s</button></label>
     <label class="fld full"><span>Tutorial ring <code>tutorialRing</code> (hand pointer on this ring)</span><select data-k="L.tutorialRing"><option value="-1">None (-1)</option>${rings}</select></label>
     </div>
     <details><summary class="hint">More fields</summary><div class="fields">${nfld('Version <code>version</code>', 'L.version', lv.version, 1)}<span></span>${nfld('liftDirection x', 'L.liftDirection.x', lv.liftDirection.x)}${nfld('liftDirection y', 'L.liftDirection.y', lv.liftDirection.y)}${nfld('liftDirection z', 'L.liftDirection.z', lv.liftDirection.z)}</div></details>
@@ -610,7 +626,7 @@ function paneHelp() {
   <li>Drag a ring to turn it around its center (snaps to <code>snapStep</code>). Its arms turn with it.</li>
   <li>When a ring's gap passes a hook, pin or bar end resting on it, that link comes apart.</li>
   <li>A piece with no links left shatters. A ring gives 300 points.</li>
-  <li>Pin: locks the ring or bar it stands on; it shatters when it locks nothing. A bar held only by a pin cannot be freed by a gap.</li>
+  <li>Pin: stands on its own in the air. On a ring it locks the ring until the gap passes it. On a Straight Bar it only holds the bar up: when nothing rests on the bar any more (every end that sat on a ring is free), the bar comes out and its pins go with it.</li>
   <li>Bomb: sits on a ring (turns with it) or a bar. When a turn brings it onto another ring or bar, the bomb blows up and both pieces shatter. Use it to break a piece that is stuck.</li>
   <li>Locked Ring: does not turn until the piece holding its key shatters.</li>
   <li>Gear Rings: meshed gears turn the other way, by the tooth ratio.</li>
@@ -666,6 +682,7 @@ $('#pane').addEventListener('click', e => {
   else if (act === 'gapadd') { r.shape.gaps.push({centerDegrees: r.shape.gaps.length ? (r.shape.gaps[0].centerDegrees + 180) % 360 : 0.0, widthDegrees: 46.982540130615234}); commit(); renderAll(); }
   else if (act === 'gapdel') { r.shape.gaps.splice(+b.dataset.g, 1); commit(); renderAll(); }
   else if (act === 'aim') { const {owner, locks} = analyze(lv), lk = locks.find(k => k.piece === i); placeArm(lv, i, owner[i], lk.ring); roundPiece(r); commit(); renderAll(); }
+  else if (act === 'suggestTime') { lv.timeLimit = suggestTime(+lv.difficulty); commit(); renderAll(); }
   else if (act === 'tut') { lv.tutorialRing = lv.tutorialRing === i ? -1 : i; commit(); renderAll(); }
   else if (act === 'center') { const bb = bounds(lv), cx = r3(bb.x + bb.w / 2), cy = r3(bb.y + bb.h / 2); levels[cur] = movePieces(lv, lv.rings.map((x, j) => j), -cx, -cy); commit(); view = null; renderAll(); }
   else if (act === 'order') { gameOrder(lv); sel = new Set(); commit(); renderAll(); toast('Pieces are in game order with fresh ids.'); }

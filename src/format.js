@@ -24,7 +24,7 @@ function extra(o, known) { const e = {}; for (const k of Object.keys(o || {})) i
 
 const SHAPE_KEYS = ['id', 'type', 'radius', 'tubeRadius', 'gaps', 'flatRatio', 'legLength', 'arcDegrees', 'flexDepth', 'hook', 'points', 'gearTeeth', 'gearPhase'];
 const RING_KEYS = ['shape', 'position', 'eulerAngles', 'rotationAxis', 'pivot', 'startAngle', 'limitAngle', 'minAngle', 'maxAngle', 'snapStep', 'colorIndex', 'slide', 'slideAxis', 'locked', 'keyHolder', 'lockAngle', 'keyAngle', 'gearWith'];
-const LEVEL_KEYS = ['id', 'version', 'mode', 'liftDirection', 'tier', 'difficulty', 'seed', 'rings', 'tutorialRing'];
+const LEVEL_KEYS = ['id', 'version', 'mode', 'liftDirection', 'tier', 'difficulty', 'seed', 'rings', 'tutorialRing', 'timeLimit'];
 
 // Default values for a new piece of each type (taken from the sample levels).
 export const SHAPE_DEFAULTS = {
@@ -64,9 +64,14 @@ export function normalize(lv) {
   return {
     id: typeof lv.id === 'string' ? lv.id : 'level_new', version: num(lv.version, 1), mode: num(lv.mode, 1), liftDirection: vec(lv.liftDirection, v3(0, 0, -1)),
     tier: num(lv.tier, 0), difficulty: num(lv.difficulty, 0.0), seed: num(lv.seed, 1), rings: Array.isArray(lv.rings) ? lv.rings.map(normalizeRing) : [],
-    tutorialRing: num(lv.tutorialRing, -1), ...extra(lv, LEVEL_KEYS)
+    tutorialRing: num(lv.tutorialRing, -1), timeLimit: num(lv.timeLimit, 0), ...extra(lv, LEVEL_KEYS)
   };
 }
+
+// Play time for a level, in seconds (designer, 2026-11-26: timer starts at the first move; 0 = lose; revive +30 s).
+// A suggestion from difficulty; the designer can change it per level. timeLimit 0 means no timer.
+export const REVIVE_SECONDS = 30;
+export const suggestTime = difficulty => Math.max(60, Math.min(300, Math.round((45 + 2 * difficulty) / 5) * 5));
 
 /* ---------- writing ---------- */
 export function fmtFloat(n) {
@@ -216,11 +221,13 @@ export function analyze(lv) {
     const t = r.shape.type;
     if (t === TYPE.CONNECTOR) {
       const {tail, head} = connectorEnds(r);
-      const o = ringsThrough(lv, tail)[0], tg = ringsThrough(lv, head, o === undefined ? -1 : o)[0];
+      const o = ringsThrough(lv, tail)[0], tg = ringsThrough(lv, head, o === undefined ? -1 : o)[0], bar = tg === undefined ? barsThrough(lv, head)[0] : undefined;
       if (o === undefined) problems.push({lvl: 'bad', piece: i, text: 'The arm does not start on a ring.'});
-      if (tg === undefined) problems.push({lvl: 'bad', piece: i, text: 'The hook does not rest on a ring.'});
+      if (tg === undefined && bar === undefined) problems.push({lvl: 'bad', piece: i, text: 'The hook does not rest on a ring or a bar.'});
       if (o !== undefined) owner[i] = o;
       if (o !== undefined && tg !== undefined) locks.push({kind: 'arm', piece: i, owner: o, ring: tg, point: head});
+      // a hook on a bar: a bar has no gap, so it holds until the bar or the ring goes (a knot for a Bomb)
+      if (o !== undefined && bar !== undefined) locks.push({kind: 'arm', piece: i, owner: o, ring: bar, point: head, onBar: true});
     } else if (t === TYPE.BAR) {
       const pts = barPoints(r);
       if (pts.length < 2) problems.push({lvl: 'bad', piece: i, text: 'A bar needs 2 or more points.'});

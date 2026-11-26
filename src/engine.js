@@ -102,7 +102,7 @@ export function resolve(g) {
       if (t === TYPE.RING || t === TYPE.CLOSED) links = locksOn(g, i).length + armsOf(g, i).length;
       else if (t === TYPE.CONNECTOR) links = g.owner[i] !== undefined ? (g.alive[g.owner[i]] ? 1 : 0) : g.locks.filter(L => L.on && L.piece === i).length;
       else if (t === TYPE.PIN) links = g.locks.filter(L => L.on && L.piece === i).length;
-      else if (t === TYPE.BAR) links = g.locks.filter(L => L.on && (L.piece === i || L.ring === i)).length; // its ends, and pins holding it
+      else if (t === TYPE.BAR) links = g.locks.filter(L => L.on && (L.piece === i || (L.ring === i && L.kind === 'arm'))).length; // its ends on rings and hooks on it; pins only hold it in the air (designer, 2026-11-26) and go with it
       else if (t === TYPE.BOMB) links = g.host[i] !== undefined && g.alive[g.host[i]] ? 1 : 0;
       else return;
       if (!links) { shatter(g, i); again = true; }
@@ -155,13 +155,36 @@ function partGap(A, B) {
   return best;
 }
 // First pair of parts that the step from turn0 to turn1 pushes into each other, or null.
+// Parts that part m could ever touch while its carrier turns (static parts outside its swept ring of space are left out). Cached per game.
+function candidates(g, m) {
+  const cache = g.cand || (g.cand = []);
+  if (cache[m]) return cache[m];
+  const R = g.lv.rings, cm = carrierOf(g, m), c = P(R[cm]), base = shapeAt(g, m, R.map(() => 0));
+  let lo = Infinity, hi = 0;
+  for (const q of base) for (const p of [q.a, q.b]) { const d = dist(p, c); lo = Math.min(lo, d - q.r); hi = Math.max(hi, d + q.r); }
+  for (const q of base) lo = Math.min(lo, segDist(c, [q.a, q.b]) - q.r);
+  const out = [];
+  R.forEach((r, o) => {
+    if (o === m || !SOLID[r.shape.type]) return;
+    const co = carrierOf(g, o);
+    if (co === cm) return;
+    if (co !== undefined) { out.push(o); return; }
+    let olo = Infinity, ohi = 0;
+    for (const q of shapeAt(g, o, R.map(() => 0))) { olo = Math.min(olo, segDist(c, [q.a, q.b]) - q.r); for (const p of [q.a, q.b]) ohi = Math.max(ohi, dist(p, c) + q.r); }
+    if (ohi < lo || olo > hi) return;
+    out.push(o);
+  });
+  return (cache[m] = out);
+}
 function bumpOf(g, moving, turn0, turn1) {
-  const R = g.lv.rings, parts = R.map((r, i) => i).filter(i => g.alive[i] && SOLID[R[i].shape.type]);
-  for (const m of parts) {
+  const R = g.lv.rings;
+  for (let m = 0; m < R.length; m++) {
+    if (!g.alive[m] || !SOLID[R[m].shape.type]) continue;
     const cm = carrierOf(g, m); if (cm === undefined || !moving.has(cm)) continue;
+    const cand = candidates(g, m); if (!cand.length) continue;
     const A0 = shapeAt(g, m, turn0), A1 = shapeAt(g, m, turn1);
-    for (const o of parts) {
-      if (o === m) continue;
+    for (const o of cand) {
+      if (!g.alive[o]) continue;
       const co = carrierOf(g, o);
       if (co === cm) continue;
       if (co !== undefined && moving.has(co) && o < m) continue; // pair already checked from the other side
