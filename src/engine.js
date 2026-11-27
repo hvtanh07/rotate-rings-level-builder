@@ -312,7 +312,7 @@ export function bombPos(g, b) {
 }
 // Rings and bars that bomb b touches now (not its own piece). A ring's gap does not count as touching.
 export function bombContacts(g, b) {
-  const R = g.lv.rings, p = bombPos(g, b), br = R[b].shape.radius * .5, out = [];
+  const R = g.lv.rings, p = bombPos(g, b), br = R[b].shape.radius, out = []; // the bomb as drawn (radius = its size)
   R.forEach((r, j) => {
     if (j === b || j === g.host[b] || !g.alive[j]) return;
     if (isRing(r)) { const c = P(r); if (Math.abs(dist(p, c) - r.shape.radius) < r.shape.tubeRadius + br && !inGap(r, g.turn[j], p)) out.push(j); }

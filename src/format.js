@@ -315,6 +315,17 @@ export function check(lv) {
     else if (!thru.some(T => T.bar === i)) add('warn', `${pname(lv, i)}: this bar runs into no ring, so it blocks nothing.`, i); });
   thru.forEach(T => { const b = lv.rings[T.bar], q = lv.rings[T.ring]; if (T.points.some(p => gapDepth(q, 0, p, barMargin(b, q)) < 0)) add('warn', `${pname(lv, T.bar)} runs through the tube of ${pname(lv, T.ring)}: put it in a gap so the ring can turn.`, T.bar); });
   locks.forEach(L => { if (inGap(lv.rings[L.ring], 0, L.point)) add('warn', `${pname(lv, L.piece)} starts inside the gap of ${pname(lv, L.ring)}, so it is free at once.`, L.piece); });
+  // a part must stand on its own ring's tube, not in its gap
+  lv.rings.forEach((r, i) => { const o = owner[i], q = lv.rings[o];
+    if (o === undefined || !q || ![TYPE.CONNECTOR, TYPE.PIN, TYPE.BOMB].includes(r.shape.type)) return;
+    const pts = [P(r)];
+    if (r.shape.type === TYPE.CONNECTOR) { const t = r.eulerAngles.z * Math.PI / 180, h = r.shape.legLength / 2; pts.push(...[-h, h].map(s => ({x: r.position.x + s * Math.cos(t), y: r.position.y + s * Math.sin(t)}))); }
+    const p = pts.reduce((a, b) => Math.abs(dist(b, P(q)) - q.shape.radius) < Math.abs(dist(a, P(q)) - q.shape.radius) ? b : a);
+    if (inGap(q, 0, p)) add('warn', `${pname(lv, i)} stands in the gap of its own ring ${pname(lv, o)}: move the gap away from it.`, i); });
+  // ring tubes must not touch (a small ring inside a big one is fine)
+  lv.rings.forEach((r, i) => { if (!isRing(r)) return; lv.rings.forEach((q, j) => { if (j <= i || !isRing(q) || r.gearWith.includes(j)) return;
+    const d = dist(P(r), P(q)), tubes = r.shape.tubeRadius + q.shape.tubeRadius;
+    if (d > Math.abs(r.shape.radius - q.shape.radius) + tubes && d < r.shape.radius + q.shape.radius + tubes) add('warn', `${pname(lv, i)} and ${pname(lv, j)} touch: move them apart (0.35 between tubes is the usual arm length).`, i); }); });
   const t = lv.tutorialRing;
   if (t !== -1 && (!lv.rings[t] || !isRing(lv.rings[t]))) add('warn', `tutorialRing ${t} is not a ring.`);
   return out;

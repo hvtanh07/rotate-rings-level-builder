@@ -42,8 +42,8 @@ L({name: 'Bridge', element: 'Closed ring', rule: 'A closed ring has no gap: free
 }});
 L({name: 'Make way', element: 'Ring', rule: 'Move one arm out of the way of another',
   challenge: 'The right ring cannot finish: its arm runs into the arm of the left ring. Turn the left ring first to clear the path.', make() {
-  const b = new Lv(), A = b.ring(-1.175, 0, {c: C.purple, gap: 0}), B = b.ring(1.175, 0, {c: C.green, gap: 270});
-  const ha = nb(b, A, 90, {r: .85, c: C.yellow, gap: 300}), hb = nb(b, B, 60, {r: .85, c: C.yellow, gap: 240}), s = nb(b, B, 0, {r: .7, c: C.pink, gap: 90});
+  const b = new Lv(), A = b.ring(-1.175, 0, {c: C.purple, gap: 45}), B = b.ring(1.175, 0, {c: C.green, gap: 270});
+  const ha = nb(b, A, 90, {r: .85, c: C.yellow, gap: 330}), hb = nb(b, B, 60, {r: .85, c: C.yellow, gap: 30}), s = nb(b, B, 0, {r: .7, c: C.pink, gap: 90});
   const t = nb(b, A, 225, {r: .7, c: C.cyan, gap: 200}), u = nb(b, B, 300, {r: .7, c: C.red, gap: 30});
   b.arm(ha, A).arm(hb, B).arm(A, B).arm(B, s).arm(A, t).arm(u, B); return {b};
 }});
@@ -75,7 +75,7 @@ L({name: 'In the way', element: 'Straight Bar + Pin', rule: 'A ring can be in th
 L({name: 'Two at once', element: 'Straight Bar + Pin', G: {2: 225}, rule: 'One bent bar can run into two rings and hold both',
   challenge: 'A bent bar runs into the gaps of the hub and of the lower ring, so neither can turn. It slides out along its pins, but the short bar above is in its way: slide that one up into its ring and out first.', make() {
   const b = new Lv(), H = b.ring(0, 0, {c: C.cyan, gap: 20}), O = nb(b, H, 315, {c: C.orange, gap: 20});
-  const TL = nb(b, H, 135, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red}), Z = nb(b, H, 90, {r: .8, c: C.green});
+  const TL = nb(b, H, 140, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red}), Z = nb(b, H, 80, {r: .8, c: C.green});
   b.arm(H, TL).arm(H, BL).arm(H, O).arm(Z, H);
   b.arm(TL, nb(b, TL, 135, {r: .7, c: C.pink})).arm(BL, nb(b, BL, 225, {r: .7, c: C.pink})).arm(O, nb(b, O, 270, {r: .8, c: C.purple}));
   const o = b.R[O], p = (c, r) => pol(r, 20, c);
@@ -88,7 +88,7 @@ L({name: 'Two at once', element: 'Straight Bar + Pin', G: {2: 225}, rule: 'One b
 L({name: 'Workshop', element: 'Bar + Pin', hard: true, G: {2: 225}, rule: 'Hard: bars in the way of bars, a ring in the way of a bar',
   challenge: 'Three bars hold three rings. The bent bar cannot slide out while the long bar is in its way, and the long bar cannot slide up while the top ring sits on its path. Clear the top corner, slide the long bar, then the bent bar, then open the hub.', make() {
   const b = new Lv(), H = b.ring(0, 0, {c: C.cyan, gap: 20}), O = nb(b, H, 315, {c: C.orange, gap: 20});
-  const TL = nb(b, H, 135, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red, gap: 180}), Z = nb(b, H, 90, {r: .8, c: C.green});
+  const TL = nb(b, H, 140, {r: .85, c: C.blue}), BL = nb(b, H, 225, {r: .85, c: C.red, gap: 180}), Z = nb(b, H, 80, {r: .8, c: C.green});
   b.arm(H, TL).arm(H, BL).arm(H, O).arm(Z, H);
   b.arm(TL, nb(b, TL, 135, {r: .7, c: C.pink})).arm(BL, nb(b, BL, 270, {r: .7, c: C.pink})).arm(O, nb(b, O, 270, {r: .8, c: C.purple}));
   const o = b.R[O], p = (c, r) => pol(r, 20, c);
@@ -121,34 +121,34 @@ L({name: 'Knot', element: 'Bomb (new)', rule: 'A Bomb blows up the ring or bar i
 }});
 L({name: 'Aim', element: 'Bomb', rule: 'Pick the right target: a bomb spent on a free ring is lost',
   challenge: 'Two rings sit beside the bomb ring. The right one can be freed by turning it; the closed one on the left cannot. Send the bomb left.', make() {
-  const b = new Lv(), m = b.ring(0, 0, {c: C.orange, gap: 45}), k = b.ring(-2.2, 0, {c: C.cyan, closed: true}), f = b.ring(2.2, 0, {c: C.cyan, gap: 0});
+  const b = new Lv(), m = b.ring(0, 0, {c: C.orange, gap: 45}), k = b.ring(-2.35, 0, {c: C.cyan, closed: true}), f = b.ring(2.35, 0, {c: C.cyan, gap: 0});
   b.bomb(m, 90).pin(m, 270).pin(k, 90).pin(f, 90).pin(k, 270);
   return {b};
 }});
 L({name: 'Long way', element: 'Bomb', rule: 'A bomb is solid: it cannot pass a pin',
   challenge: 'Free the small ring, then turn the bomb ring. The short way runs the bomb into its own pin; go the long way round to the knot.', make() {
-  const b = new Lv(), m = b.ring(0, 0, {c: C.yellow, gap: 300}), k = b.ring(-2.2, 0, {c: C.purple, closed: true}), s = nb(b, m, 45, {r: .65, c: C.green, gap: 135});
+  const b = new Lv(), m = b.ring(0, 0, {c: C.yellow, gap: 300}), k = b.ring(-2.35, 0, {c: C.purple, closed: true}), s = nb(b, m, 45, {r: .65, c: C.green, gap: 135});
   b.arm(m, s).bomb(m, 0).pin(m, 90).pin(k, 90).pin(k, 270);
   const t = nb(b, k, 180, {r: .7, c: C.pink}); b.arm(t, k);
   return {b};
 }});
-L({name: 'Scales', element: 'Bomb', hard: true, rule: 'Hard: a knot, two bombs, one decoy',
+L({name: 'Scales', element: 'Bomb', hard: true, G: {5: 185, 6: 30}, rule: 'Hard: a knot, two bombs, one decoy',
   challenge: 'Two bars run into the side rings. The left bar is hooked from above, so it cannot slide (a knot): only the left bomb, turned up, clears it. The right bar slides out. Turn a bomb the wrong way and it hits the small decoy ring in the middle; waste the left one and the level is lost.', make() {
   const b = new Lv(), y = .6, Lp = b.ring(-3.6, y, {r: .9, c: C.blue, gap: 0}), Rp = b.ring(3.6, y, {r: .9, c: C.blue, gap: 180});
   const hL = b.bar([[-3.35, y], [-.9, y]], {c: C.purple}), hR = b.bar([[3.35, y], [.9, y]], {c: C.purple});
-  b.pinBar(hL, .2, 1).pinBar(hR, .2, -1).pin(Lp, 270).pin(Rp, 270);
+  b.pinBar(hL, .4, 1).pinBar(hR, .4, -1).pin(Lp, 270).pin(Rp, 270);
   b.arm(Lp, nb(b, Lp, 180, {r: .6, c: C.pink})).arm(Rp, nb(b, Rp, 0, {r: .6, c: C.pink}));
-  const kL = b.ring(-2.1, y + 1.35, {r: .9, c: C.green, gap: 90});
-  b.hookBar(kL, hL, [-2.1, y]);
-  const BL = b.ring(-1.6, y - 1.2, {c: C.orange, gap: 200}), BR = b.ring(1.6, y - 1.2, {c: C.orange, gap: 340});
-  const ct = b.ring(0, -2.8, {r: .8, c: C.yellow}), dc = b.ring(0, -1.2, {r: .5, c: C.cyan, gap: 90}); b.pin(dc, 270);
+  const kL = b.ring(-2, y + 1.4, {r: .9, c: C.green, gap: 90});
+  b.hookBar(kL, hL, [-2, y]);
+  const BL = b.ring(-1.65, y - 1.2, {c: C.orange, gap: 200}), BR = b.ring(1.65, y - 1.2, {c: C.orange, gap: 340});
+  const ct = b.ring(0, -2.8, {r: .8, c: C.yellow}), dc = b.ring(0, -1.15, {r: .35, c: C.cyan, gap: 90}); b.pin(dc, 270);
   b.arm(ct, BL).arm(ct, BR).pin(ct, 270).bomb(BL, 45).bomb(BR, 135);
   return {b};
 }});
 L({name: 'Ring road', element: 'Bomb', G: {0: 40, 1: 225, 2: 200, 3: 200, 4: 275, 5: 130}, rule: 'Two rings hooked onto each other are a knot',
   challenge: 'Breather: around the road, two rings hold each other and neither can turn. Clear the road up to the bomb ring and send its bomb into the pair.', make() {
   const b = new Lv(), o = {x: 0, y: 0}, R = [], cols = [C.red, C.orange, C.yellow, C.green, C.cyan, C.blue];
-  for (let k = 0; k < 6; k++) R.push(at(b, D(.85, .85), 90 + 60 * k, o, {r: k === 2 ? 1 : .85, c: cols[k]}));
+  for (let k = 0; k < 6; k++) R.push(at(b, 2.2, 90 + 60 * k, o, {r: k === 2 ? 1 : .85, c: cols[k]}));
   b.arm(R[0], R[1]).arm(R[1], R[0]);                  // the knot
   b.arm(R[2], R[3]).arm(R[3], R[4]).arm(R[4], R[5]);  // the road: clear from R5 back
   b.bomb(R[2], 30).pin(R[2], 280);
@@ -178,9 +178,9 @@ L({name: 'Key chain', element: 'Locked Ring', rule: 'Locks in a row: each key op
   b.pin(r, 0).lock(l, t).lock(r, l);
   return {b};
 }});
-L({name: 'Vault', element: 'Locked Ring + Bomb', hard: true, G: {0: 290, 2: 340, 4: 285, 5: 260, 6: 355, 7: 285}, rule: 'Hard: a locked bomb, a key on a bar, a knot',
+L({name: 'Vault', element: 'Locked Ring + Bomb', hard: true, G: {0: 320, 2: 315, 4: 285, 5: 260, 6: 355, 7: 285}, rule: 'Hard: a locked bomb, a key on a bar, a knot',
   challenge: 'The bomb ring is locked; its key is on the bar run into the left top ring. The right top ring is in the bar\'s way, and its pendant must go first. Slide the bar out, then aim the bomb at the closed knot ring, not the free one.', make() {
-  const b = new Lv(), M = b.ring(0, 0, {c: C.orange}), K = b.ring(-2.2, 0, {c: C.blue, closed: true}), F = b.ring(2.2, 0, {c: C.blue});
+  const b = new Lv(), M = b.ring(0, 0, {c: C.orange}), K = b.ring(-2.35, 0, {c: C.blue, closed: true}), F = b.ring(2.35, 0, {c: C.blue});
   const A = b.ring(-2.2, 2.4, {r: .85, c: C.green}), B = b.ring(2.2, 2.4, {r: .85, c: C.green});
   const h = b.poke(A, 0, {c: C.purple, len: 1.8});
   b.arm(A, nb(b, A, 135, {r: .65, c: C.pink})).arm(B, nb(b, B, 45, {r: .65, c: C.pink}));
@@ -232,13 +232,13 @@ L({name: 'Gear train', element: 'Gear + Lock + Bomb', hard: true, G: {0: 340, 1:
   b.arm(nb(b, A, 180, {r: .7, c: C.blue}), A);
   b.pin(A, 270).pin(Cc, 270).pin(B, 270);
   b.arm(nb(b, B, 270, {r: .7, c: C.purple}), B);
-  const kn = b.ring(d + .35, -2.05, {r: .9, c: C.red, closed: true}); b.pin(kn, 270).bomb(Cc, 45);
+  const kn = b.ring(d + .95, -2.04, {r: .9, c: C.red, closed: true}); b.pin(kn, 270).bomb(Cc, 45);
   const kp = nb(b, kn, 0, {r: .6, c: C.yellow}); b.arm(kp, kn);
   return {b};
 }});
 L({name: 'Nest', element: 'Ring', rule: 'Breather: rings inside rings',
   challenge: 'Breather: small rings sit inside big ones and hook their inner side. Turn the big rings so their gaps pass the inner hooks.', make() {
-  const b = new Lv(), big = [b.ring(-1.6, 0, {r: 1.5, c: C.blue}), b.ring(1.6, 0, {r: 1.5, c: C.purple})];
+  const b = new Lv(), big = [b.ring(-1.675, 0, {r: 1.5, c: C.blue}), b.ring(1.675, 0, {r: 1.5, c: C.purple})];
   big.forEach((B, k) => { const q = b.R[B], sx = k ? .55 : -.55, s = b.ring(q.x + sx, q.y, {r: .6, c: k ? C.yellow : C.orange}); b.armTo(s, [q.x + Math.sign(sx) * 1.5, q.y]); });
   b.arm(big[0], big[1]);
   b.arm(nb(b, big[0], 225, {r: .7, c: C.green}), big[0]).arm(nb(b, big[1], 315, {r: .7, c: C.green}), big[1]);
@@ -248,8 +248,8 @@ L({name: 'Nest', element: 'Ring', rule: 'Breather: rings inside rings',
 /* ---------- 27-40: mixing everything ---------- */
 L({name: 'Crossfire', element: 'Bomb', rule: 'Two bombs, each must cross to the far knot',
   challenge: 'Each bomb ring sits next to the wrong knot: the near hit is on a free ring. Send each bomb across to the far knot.', make() {
-  const b = new Lv(), m1 = b.ring(-1.1, 1.1, {c: C.orange}), m2 = b.ring(1.1, -1.1, {c: C.orange});
-  const k1 = b.ring(1.1, 1.1, {c: C.blue, closed: true}), k2 = b.ring(-1.1, -1.1, {c: C.blue, closed: true});
+  const b = new Lv(), m1 = b.ring(-1.175, 1.175, {c: C.orange}), m2 = b.ring(1.175, -1.175, {c: C.orange});
+  const k1 = b.ring(1.175, 1.175, {c: C.blue, closed: true}), k2 = b.ring(-1.175, -1.175, {c: C.blue, closed: true});
   b.pin(k1, 45).pin(k2, 225).bomb(m1, 270).bomb(m2, 90).pin(m1, 135).pin(m2, 315);
   const f1 = nb(b, m1, 180, {r: .7, c: C.green}), f2 = nb(b, m2, 0, {r: .7, c: C.green}); b.arm(f1, m1).arm(f2, m2);
   return {b};
@@ -295,7 +295,7 @@ L({name: 'Branches', element: 'Ring', G: {0: 335, 1: 235, 2: 165, 3: 235, 4: 125
 }});
 L({name: 'Safe', element: 'Lock + Bomb', rule: 'The bomb ring holds the key of the knot cover',
   challenge: 'The bomb ring is also the key holder: when it explodes the lock opens. Unlock the cover first, then blow the knot, then free the cover.', make() {
-  const b = new Lv(), m = b.ring(0, 0, {c: C.orange}), k = b.ring(0, -2.2, {c: C.blue, closed: true}), cov = b.ring(2.2, -1.1, {c: C.red});
+  const b = new Lv(), m = b.ring(0, 0, {c: C.orange}), k = b.ring(0, -2.35, {c: C.blue, closed: true}), cov = b.ring(2.2, -1.1, {c: C.red});
   b.bomb(m, 0).pin(m, 90).pin(k, 270).arm(cov, k).lock(cov, m);
   b.arm(nb(b, m, 180, {r: .7, c: C.green}), m);
   return {b};
@@ -304,7 +304,7 @@ L({name: 'Mirror bomb', element: 'Gear + Bomb', rule: 'A bomb on a gear turns op
   challenge: 'The bomb rides the right gear, which turns opposite to the gear you drag. Aim it at the closed ring below, not the free ring above.', make() {
   const b = new Lv(), d = D(1, 1), a = b.ring(-d / 2, 0, {c: C.green}), g = b.ring(d / 2, 0, {c: C.green});
   b.gear(a, g).pin(a, 180).bomb(g, 0).pin(g, 180 - 30);
-  const k = b.ring(d / 2 + .45, -2.1, {c: C.blue, closed: true}), f = b.ring(d / 2 + .45, 2.1, {c: C.blue});
+  const k = b.ring(d / 2 + .45, -2.32, {c: C.blue, closed: true}), f = b.ring(d / 2 + .45, 2.32, {c: C.blue});
   b.pin(k, 270).pin(f, 90);
   return {b};
 }});
@@ -317,11 +317,11 @@ L({name: 'Tower', element: 'All so far', rule: 'A tall build: a roof bar, a lock
   b.arm(nb(b, base, 225, {r: .7, c: C.yellow}), base).arm(nb(b, base, 315, {r: .7, c: C.yellow}), base);
   return {b};
 }});
-L({name: 'Fortress', element: 'Lock + Bomb + Gear', hard: true, G: {2: 290, 3: 180, 6: 80, 7: 15, 8: 15}, rule: 'Hard: two locked bombs, two knots',
+L({name: 'Fortress', element: 'Lock + Bomb + Gear', hard: true, G: {2: 320, 3: 180, 6: 80, 7: 50, 8: 15}, rule: 'Hard: two locked bombs, two knots',
   challenge: 'Two bomb rings are locked, their keys on the two gate bars run into the gear pair. Slide each gate out, then aim each bomb at its own knot; each has a free decoy on the other side.', make() {
   const b = new Lv(), d = D(1, 1), a = b.ring(-d / 2, 2.4, {c: C.green}), g = b.ring(d / 2, 2.4, {c: C.green}); b.gear(a, g).pin(a, 90).pin(g, 90);
-  const m1 = b.ring(-2.2, 0, {c: C.orange}), m2 = b.ring(2.2, 0, {c: C.orange});
-  const k1 = b.ring(-4.4, 0, {c: C.blue, closed: true}), k2 = b.ring(4.4, 0, {c: C.blue, closed: true}), f = b.ring(0, -.4, {c: C.cyan});
+  const m1 = b.ring(-2.32, 0, {c: C.orange}), m2 = b.ring(2.32, 0, {c: C.orange});
+  const k1 = b.ring(-4.67, 0, {c: C.blue, closed: true}), k2 = b.ring(4.67, 0, {c: C.blue, closed: true}), f = b.ring(0, -.4, {c: C.cyan});
   const h1 = b.poke(a, 180, {c: C.purple}), h2 = b.poke(g, 0, {c: C.purple, side: -1});
   b.lock(m1, h1).lock(m2, h2).bomb(m1, 270).bomb(m2, 270).pin(m1, 45).pin(m2, 135).pin(k1, 90).pin(k2, 90).pin(f, 270);
   const y1 = nb(b, k1, 270, {r: .7, c: C.yellow}), y2 = nb(b, k2, 270, {r: .7, c: C.yellow}); b.arm(y1, k1).arm(y2, k2);
@@ -351,7 +351,7 @@ L({name: 'Gear bridge', element: 'Gear + Bar + Bomb', G: {1: 130, 2: 310, 5: 180
   const b = new Lv(), d = D(.9, .9), G = [0, 1, 2, 3].map(k => b.ring((k - 1.5) * d, 0, {r: .9, c: k % 2 ? C.cyan : C.green}));
   for (let k = 0; k < 3; k++) b.gear(G[k], G[k + 1]);
   b.poke(G[0], 90, {c: C.purple}); b.poke(G[3], 90, {c: C.purple, side: -1});
-  const k = b.ring(.5 * d, -2.05, {r: .9, c: C.blue, closed: true}), f = b.ring(.5 * d, 2.05, {r: .9, c: C.blue});
+  const k = b.ring(.5 * d, -2.15, {r: .9, c: C.blue, closed: true}), f = b.ring(.5 * d, 2.15, {r: .9, c: C.blue});
   b.pin(k, 270).pin(f, 90).bomb(G[2], 0).pin(G[1], 270).pin(G[2], 180);
   return {b};
 }});
@@ -367,14 +367,14 @@ L({name: 'Spiral', element: 'All so far', rule: 'A spiral: the lock key is at th
   b.arm(nb(b, R[6], dir - 40, {r: .5, c: C.pink}), R[6]);
   return {b};
 }});
-L({name: 'Crown', element: 'All', hard: true, G: {4: 105, 5: 290, 6: 230, 7: 355, 9: 175}, rule: 'Finale: every rule in one picture',
+L({name: 'Crown', element: 'All', hard: true, G: {4: 105, 5: 290, 6: 230, 7: 15, 9: 120}, rule: 'Finale: every rule in one picture',
   challenge: 'Finale: two bars run into the gear pair, the jewel is locked with its key on the left bar, and the bomb ring at the base has a decoy on the near side and the hook of the jewel blocking the far side. Bars, then gears and jewel, then send the bomb the long way to the knot.', make() {
   const b = new Lv(), d = D(.9, .9), a = b.ring(-d / 2, 2.6, {r: .9, c: C.green}), g = b.ring(d / 2, 2.6, {r: .9, c: C.green}); b.gear(a, g).pin(a, 90).pin(g, 90);
   const L = b.ring(-2.6, .3, {r: .9, c: C.yellow, gap: 40}), R = b.ring(2.6, .3, {r: .9, c: C.yellow, gap: 140}), J = b.ring(0, 0, {r: 1, c: C.red});
   const h1 = b.poke(a, 180, {c: C.purple}), h2 = b.poke(g, 0, {c: C.purple, side: -1});
   b.arm(J, L).arm(J, R).lock(J, h1);
-  b.arm(L, nb(b, L, 220, {r: .65, c: C.pink})).arm(R, nb(b, R, 320, {r: .65, c: C.pink}));
-  const M = b.ring(1.1, -2.3, {r: .95, c: C.orange}), K = b.ring(-1, -2.3, {r: .95, c: C.blue, closed: true}), F = b.ring(3.2, -2.3, {r: .95, c: C.blue});
-  b.arm(J, M).bomb(M, 60).pin(K, 270).pin(F, 270).pin(M, 270);
+  b.arm(L, nb(b, L, 220, {r: .65, c: C.pink})).arm(R, nb(b, R, 340, {r: .65, c: C.pink}));
+  const M = b.ring(1.1, -2.3, {r: .95, c: C.orange}), K = b.ring(-1.15, -2.3, {r: .95, c: C.blue, closed: true}), F = b.ring(3.35, -2.3, {r: .95, c: C.blue});
+  b.arm(J, M).bomb(M, 60).pin(K, 270).pin(F, 270).pin(M, 270); const p1 = nb(b, F, 330, {r: .6, c: C.green}); b.arm(F, p1);
   return {b};
 }});
